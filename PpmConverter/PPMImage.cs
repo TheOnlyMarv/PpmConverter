@@ -109,6 +109,7 @@ namespace PpmConverter
 
                             case ReadingState.LfImage:
                                 ReadImage(line, reader, image, orgX, orgY);
+                                FillEmptyPixel(image, orgX, orgY);
                                 break;
                             default:
                                 break;
@@ -162,6 +163,30 @@ namespace PpmConverter
             {
                 throw new IllegalFormatException("Wrong image format");
             }
+        }
+        private static void FillEmptyPixel(PPMImage<RGBImage> image, int orgX, int orgY)
+        {
+            for (int x = 0; x < orgX; x++)
+            {
+                for (int y = orgY; y < image.Matrix.B.GetLength(1); y++)
+                {
+                    image.Matrix.R[x, y] = image.Matrix.R[x, y - 1];
+                    image.Matrix.G[x, y] = image.Matrix.G[x, y - 1];
+                    image.Matrix.B[x, y] = image.Matrix.B[x, y - 1];
+                }
+            }
+
+            for (int y = 0; y < image.Matrix.B.GetLength(1); y++)
+            {
+                for (int x = orgX; x < image.Matrix.B.GetLength(0); x++)
+                {
+                    image.Matrix.R[x, y] = image.Matrix.R[x - 1, y];
+                    image.Matrix.G[x, y] = image.Matrix.G[x - 1, y];
+                    image.Matrix.B[x, y] = image.Matrix.B[x - 1, y];
+                }
+            }
+
+
         }
 
         private enum ReadingState
