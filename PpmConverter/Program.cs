@@ -10,6 +10,17 @@ namespace PpmConverter
     {
         static void Main(string[] args)
         {
+            if (args.Length == 1)
+            {
+                string path = args[0];
+                //Hier Quellcode von allen
+
+
+
+
+
+
+            }
         }
     }
 }
