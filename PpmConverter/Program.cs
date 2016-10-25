@@ -13,13 +13,20 @@ namespace PpmConverter
             if (args.Length == 1)
             {
                 string path = args[0];
-                //Hier Quellcode von allen
+                PPMImage<RGBImage> image;
+                try
+                {
+                    Console.Write("Load file... ");
+                    image = PPMImage<RGBImage>.LoadImageFromFile(path);
+                    Console.WriteLine(" - DONE");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine(ex.Message);
+                }
 
-
-
-
-
-
+                Console.ReadLine();
             }
         }
     }

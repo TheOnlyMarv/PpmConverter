@@ -8,6 +8,9 @@ namespace PpmConverter
 {
     public class RGBImage : Image
     {
+        private byte[,] _r;
+        private byte[,] _g;
+        private byte[,] _b;
         public RGBImage(byte[,] r, byte[,] g, byte[,] b)
         {
             _r = r;
@@ -15,24 +18,29 @@ namespace PpmConverter
             _b = b;
         }
 
-        private byte[,] _r;
+        public RGBImage(int x, int y)
+        {
+            _r = new byte[x, y];
+            _g = new byte[x, y];
+            _b = new byte[x, y];
+        }
 
         public byte[,] R
         {
             get { return _r; }
+            set { _r = value; }
         }
-
-        private byte[,] _g;
 
         public byte[,] G
         {
             get { return _g; }
+            set { _g = value; }
         }
-        private byte[,] _b;
 
         public byte[,] B
         {
             get { return _b; }
+            set { _b = value; }
         }
 
     }
