@@ -58,7 +58,7 @@ namespace PpmConverter
             }
             if (!path.EndsWith(".ppm", StringComparison.CurrentCultureIgnoreCase))
             {
-                throw new IOException("Wrong file extension!");
+                throw new WrongExtensionException("Wrong file extension!");
             }
 
             PPMImage<RGBImage> image = new PPMImage<RGBImage>();
@@ -96,13 +96,13 @@ namespace PpmConverter
                                 }
                                 else
                                 {
-                                    // IllegalFormatException
+                                    throw new IllegalFormatException("Wrong image format");
                                 }
                                 break;
                             case ReadingState.LfMaxValue:
                                 if (!byte.TryParse(line, out image._maxValue))
                                 {
-                                    // IllegalFormatException
+                                    throw new IllegalFormatException("Wrong image format");
                                 }
                                 state = ReadingState.LfImage;
                                 break;
@@ -121,8 +121,19 @@ namespace PpmConverter
 
         private static void ReadImage(string start, StreamReader reader, PPMImage<RGBImage> image, int orgX, int orgY)
         {
-            string allLines = start + " " + reader.ReadToEnd();
-            string[] value = allLines.Replace("\n", "").Split(new char[] { ' ', '\t', '\n' });
+            List<string> listString = new List<string>();
+            listString.AddRange(start.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries));
+
+            while (!reader.EndOfStream)
+            {
+                string line = reader.ReadLine();
+                if (!line.StartsWith("#"))
+                {
+                    listString.AddRange(line.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries));
+                }
+            }
+
+            string[] value = listString.ToArray();
             try
             {
                 int currX = 0, currY = 0;
@@ -142,14 +153,14 @@ namespace PpmConverter
                     }
                     else
                     {
-                        // IllegalFormatException
+                        throw new IllegalFormatException("Wrong image format");
                     }
                 }
 
             }
             catch (IndexOutOfRangeException)
             {
-                // IllegalFormatException
+                throw new IllegalFormatException("Wrong image format");
             }
         }
 
