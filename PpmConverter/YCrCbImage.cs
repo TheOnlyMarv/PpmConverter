@@ -12,7 +12,7 @@ namespace PpmConverter
         private byte[,] _cr;
         private byte[,] _cb;
 
-        public YCrCbImage(byte[,] y , byte[,] cr, byte[,] cb)
+        public YCrCbImage(byte[,] y, byte[,] cr, byte[,] cb)
         {
             _y = y;
             _cr = cr;
@@ -37,12 +37,11 @@ namespace PpmConverter
             get { return _cr; }
             set { _cr = value; }
         }
-            
+
         public byte[,] Cb
         {
             get { return _cb; }
             set { _cb = value; }
         }
-
     }
 }
