@@ -49,7 +49,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RGBImage.cs" />
-    <Compile Include="YCrCbImage.cs" />
+    <Compile Include="YCbCrImage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
