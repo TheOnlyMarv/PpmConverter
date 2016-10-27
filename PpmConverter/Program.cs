@@ -15,13 +15,19 @@ namespace PpmConverter
                 string path = args[0];
                 PPMImage<RGBImage> image;
                 YCbCrImage ycrcbMatrix;
+                RGBImage rgbMatrix;
                 try
                 {
                     Console.Write("Load file... ");
                     image = PPMImage<RGBImage>.LoadImageFromFile(path);
                     Console.WriteLine(" - DONE");
+
                     Console.Write("Converting to YCbCr...");
                     ycrcbMatrix = YCbCrImage.FromRGB(image.Matrix);
+                    Console.WriteLine(" - DONE");
+
+                    Console.Write("Converting back to RGB...");
+                    rgbMatrix = RGBImage.FromYCbCr(ycrcbMatrix);
                     Console.WriteLine(" - DONE");
                 }
                 catch (Exception ex)

@@ -43,5 +43,31 @@ namespace PpmConverter
             set { _b = value; }
         }
 
+
+        public static RGBImage FromYCbCr(YCbCrImage ycbcrimage)
+        {
+            byte[,] y = ycbcrimage.Y;
+            byte[,] cb = ycbcrimage.Cb;
+            byte[,] cr = ycbcrimage.Cr;
+
+            int maxWidth = ycbcrimage.Y.GetLength(0);
+            int maxHeight = ycbcrimage.Y.GetLength(1);
+
+            byte[,] r = new byte[maxWidth, maxHeight];
+            byte[,] g = new byte[maxWidth, maxHeight];
+            byte[,] b = new byte[maxWidth, maxHeight];
+
+            for (int height = 0; height < maxHeight; height++)
+            {
+                for (int width = 0; width < maxWidth; width++)
+                {
+                    r[width, height] = (byte)(((y[width, height] / 0.299) + (cb[width, height] / 0.587) + (cr[width, height] / 0.114)));
+                    g[width, height] = (byte)(((y[width, height] / 0.5) + (cb[width, height] / -0.4186) + (cr[width, height] / -0.0813)) - 128);
+                    b[width, height] = (byte)(((y[width, height] / -0.1687) + (cb[width, height] / -0.3312) + (cr[width, height] / 0.5)) - 128);
+                }
+            }
+
+            return new RGBImage(r, g, b);
+        }
     }
 }
