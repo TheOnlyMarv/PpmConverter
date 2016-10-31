@@ -42,7 +42,7 @@ namespace PpmConverter
 
         private static void SaveIntoFile(PPMImage<RGBImage> iamge, string destinationPath)
         {
-            Console.Write("Converting back to RGB...");
+            Console.Write("Save new file...");
             // Felix hier in file speichern
             Console.WriteLine(" - DONE");
         }
