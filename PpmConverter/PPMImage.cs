@@ -50,6 +50,32 @@ namespace PpmConverter
         #endregion
 
         #region Methods
+        public void SaveIntoFile(string path)
+        {
+            using (StreamWriter writer = new StreamWriter(path))
+            {
+                RGBImage matrix = ((RGBImage)(Image)Matrix);
+                
+                writer.WriteLine(Typ);
+                writer.WriteLine(matrix.B.GetLength(0).ToString() + " " + matrix.B.GetLength(1).ToString());
+                writer.WriteLine(MaxValue.ToString());
+
+                for (int y = 0; y < matrix.R.GetLength(1); y++)
+                {
+                    for (int x = 0; x < matrix.R.GetLength(0); x++)
+                    {
+                        writer.Write(matrix.R.GetValue(x, y));
+                        writer.Write(" ");
+                        writer.Write(matrix.G.GetValue(x, y));
+                        writer.Write(" ");
+                        writer.Write(matrix.B.GetValue(x, y));
+                        writer.Write(" ");
+                    }
+                    writer.WriteLine("");
+                }
+            }
+        }
+
         public static PPMImage<RGBImage> LoadImageFromFile(string path)
         {
             if (!File.Exists(path))

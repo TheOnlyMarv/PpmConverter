@@ -40,10 +40,10 @@ namespace PpmConverter
             }
         }
 
-        private static void SaveIntoFile(PPMImage<RGBImage> iamge, string destinationPath)
+        private static void SaveIntoFile(PPMImage<RGBImage> image, string destinationPath)
         {
             Console.Write("Save new file...");
-            // Felix hier in file speichern
+            image.SaveIntoFile(destinationPath);
             Console.WriteLine(" - DONE");
         }
 
