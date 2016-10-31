@@ -32,7 +32,7 @@ namespace PpmConverter
                     image = LoadImageFromFile(sourcePath);
                     ycrcbMatrix = ConvertToYCbCr(image);
                     rgbMatrix = ConvertToRGB(ycrcbMatrix);
-                    SaveIntoFile(destinationPath);
+                    SaveIntoFile(image, destinationPath);
                     break;
                 default:
                     Console.WriteLine("Wrong number of arguments");
@@ -40,7 +40,7 @@ namespace PpmConverter
             }
         }
 
-        private static void SaveIntoFile(string destinationPath)
+        private static void SaveIntoFile(PPMImage<RGBImage> iamge, string destinationPath)
         {
             Console.Write("Converting back to RGB...");
             // Felix hier in file speichern
