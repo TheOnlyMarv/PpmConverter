@@ -38,6 +38,7 @@ namespace PpmConverter
                     Console.WriteLine("Wrong number of arguments");
                     break;
             }
+            Console.ReadLine();
         }
 
         private static void SaveIntoFile(PPMImage<RGBImage> image, string destinationPath)
