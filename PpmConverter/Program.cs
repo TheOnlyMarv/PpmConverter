@@ -11,39 +11,47 @@ namespace PpmConverter
         public static void Main(string[] args)
         {
             string sourcePath, destinationPath;
-            PPMImage<RGBImage> image;
+            PPMImage image;
             YCbCrImage ycrcbMatrix;
             RGBImage rgbMatrix;
-
-            switch (args.Length)
+            try
             {
-                case 0:
-                    Console.WriteLine("Need a source parameter");
-                    break;
-                case 1:
-                    sourcePath = args[0];
-                    image = LoadImageFromFile(sourcePath);
-                    ycrcbMatrix = ConvertToYCbCr(image);
-                    rgbMatrix = ConvertToRGB(ycrcbMatrix);
-                    break;
-                case 2:
-                    sourcePath = args[0];
-                    destinationPath = args[1];
-                    image = LoadImageFromFile(sourcePath);
-                    ycrcbMatrix = ConvertToYCbCr(image);
-                    //ycrcbMatrix.subsamplingCb();
-                    rgbMatrix = ConvertToRGB(ycrcbMatrix);
-                    image.Matrix = rgbMatrix;
-                    SaveIntoFile(image, destinationPath);
-                    break;
-                default:
-                    Console.WriteLine("Wrong number of arguments");
-                    break;
+                switch (args.Length)
+                {
+                    case 0:
+                        Console.WriteLine("Need a source parameter");
+                        break;
+                    case 1:
+                        sourcePath = args[0];
+                        image = LoadImageFromFile(sourcePath);
+                        ycrcbMatrix = ConvertToYCbCr(image);
+                        rgbMatrix = ConvertToRGB(ycrcbMatrix);
+                        break;
+                    case 2:
+                        sourcePath = args[0];
+                        destinationPath = args[1];
+                        image = LoadImageFromFile(sourcePath);
+                        ycrcbMatrix = ConvertToYCbCr(image);
+                        //ycrcbMatrix.subsamplingCb();
+                        rgbMatrix = ConvertToRGB(ycrcbMatrix);
+                        image.Matrix = rgbMatrix;
+                        SaveIntoFile(image, destinationPath);
+                        break;
+                    default:
+                        Console.WriteLine("Wrong number of arguments");
+                        break;
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("\n{0}:\n{1}", ex.GetType().Name, ex.Message);
+            }
+#if DEBUG
             Console.ReadLine();
+#endif
         }
 
-        private static void SaveIntoFile(PPMImage<RGBImage> image, string destinationPath)
+        private static void SaveIntoFile(PPMImage image, string destinationPath)
         {
             Console.Write("Save new file...");
             image.SaveIntoFile(destinationPath);
@@ -58,7 +66,7 @@ namespace PpmConverter
             return rgbMatrix;
         }
 
-        private static YCbCrImage ConvertToYCbCr(PPMImage<RGBImage> image)
+        private static YCbCrImage ConvertToYCbCr(PPMImage image)
         {
             Console.Write("Converting to YCbCr...");
             YCbCrImage ycrcbMatrix = YCbCrImage.FromRGB(image.Matrix);
@@ -66,10 +74,10 @@ namespace PpmConverter
             return ycrcbMatrix;
         }
 
-        public static PPMImage<RGBImage> LoadImageFromFile(string path)
+        public static PPMImage LoadImageFromFile(string path)
         {
             Console.Write("Load file...");
-            PPMImage<RGBImage> image = PPMImage<RGBImage>.LoadImageFromFile(path);
+            PPMImage image = PPMImage.LoadImageFromFile(path);
             Console.WriteLine(" - DONE");
             return image;
         }

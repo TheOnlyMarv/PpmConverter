@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PpmConverter
 {
-    public class PPMImage<T> where T : Image
+    public class PPMImage
     {
         #region Declaration
         private PPMImage()
@@ -21,9 +21,9 @@ namespace PpmConverter
             get { return _typ; }
         }
 
-        private T _matrix;
+        private RGBImage _matrix;
 
-        public T Matrix
+        public RGBImage Matrix
         {
             get { return _matrix; }
             set { _matrix = value; }
@@ -55,29 +55,23 @@ namespace PpmConverter
         {
             using (StreamWriter writer = new StreamWriter(path))
             {
-                RGBImage matrix = ((RGBImage)(Image)Matrix);
-                
+                           
                 writer.WriteLine(Typ);
-                writer.WriteLine(matrix.B.GetLength(0).ToString() + " " + matrix.B.GetLength(1).ToString());
+                writer.WriteLine(string.Format("{0} {1}", Matrix.B.GetLength(0).ToString(), Matrix.B.GetLength(1).ToString()));
                 writer.WriteLine(MaxValue.ToString());
 
-                for (int y = 0; y < matrix.R.GetLength(1); y++)
+                for (int y = 0; y < Matrix.R.GetLength(1); y++)
                 {
-                    for (int x = 0; x < matrix.R.GetLength(0); x++)
+                    for (int x = 0; x < Matrix.R.GetLength(0); x++)
                     {
-                        writer.Write(matrix.R.GetValue(x, y));
-                        writer.Write(" ");
-                        writer.Write(matrix.G.GetValue(x, y));
-                        writer.Write(" ");
-                        writer.Write(matrix.B.GetValue(x, y));
-                        writer.Write(" ");
+                        writer.Write(string.Format("{0} {1} {2}", Matrix.R.GetValue(x, y), Matrix.G.GetValue(x, y), Matrix.B.GetValue(x, y)));
                     }
                     writer.WriteLine("");
                 }
             }
         }
 
-        public static PPMImage<RGBImage> LoadImageFromFile(string path)
+        public static PPMImage LoadImageFromFile(string path)
         {
             if (!File.Exists(path))
             {
@@ -88,7 +82,7 @@ namespace PpmConverter
                 throw new WrongExtensionException("Wrong file extension!");
             }
 
-            PPMImage<RGBImage> image = new PPMImage<RGBImage>();
+            PPMImage image = new PPMImage();
             using (StreamReader reader = new StreamReader(path))
             {
                 ReadingState state = ReadingState.LfTyp;
@@ -158,7 +152,7 @@ namespace PpmConverter
             return line.Substring(0, index).Trim();
         }
 
-        private static void ReadImage(string start, StreamReader reader, PPMImage<RGBImage> image, int orgX, int orgY)
+        private static void ReadImage(string start, StreamReader reader, PPMImage image, int orgX, int orgY)
         {
             List<string> listString = new List<string>();
             listString.AddRange(start.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries));
@@ -202,7 +196,7 @@ namespace PpmConverter
                 throw new IllegalFormatException("Wrong image format");
             }
         }
-        private static void FillEmptyPixel(PPMImage<RGBImage> image, int orgX, int orgY)
+        private static void FillEmptyPixel(PPMImage image, int orgX, int orgY)
         {
             for (int x = 0; x < orgX; x++)
             {

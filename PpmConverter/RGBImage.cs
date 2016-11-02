@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PpmConverter
 {
-    public class RGBImage : Image
+    public class RGBImage
     {
         private byte[,] _r;
         private byte[,] _g;

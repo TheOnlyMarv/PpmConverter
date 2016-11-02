@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PpmConverter
 {
-    public class YCbCrImage : Image
+    public class YCbCrImage
     {
         private byte[,] _y;
         private byte[,] _cr;
