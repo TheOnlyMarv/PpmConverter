@@ -11,6 +11,8 @@ namespace PpmConverter
         private byte[,] _y;
         private byte[,] _cr;
         private byte[,] _cb;
+        private int _StepX = 2;
+        private int _stepY = 2;
 
         public YCbCrImage(byte[,] y, byte[,] cb, byte[,] cr)
         {
@@ -19,6 +21,97 @@ namespace PpmConverter
             _cr = cr;
         }
 
+        public bool subsamplingCb()
+        {
+            int _countX = 0;
+            int _countY = 0;
+            byte[,] _newCb = new byte[_cb.GetLength(0) / 2, _cb.GetLength(1) / 2];
+            for(int i = 0; i < _cb.GetLength(0); i++) 
+            {
+                for(int j = 0; j < _cb.GetLength(1); j++)
+                {
+                    if(j % 2 != 0 && i%2 != 0)
+                    {
+                        int avg = (int)_cb[i - 1, j - 1] + (int)_cb[i, j - 1] + (int)_cb[i - 1, j] + (int)_cb[i, j];
+                        avg = avg / 4;
+                        _newCb[_countX, _countY++] = (byte)avg;
+                    }
+                }
+                _countX++;
+            }
+            _cb = _newCb;
+            return true;
+        }
+
+        public bool subsamplingCr()
+        {
+            int _countX = 0;
+            int _countY = 0;
+            byte[,] _newCr = new byte[_cr.GetLength(0) / 2, _cr.GetLength(1) / 2];
+            for (int i = 0; i < _cr.GetLength(0); i++)
+            {
+                for (int j = 0; j < _cr.GetLength(1); j++)
+                {
+                    if (j % 2 != 0 && i % 2 != 0)
+                    {
+                        int avg = (int)_cr[i - 1, j - 1] + (int)_cr[i, j - 1] + (int)_cr[i - 1, j] + (int)_cr[i, j];
+                        avg = avg / 4;
+                        _newCr[_countX, _countY++] = (byte)avg;
+                    }
+                }
+                _countX++;
+            }
+            _cr = _newCr;
+            return true;
+        }
+
+        public bool extendMatrix()
+        {
+            extendMatrixCb();
+            extendMatrixCr();
+            return true;
+        }
+
+        private bool extendMatrixCb() 
+        {
+            int indexX = -1;
+            int indexY = -1;
+            int offsetX = _y.GetLength(0) / _cb.GetLength(0);
+            int offsetY = _y.GetLength(1) / _cb.GetLength(1);
+            byte[,] _extendedMatrixCb = new byte[_y.GetLength(0), _y.GetLength(1)];
+            for(int i = 0; i < _y.GetLength(0); i++)
+            {
+                if (i % offsetY == 0) indexY++;
+                for(int j = 0; j < _y.GetLength(1); j++)
+                {
+                    if (j % offsetX == 0) indexX++;
+                    _extendedMatrixCb[j, i] = _cb[indexX, indexY];
+                }
+            }
+            _cb = _extendedMatrixCb;
+            return true;
+        }
+
+        private bool extendMatrixCr()
+        {
+            int indexX = -1;
+            int indexY = -1;
+            int offsetX = _y.GetLength(0) / _cr.GetLength(0);
+            int offsetY = _y.GetLength(1) / _cr.GetLength(1);
+            byte[,] _extendedMatrixCr = new byte[_y.GetLength(0), _y.GetLength(1)];
+            for (int i = 0; i < _y.GetLength(0); i++)
+            {
+                if (i % offsetY == 0) indexY++;
+                for (int j = 0; j < _y.GetLength(1); j++)
+                {
+                    if (j % offsetX == 0) indexX++;
+                    _extendedMatrixCr[j, i] = _cr[indexX, indexY];
+                }
+            }
+            _cr = _extendedMatrixCr;
+            return true;
+        }
+       
         public YCbCrImage(int x, int y)
         {
             _y = new byte[x, y];
