@@ -83,12 +83,13 @@ namespace PpmConverter
             byte[,] _extendedMatrixCb = new byte[_y.GetLength(0), _y.GetLength(1)];
             for(int i = 0; i < _y.GetLength(0); i++)
             {
-                if (i % offsetY == 0) indexY++;
+                if (i % offsetY == 0) ++indexY;
                 for(int j = 0; j < _y.GetLength(1); j++)
                 {
-                    if (j % offsetX == 0) indexX++;
+                    if (j % offsetX == 0) ++indexX;
                     _extendedMatrixCb[j, i] = _cb[indexX, indexY];
                 }
+                indexX = -1;
             }
             _cb = _extendedMatrixCb;
             return true;
@@ -103,12 +104,13 @@ namespace PpmConverter
             byte[,] _extendedMatrixCr = new byte[_y.GetLength(0), _y.GetLength(1)];
             for (int i = 0; i < _y.GetLength(0); i++)
             {
-                if (i % offsetY == 0) indexY++;
+                if (i % offsetY == 0) ++indexY;
                 for (int j = 0; j < _y.GetLength(1); j++)
                 {
-                    if (j % offsetX == 0) indexX++;
+                    if (j % offsetX == 0) ++indexX;
                     _extendedMatrixCr[j, i] = _cr[indexX, indexY];
                 }
+                indexX = -1;
             }
             _cr = _extendedMatrixCr;
             return true;
