@@ -38,7 +38,7 @@ namespace PpmConverter
                     }
                 }
                 _countY = 0;
-                _countX++;
+                if (i % 2 != 0) _countX++;
             }
             _cb = _newCb;
             return true;
@@ -61,7 +61,7 @@ namespace PpmConverter
                     }
                 }
                 _countY = 0;
-                _countX++;
+                if(i % 2 != 0) _countX++;
             }
             _cr = _newCr;
             return true;
