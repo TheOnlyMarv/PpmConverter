@@ -159,9 +159,9 @@ namespace PpmConverter
             {
                 for (int width = 0; width < maxWidth; width++)
                 {
-                    y[width, height] = (byte)(((0.299 * red[width, height]) + (0.587 * green[width, height]) + (0.114 * blue[width, height])));
-                    cb[width, height] = (byte)(((-0.168736 * red[width, height]) + (-0.331264 * green[width, height]) + (0.5 * blue[width, height])) + 128);
-                    cr[width, height] = (byte)(((0.5 * red[width, height]) + (-0.418688 * green[width, height]) + (-0.081312 + blue[width, height])) + 128);
+                    y[width, height] = (byte)(0.299 * red[width, height] + 0.587 * green[width, height] + 0.114 * blue[width, height]);
+                    cb[width, height] = (byte)((blue[width,height] - y[width, height]) * 0.564 + 128);
+                    cr[width, height] = (byte)((red[width, height] - y[width, height]) * 0.713 + 128);
                 }
             }
 

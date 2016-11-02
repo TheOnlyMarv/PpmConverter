@@ -66,6 +66,10 @@ namespace PpmConverter
                     r[width, height] = (byte)(y[width, height] + 1.402 * (cr[width, height] - 128));
                     g[width, height] = (byte)(y[width, height] - 0.344136 *(cb[width, height] - 128) - 0.714136 * (cr[width, height] - 128));
                     b[width, height] = (byte)(y[width, height] + 1.772 * (cb[width, height] - 128) );
+
+                    r[width, height] = Math.Max((byte)0, Math.Min((byte)255, r[width, height]));
+                    g[width, height] = Math.Max((byte)0, Math.Min((byte)255, g[width, height]));
+                    b[width, height] = Math.Max((byte)0, Math.Min((byte)255, b[width, height]));
                 }
             }
 
