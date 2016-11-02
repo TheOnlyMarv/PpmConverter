@@ -10,44 +10,42 @@ namespace PpmConverter
     public class PPMImage
     {
         #region Declaration
+        private string _typ;
+        private RGBImage _matrix;
+        private byte _maxValue;
+        private int _stepX = 2;
+        private int _stepY = 2;
+
         private PPMImage()
         {
         }
-
-        private string _typ;
 
         public string Typ
         {
             get { return _typ; }
         }
 
-        private RGBImage _matrix;
 
         public RGBImage Matrix
         {
             get { return _matrix; }
             set { _matrix = value; }
         }
-        private byte _maxValue;
 
         public byte MaxValue
         {
             get { return _maxValue; }
         }
-        private int _stepX = 2;
 
         public int StepX
         {
             get { return _stepX; }
         }
 
-        private int _stepY = 2;
-
         public int StepY
         {
             get { return _stepY; }
         }
-
         #endregion
 
         #region Methods
@@ -55,7 +53,7 @@ namespace PpmConverter
         {
             using (StreamWriter writer = new StreamWriter(path))
             {
-                           
+
                 writer.WriteLine(Typ);
                 writer.WriteLine(string.Format("{0} {1}", Matrix.B.GetLength(0).ToString(), Matrix.B.GetLength(1).ToString()));
                 writer.WriteLine(MaxValue.ToString());
@@ -64,7 +62,7 @@ namespace PpmConverter
                 {
                     for (int x = 0; x < Matrix.R.GetLength(0); x++)
                     {
-                        writer.Write(string.Format("{0} {1} {2}", Matrix.R.GetValue(x, y), Matrix.G.GetValue(x, y), Matrix.B.GetValue(x, y)));
+                        writer.Write(string.Format("{0} {1} {2} ", Matrix.R.GetValue(x, y), Matrix.G.GetValue(x, y), Matrix.B.GetValue(x, y)));
                     }
                     writer.WriteLine("");
                 }
@@ -96,34 +94,61 @@ namespace PpmConverter
                         switch (state)
                         {
                             case ReadingState.LfTyp:
-                                image._typ = line;
-                                state = ReadingState.LfResolution;
-                                break;
-                            case ReadingState.LfResolution:
-                                string[] xy = line.Split(new char[] { ' ', '\t' });
-                                int x, y;
-                                if (xy.Length == 2 && int.TryParse(xy[0], out x) && int.TryParse(xy[1], out y))
+                                if (line.Length == 2)
                                 {
-                                    orgX = x;
-                                    int temp = x % image._stepX;
-                                    int newX = x - (temp == 0 ? 0 : temp - image._stepX);
+                                    image._typ = line;
+                                    state = ReadingState.LfResolution;
+                                    break;
+                                }
+                                image._typ = line.Substring(0, 2);
+                                line = line.Substring(3);
+                                state = ReadingState.LfResolution;
+                                goto case ReadingState.LfResolution;
+                            case ReadingState.LfResolution:
+                                string[] xy = line.Split(new char[] { ' ', '\t', '\n' });
+                                int x, y;
+                                if (xy.Length >= 2)
+                                {
+                                    if (int.TryParse(xy[0], out x) && int.TryParse(xy[1], out y))
+                                    {
+                                        orgX = x;
+                                        int temp = x % image._stepX;
+                                        int newX = x - (temp == 0 ? 0 : temp - image._stepX);
 
-                                    orgY = y;
-                                    temp = y % image._stepY;
-                                    int newY = y - (temp == 0 ? 0 : temp - image._stepY);
+                                        orgY = y;
+                                        temp = y % image._stepY;
+                                        int newY = y - (temp == 0 ? 0 : temp - image._stepY);
 
-                                    image._matrix = new RGBImage(newX, newY);
+                                        image._matrix = new RGBImage(newX, newY);
 
-                                    state = ReadingState.LfMaxValue;
+                                        state = ReadingState.LfMaxValue;
+
+                                        if (xy.Length > 2)
+                                        {
+                                            line = line.Substring(xy[0].Length + xy[1].Length + 2);
+                                            state = ReadingState.LfMaxValue;
+                                            goto case ReadingState.LfMaxValue;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw new IllegalFormatException("Wrong image format");
+                                    }
                                 }
                                 else
                                 {
-                                    throw new IllegalFormatException("Wrong image format");
+                                    throw new IllegalFormatException("Maybe X and Y in seperate lines");
                                 }
                                 break;
                             case ReadingState.LfMaxValue:
                                 if (!byte.TryParse(line, out image._maxValue))
                                 {
+                                    if (byte.TryParse(line.Substring(0, line.IndexOf(' ')), out image._maxValue))
+                                    {
+                                        line = line.Substring(line.IndexOf(' ') + 1);
+                                        state = ReadingState.LfImage;
+                                        goto case ReadingState.LfImage;
+                                    }
                                     throw new IllegalFormatException("Wrong image format");
                                 }
                                 state = ReadingState.LfImage;
