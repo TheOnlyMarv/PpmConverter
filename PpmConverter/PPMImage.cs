@@ -98,6 +98,7 @@ namespace PpmConverter
                     string line = reader.ReadLine().Trim();
                     if (!line.StartsWith("#"))
                     {
+                        line = RemoveInlineComments(line);
                         switch (state)
                         {
                             case ReadingState.LfTyp:
@@ -145,6 +146,16 @@ namespace PpmConverter
                 }
             }
             return image;
+        }
+
+        private static string RemoveInlineComments(string line)
+        {
+            int index = line.IndexOf('#');
+            if (index == -1)
+            {
+                return line;
+            }
+            return line.Substring(0, index).Trim();
         }
 
         private static void ReadImage(string start, StreamReader reader, PPMImage<RGBImage> image, int orgX, int orgY)
