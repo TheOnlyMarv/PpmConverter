@@ -26,6 +26,7 @@ namespace PpmConverter
         public T Matrix
         {
             get { return _matrix; }
+            set { _matrix = value; }
         }
         private byte _maxValue;
 

@@ -31,8 +31,9 @@ namespace PpmConverter
                     destinationPath = args[1];
                     image = LoadImageFromFile(sourcePath);
                     ycrcbMatrix = ConvertToYCbCr(image);
-                    ycrcbMatrix.subsamplingCb();
+                    //ycrcbMatrix.subsamplingCb();
                     rgbMatrix = ConvertToRGB(ycrcbMatrix);
+                    image.Matrix = rgbMatrix;
                     SaveIntoFile(image, destinationPath);
                     break;
                 default:

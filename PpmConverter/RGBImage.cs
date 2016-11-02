@@ -46,7 +46,7 @@ namespace PpmConverter
 
         public static RGBImage FromYCbCr(YCbCrImage ycbcrimage)
         {
-            ycbcrimage.extendMatrix();
+            //ycbcrimage.extendMatrix();
 
             byte[,] y = ycbcrimage.Y;
             byte[,] cb = ycbcrimage.Cb;
@@ -63,9 +63,9 @@ namespace PpmConverter
             {
                 for (int width = 0; width < maxWidth; width++)
                 {
-                    r[width, height] = (byte)(((y[width, height]) + (cr[width, height] * 1.402)));
-                    g[width, height] = (byte)(((y[width, height]) - (cb[width, height] * 0.344136) - (cr[width, height] * 0.714136)));
-                    b[width, height] = (byte)(((y[width, height]) + (cb[width, height] * 1.772)));
+                    r[width, height] = (byte)(y[width, height] + 1.402 * (cr[width, height] - 128));
+                    g[width, height] = (byte)(y[width, height] - 0.344136 *(cb[width, height] - 128) - 0.714136 * (cr[width, height] - 128));
+                    b[width, height] = (byte)(y[width, height] + 1.772 * (cb[width, height] - 128) );
                 }
             }
 
