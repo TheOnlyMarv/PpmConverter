@@ -37,6 +37,7 @@ namespace PpmConverter
                         _newCb[_countX, _countY++] = (byte)avg;
                     }
                 }
+                _countY = 0;
                 _countX++;
             }
             _cb = _newCb;
@@ -59,6 +60,7 @@ namespace PpmConverter
                         _newCr[_countX, _countY++] = (byte)avg;
                     }
                 }
+                _countY = 0;
                 _countX++;
             }
             _cr = _newCr;
