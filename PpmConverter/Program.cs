@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace PpmConverter
                         destinationPath = args[1];
                         image = LoadImageFromFile(sourcePath);
                         ycrcbMatrix = ConvertToYCbCr(image);
-                        //ycrcbMatrix.subsamplingCb();
+                        Subsampling(ycrcbMatrix);
                         rgbMatrix = ConvertToRGB(ycrcbMatrix);
                         image.Matrix = rgbMatrix;
                         SaveIntoFile(image, destinationPath);
@@ -46,9 +47,17 @@ namespace PpmConverter
             {
                 Console.WriteLine("\n{0}:\n{1}", ex.GetType().Name, ex.Message);
             }
-#if DEBUG
+#if !DEBUG
             Console.ReadLine();
 #endif
+        }
+
+        private static void Subsampling(YCbCrImage ycrcbMatrix)
+        {
+            Console.Write("Subsampling...");
+            ycrcbMatrix.SubsampleMatrix();
+            ycrcbMatrix.ExtendMatrix();
+            Console.WriteLine(" - DONE");
         }
 
         private static void SaveIntoFile(PPMImage image, string destinationPath)

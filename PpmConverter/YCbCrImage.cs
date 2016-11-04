@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,14 +12,67 @@ namespace PpmConverter
         private byte[,] _y;
         private byte[,] _cr;
         private byte[,] _cb;
-        private int _StepX = 2;
-        private int _stepY = 2;
 
         public YCbCrImage(byte[,] y, byte[,] cb, byte[,] cr)
         {
             _y = y;
             _cb = cb;
             _cr = cr;
+        }
+
+        public void SubsampleMatrix()
+        {
+            byte[,] newCr = new byte[_cr.GetLength(0) / PPMImage.StepX, _cr.GetLength(1) / PPMImage.StepY];
+            byte[,] newCb = new byte[_cb.GetLength(0) / PPMImage.StepX, _cb.GetLength(1) / PPMImage.StepY];
+
+            int smallY = 0;
+            for (int y = 0; y < _cr.GetLength(1); y = y + PPMImage.StepY)
+            {
+                int smallX = 0;
+                for (int x = 0; x < _cr.GetLength(0); x = x + PPMImage.StepX)
+                {
+                    int sumCr = 0;
+                    int sumCb = 0;
+                    for (int sY = 0; sY < PPMImage.StepY; sY++)
+                    {
+                        for (int sX = 0; sX < PPMImage.StepX; sX++)
+                        {
+                            sumCr += _cr[x + sY, y + sY];
+                            sumCb += _cb[x + sY, y + sY];
+                        }
+                    }
+                    newCr[smallX, smallY] = (byte)(sumCr / (PPMImage.StepX * PPMImage.StepY));
+                    newCb[smallX, smallY] = (byte)(sumCb / (PPMImage.StepX * PPMImage.StepY));
+                    smallX++;
+                }
+                smallY++;
+            }
+            _cr = newCr;
+            _cb = newCb;
+        }
+
+        public void ExtendMatrix()
+        {
+            byte[,] newCr = new byte[_cr.GetLength(0) * PPMImage.StepX, _cr.GetLength(1) * PPMImage.StepY];
+            byte[,] newCb = new byte[_cb.GetLength(0) * PPMImage.StepX, _cb.GetLength(1) * PPMImage.StepY];
+
+
+            for (int sY = 0; sY < PPMImage.StepY; sY++)
+            {
+                for (int sX = 0; sX < PPMImage.StepX; sX++)
+                {
+                    for (int y = sY; y < newCr.GetLength(1); y = y + sY + 1)
+                    {
+                        for (int x = sX; x < newCr.GetLength(0); x = x + sX + 1)
+                        {
+                            newCr[x, y] = _cr[x / PPMImage.StepX, y / PPMImage.StepY];
+                            newCb[x, y] = _cb[x / PPMImage.StepX, y / PPMImage.StepY];
+                        }
+                    }
+                }
+            }
+            _cr = newCr;
+            _cb = newCb;
         }
 
         public bool subsamplingCb()
@@ -159,12 +213,13 @@ namespace PpmConverter
             {
                 for (int width = 0; width < maxWidth; width++)
                 {
-                    y[width, height] = (byte)(0.299 * red[width, height] + 0.587 * green[width, height] + 0.114 * blue[width, height]);
-                    cb[width, height] = (byte)((blue[width,height] - y[width, height]) * 0.564 + 128);
-                    cr[width, height] = (byte)((red[width, height] - y[width, height]) * 0.713 + 128);
+                    y[width, height] = (byte)Math.Round(0.257 * red[width, height] + 0.504 * green[width, height] + 0.098 * blue[width, height] + 16);
+                    cb[width, height] = (byte)Math.Round(-0.148 * red[width, height] - 0.291 * green[width, height] + 0.439 * blue[width, height] + 128);//(blue[width,height] - y[width, height]) * 0.564 + 128);
+                    cr[width, height] = (byte)Math.Round(0.439 * red[width, height] - 0.368 * green[width, height] - 0.071 * blue[width, height] + 128);
                 }
             }
-
+            //Debug.WriteLine("r: {0}\tg: {1}\tb: {2}", rgbImage.R[30, 0], rgbImage.G[30, 0], rgbImage.B[30, 0]);
+            //Debug.WriteLine("y: {0}\tcb: {1}\tcr: {2}", y[30,0] , cb[30, 0], cr[30, 0]);
             return new YCbCrImage(y, cb, cr);
         }
     }

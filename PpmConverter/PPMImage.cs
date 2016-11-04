@@ -13,8 +13,8 @@ namespace PpmConverter
         private string _typ;
         private RGBImage _matrix;
         private byte _maxValue;
-        private int _stepX = 2;
-        private int _stepY = 2;
+        private static int _stepX = 2;
+        private static int _stepY = 2;
 
         private PPMImage()
         {
@@ -37,12 +37,12 @@ namespace PpmConverter
             get { return _maxValue; }
         }
 
-        public int StepX
+        public static int StepX
         {
             get { return _stepX; }
         }
 
-        public int StepY
+        public static int StepY
         {
             get { return _stepY; }
         }
@@ -112,12 +112,12 @@ namespace PpmConverter
                                     if (int.TryParse(xy[0], out x) && int.TryParse(xy[1], out y))
                                     {
                                         orgX = x;
-                                        int temp = x % image._stepX;
-                                        int newX = x - (temp == 0 ? 0 : temp - image._stepX);
+                                        int temp = x % PPMImage._stepX;
+                                        int newX = x - (temp == 0 ? 0 : temp - PPMImage._stepX);
 
                                         orgY = y;
-                                        temp = y % image._stepY;
-                                        int newY = y - (temp == 0 ? 0 : temp - image._stepY);
+                                        temp = y % PPMImage._stepY;
+                                        int newY = y - (temp == 0 ? 0 : temp - PPMImage._stepY);
 
                                         image._matrix = new RGBImage(newX, newY);
 
