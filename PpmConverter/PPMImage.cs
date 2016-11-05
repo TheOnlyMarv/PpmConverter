@@ -70,7 +70,7 @@ namespace PpmConverter
         }
 
         public static PPMImage LoadImageFromFile(string path)
-        {
+        { 
             if (!File.Exists(path))
             {
                 throw new FileNotFoundException(path + " not found");

@@ -87,7 +87,7 @@ namespace PpmConverter
                 for(int j = 0; j < _y.GetLength(1); j++)
                 {
                     if (j % offsetX == 0) ++indexX;
-                    _extendedMatrixCb[j, i] = _cb[indexX, indexY];
+                    _extendedMatrixCb[i, j] = _cb[indexY, indexX];
                 }
                 indexX = -1;
             }
@@ -108,7 +108,7 @@ namespace PpmConverter
                 for (int j = 0; j < _y.GetLength(1); j++)
                 {
                     if (j % offsetX == 0) ++indexX;
-                    _extendedMatrixCr[j, i] = _cr[indexX, indexY];
+                    _extendedMatrixCr[i, j] = _cr[indexY, indexX];
                 }
                 indexX = -1;
             }

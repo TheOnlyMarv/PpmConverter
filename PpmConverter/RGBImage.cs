@@ -46,7 +46,7 @@ namespace PpmConverter
 
         public static RGBImage FromYCbCr(YCbCrImage ycbcrimage)
         {
-            //ycbcrimage.extendMatrix();
+            ycbcrimage.extendMatrix();
 
             byte[,] y = ycbcrimage.Y;
             byte[,] cb = ycbcrimage.Cb;
