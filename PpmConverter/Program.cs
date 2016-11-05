@@ -55,8 +55,10 @@ namespace PpmConverter
         private static void Subsampling(YCbCrImage ycrcbMatrix)
         {
             Console.Write("Subsampling...");
-            ycrcbMatrix.SubsampleMatrix();
-            ycrcbMatrix.ExtendMatrix();
+            //ycrcbMatrix.SubsampleMatrix();
+            //ycrcbMatrix.ExtendMatrix();
+            ycrcbMatrix.subsamplingCb();
+            ycrcbMatrix.subsamplingCr();
             Console.WriteLine(" - DONE");
         }
 
