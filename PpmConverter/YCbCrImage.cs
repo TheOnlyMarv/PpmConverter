@@ -89,7 +89,7 @@ namespace PpmConverter
                     if(j % 2 != 0 && i%2 != 0)
                     {
                         int avg = (int)_cb[i - 1, j - 1] + (int)_cb[i, j - 1] + (int)_cb[i - 1, j] + (int)_cb[i, j];
-                        avg = avg / 4;
+                        avg = (avg + 2) / 4;
                         _newCb[_countX, _countY++] = (byte)avg;
                     }
                 }
@@ -112,7 +112,7 @@ namespace PpmConverter
                     if (j % 2 != 0 && i % 2 != 0)
                     {
                         int avg = (int)_cr[i - 1, j - 1] + (int)_cr[i, j - 1] + (int)_cr[i - 1, j] + (int)_cr[i, j];
-                        avg = avg / 4;
+                        avg = (avg + 2) / 4;
                         _newCr[_countX, _countY++] = (byte)avg;
                     }
                 }
