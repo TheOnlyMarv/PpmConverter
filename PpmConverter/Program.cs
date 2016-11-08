@@ -11,6 +11,11 @@ namespace PpmConverter
     {
         public static void Main(string[] args)
         {
+
+        }
+
+        public static void Old_Main(string[] args)
+        {
             string sourcePath, destinationPath;
             PPMImage image;
             YCbCrImage ycrcbMatrix;
@@ -47,7 +52,7 @@ namespace PpmConverter
             {
                 Console.WriteLine("\n{0}:\n{1}", ex.GetType().Name, ex.Message);
             }
-#if !DEBUG
+#if DEBUG
             Console.ReadLine();
 #endif
         }
