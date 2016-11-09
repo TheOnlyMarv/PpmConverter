@@ -11,7 +11,12 @@ namespace PpmConverter
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("Create Bits in File...");
+            Felix__Bitstrom.createBitFile();
+            Console.WriteLine(" - Done");
 
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
 
         public static void Old_Main(string[] args)
