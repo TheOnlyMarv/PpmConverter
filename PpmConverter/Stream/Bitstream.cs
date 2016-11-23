@@ -118,26 +118,6 @@ namespace PpmConverter
             Position = pos;
         }
 
-        //public int[] GetAllBitsFromBegin()
-        //{
-        //    long pos = Position;
-        //    Position = 0;
-        //    int[] result = new int[stream.Length * 8];
-
-        //    int reader = stream.ReadByte();
-        //    long posCounter = 0;
-        //    while (reader != -1)
-        //    {
-        //        for (int i = 8; i > 0; i--)
-        //        {
-        //            result[posCounter++] = reader >> i & 0x01;
-        //        }
-        //        reader = stream.ReadByte();
-        //    }
-        //    Position = pos;
-        //    return result;
-        //}
-
         public override void Flush()
         {
             stream.Flush();
