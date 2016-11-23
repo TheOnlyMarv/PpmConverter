@@ -82,11 +82,12 @@ namespace PpmConverter
             }
             if (counter != 0)
             {
-                for (int i = 0; i < counter; i++)
+                byte temp = 0;
+                for (int i = 0; i < 8 - counter; i++)
                 {
-                    b = (byte)(b << 1);
+                    temp = (byte)((temp << 1) + 1);
                 }
-                WriteByte(b);
+                WriteByte((byte)((b << 8 - counter) + temp));
             }
         }
 
@@ -116,6 +117,26 @@ namespace PpmConverter
             fs.Close();
             Position = pos;
         }
+
+        //public int[] GetAllBitsFromBegin()
+        //{
+        //    long pos = Position;
+        //    Position = 0;
+        //    int[] result = new int[stream.Length * 8];
+
+        //    int reader = stream.ReadByte();
+        //    long posCounter = 0;
+        //    while (reader != -1)
+        //    {
+        //        for (int i = 8; i > 0; i--)
+        //        {
+        //            result[posCounter++] = reader >> i & 0x01;
+        //        }
+        //        reader = stream.ReadByte();
+        //    }
+        //    Position = pos;
+        //    return result;
+        //}
 
         public override void Flush()
         {
