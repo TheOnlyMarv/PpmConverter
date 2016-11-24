@@ -97,7 +97,12 @@ namespace PpmConverter
         }
         public int[] ReadBits()
         {
-            byte b = (byte)ReadByte();
+            int readed = ReadByte();
+            if (readed == -1)
+            {
+                return null;
+            }
+            byte b = (byte)readed;
             int[] result = new int[8];
             for (int i = result.Length - 1; i >= 0; i--)
             {
