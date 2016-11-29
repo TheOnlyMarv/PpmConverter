@@ -22,8 +22,22 @@ namespace PpmConverter.Jpeg
 
         public void WriteMarker(PPMImage image)
         {
+            WriteStartOfImage();
             WriteApp0();
             WriteSof0(image);
+            WirteEndOfImage();
+        }
+
+        private void WirteEndOfImage()
+        {
+            bitstream.WriteByte(0xff);
+            bitstream.WriteByte(0xd9);
+        }
+
+        private void WriteStartOfImage()
+        {
+            bitstream.WriteByte(0xff);
+            bitstream.WriteByte(0xd8);
         }
 
         private void WriteApp0()
