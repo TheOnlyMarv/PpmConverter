@@ -25,7 +25,7 @@ namespace PpmConverter
         private static void BenchFlushIntoFile()
         {
             long start = DateTime.Now.Ticks;
-            bitstream.FlushIntoFile("test.stream");
+            bitstream.FlushIntoFile("benchmark.stream");
             long end = DateTime.Now.Ticks;
             Console.WriteLine("Time for flush into file: {0}", new TimeSpan(DateTime.FromBinary(end - start).Ticks));
         }
@@ -80,8 +80,40 @@ namespace PpmConverter
         {
             testWriteReadByte();
             testWriteReadBits();
+            testWriteReadSingleBits();
             Console.WriteLine("Tests Done");
         }
+
+        private static void testWriteReadSingleBits()
+        {
+            Bitstream bitstream = new Bitstream();
+            int[] bits = new int[] { 1, 1, 1, 0, 0, 1, 1, 1 }; //231  -> 8 Bits
+            bitstream.WriteBits(bits);
+            bitstream.WriteBit(1);
+            bitstream.WriteBit(1);
+            bitstream.WriteBit(0);
+            bitstream.WriteBit(1);
+            bitstream.WriteBit(0);
+            bitstream.WriteBit(0);
+            bitstream.WriteBit(1);
+            bitstream.WriteBit(0);
+            //8 Bits -> 16 Bits
+
+            bitstream.WriteBit(1);
+            bitstream.WriteBit(1);
+            bitstream.WriteBit(0);
+            //3 Bits -> 19 Bits
+            bitstream.Flush();
+            // Flush should add 5 Bits -> 24
+
+            int exp1 = 231, exp2 = 210, exp3 = 223;
+            bitstream.Seek(0, SeekOrigin.Begin);
+            if (!(bitstream.ReadByte() == exp1 && bitstream.ReadByte() == exp2 && bitstream.ReadByte() == exp3))
+            {
+                Console.WriteLine(testFailed + "WriteReadSingleBits()");
+            }
+        }
+
         private static void testWriteReadBits()
         {
             Bitstream bitstream = new Bitstream();

@@ -77,32 +77,42 @@ namespace PpmConverter
             {
                 throw new IllegalFormatException("0 or 1 expected!");
             }
-            
+            bufferByte += (byte)(bit << (7 - bufferCounter++));
+            if (bufferCounter == 8)
+            {
+                stream.WriteByte(bufferByte);
+                bufferCounter = 0;
+                bufferByte = 0;
+            }
         }
 
         public void WriteBits(int[] bits)
         {
-            byte counter = 0;
-            byte b = 0;
             for (int i = 0; i < bits.Length; i++)
             {
-                b = (byte)((b << 1) + bits[i]);
-                if (++counter == 8)
-                {
-                    WriteByte(b);
-                    counter = 0;
-                    b = 0;
-                }
+                WriteBit(bits[i]);
             }
-            if (counter != 0)
-            {
-                byte temp = 0;
-                for (int i = 0; i < 8 - counter; i++)
-                {
-                    temp = (byte)((temp << 1) + 1);
-                }
-                WriteByte((byte)((b << 8 - counter) + temp));
-            }
+            //byte counter = 0;
+            //byte b = 0;
+            //for (int i = 0; i < bits.Length; i++)
+            //{
+            //    b = (byte)((b << 1) + bits[i]);
+            //    if (++counter == 8)
+            //    {
+            //        WriteByte(b);
+            //        counter = 0;
+            //        b = 0;
+            //    }
+            //}
+            //if (counter != 0)
+            //{
+            //    byte temp = 0;
+            //    for (int i = 0; i < 8 - counter; i++)
+            //    {
+            //        temp = (byte)((temp << 1) + 1);
+            //    }
+            //    WriteByte((byte)((b << 8 - counter) + temp));
+            //}
         }
 
         public override int ReadByte()
@@ -128,6 +138,7 @@ namespace PpmConverter
 
         public void FlushIntoFile(string file)
         {
+            Flush();
             FileStream fs = new FileStream(file, FileMode.Create);
             long pos = Position;
             Position = 0;
@@ -139,7 +150,20 @@ namespace PpmConverter
 
         public override void Flush()
         {
+            WriteIncompleteByte();
             stream.Flush();
+        }
+
+        private void WriteIncompleteByte()
+        {
+            while (bufferCounter != 8 && bufferCounter != 0)
+            {
+                bufferByte += (byte)(1 << (7 - bufferCounter++));
+            }
+            if (bufferCounter == 8)
+            {
+                WriteByte(bufferByte);
+            }
         }
 
         public override long Seek(long offset, SeekOrigin origin)
