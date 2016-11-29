@@ -44,14 +44,14 @@ namespace PpmConverter.Huffman
             return runHuffmanAlgortihm(structure);
         }
 
-        public void encode(String word, Bitstream bitstream)
+        public void encode(string word, Bitstream bitstream)
         {
             bitstream.WriteByte((byte)word.Length);
             char[] toEncode = word.ToCharArray();
             LinkedList<int> toWrite = new LinkedList<int>();
             for (int i = 0; i < toEncode.Length; ++i)
             {
-                String code = findCode((int)toEncode[i], "");
+                string code = findCode((int)toEncode[i], "");
                 foreach (char symbol in code)
                 {
                     if (symbol.Equals('0')) toWrite.AddLast(0);
@@ -61,7 +61,7 @@ namespace PpmConverter.Huffman
             bitstream.WriteBits(toWrite.ToArray());
         }
 
-        public String decode(Bitstream bitstream)
+        public string decode(Bitstream bitstream)
         {
             int[] toDecode = getAllBits(bitstream);
             int counter = 8; //first byte is the lenght of the word
@@ -86,7 +86,7 @@ namespace PpmConverter.Huffman
                 returnValues.AddLast((char)curTree.value);
             }
 
-            return new String(returnValues.ToArray());
+            return new string(returnValues.ToArray());
         }
 
         private int[] getAllBits(Bitstream bitstream)
@@ -104,7 +104,7 @@ namespace PpmConverter.Huffman
             return retVal;
         }
 
-        private int[] convertToIntArray(String code)
+        private int[] convertToIntArray(string code)
         {
             int[] retVal = new int[code.Length];
             int i = 0;
@@ -116,14 +116,14 @@ namespace PpmConverter.Huffman
             return retVal;
         }
 
-        private String findCode(int symbol, String code)
+        private string findCode(int symbol, string code)
         {
             if (this.leaf){
                 if (value == symbol) return code;
                 else return null;
             }
-            String left = this.leftNode.findCode(symbol, code + 0);
-            String right = this.rightNode.findCode(symbol, code + 1);
+            string left = this.leftNode.findCode(symbol, code + 0);
+            string right = this.rightNode.findCode(symbol, code + 1);
 
             if (left != null) return left;
             else return right;
@@ -134,7 +134,7 @@ namespace PpmConverter.Huffman
             this.printRek("");
         }
 
-        private void printRek(String code)
+        private void printRek(string code)
         {
             if (this.leaf)
             {

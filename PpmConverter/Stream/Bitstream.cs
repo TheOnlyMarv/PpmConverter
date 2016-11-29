@@ -10,6 +10,8 @@ namespace PpmConverter
     public class Bitstream : Stream
     {
         private MemoryStream stream;
+        private byte bufferByte;
+        private byte bufferCounter;
 
         #region Properties
         public override bool CanRead
@@ -61,11 +63,23 @@ namespace PpmConverter
         public Bitstream()
         {
             stream = new MemoryStream();
+            bufferByte = 0;
+            bufferCounter = 0;
         }
         public override void WriteByte(byte b)
         {
             stream.WriteByte(b);
         }
+
+        public void WriteBit(int bit)
+        {
+            if (bit != 0 && bit != 1)
+            {
+                throw new IllegalFormatException("0 or 1 expected!");
+            }
+            
+        }
+
         public void WriteBits(int[] bits)
         {
             byte counter = 0;
