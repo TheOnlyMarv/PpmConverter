@@ -27,7 +27,6 @@ namespace PpmConverter
             }
             Console.Read();
 
-            
             //SortedList<float, int> symbols = new SortedList<float, int>(new PpmConverter.Huffman.DuplicateKeyComparer<float>());
 
             //symbols.Add(0.3f, 72);
