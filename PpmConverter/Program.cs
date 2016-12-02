@@ -13,42 +13,40 @@ namespace JpegConverter
     {
         public static void Main(string[] args)
         {
-
-            //BitstreamTest.StartTests();
-            //BitstreamTest.StartBenchmarking(10000000);
-            //if (args.Length == 2)
-            //{
-            //    string sourcePath = args[0], destination = args[1];
-            //    PPMImage image = LoadImageFromFile(sourcePath);
-            //    YCbCrImage ycrcbMatrix = ConvertToYCbCr(image);
-            //    Subsampling(ycrcbMatrix);
-            //    RGBImage rgbImage = ConvertToRGB(ycrcbMatrix);
-            //    JpegEncoder jpegEncoder = new JpegEncoder();
-            //    ConvertToJpeg(jpegEncoder, image);
-            //    SaveJpegIntoFile(jpegEncoder, destination);
-            //}
-            //Console.Read();
-
-
-            SortedList<float, int> symbols = new SortedList<float, int>(new DuplicateKeyComparer<float>());
-
-            symbols.Add(0.3f, 72);
-            symbols.Add(0.2f, 97);
-            symbols.Add(0.15f, 108);
-            symbols.Add(0.1f, 32);
-            symbols.Add(0.25f, 111);
-
-            HuffmanTree tree = HuffmanTree.createTree(symbols);
-            tree.print();
-
-            Bitstream bitstream = new Bitstream();
-            tree.encode("Hallo", bitstream);
-            bitstream.Seek(0, System.IO.SeekOrigin.Begin);
-            String result = tree.decode(bitstream);
-
-            Console.WriteLine(result);
-
+            BitstreamTest.StartTests();
+            BitstreamTest.StartBenchmarking(10000000);
+            if (args.Length == 2)
+            {
+                string sourcePath = args[0], destination = args[1];
+                PPMImage image = LoadImageFromFile(sourcePath);
+                YCbCrImage ycrcbMatrix = ConvertToYCbCr(image);
+                Subsampling(ycrcbMatrix);
+                RGBImage rgbImage = ConvertToRGB(ycrcbMatrix);
+                JpegEncoder jpegEncoder = new JpegEncoder();
+                ConvertToJpeg(jpegEncoder, image);
+                SaveJpegIntoFile(jpegEncoder, destination);
+            }
             Console.Read();
+
+            //SortedList<float, int> symbols = new SortedList<float, int>(new PpmConverter.Huffman.DuplicateKeyComparer<float>());
+
+            //symbols.Add(0.3f, 72);
+            //symbols.Add(0.2f, 97);
+            //symbols.Add(0.15f, 108);
+            //symbols.Add(0.1f, 32);
+            //symbols.Add(0.25f, 111);
+
+            //PpmConverter.Huffman.HuffmanTree tree = PpmConverter.Huffman.HuffmanTree.createTree(symbols);
+            //tree.print();
+
+            //Bitstream bitstream = new Bitstream();
+            //tree.encode("Hallo", bitstream);
+            //bitstream.Seek(0, System.IO.SeekOrigin.Begin);
+            //String result = tree.decode(bitstream);
+
+            //Console.WriteLine(result);
+
+            //Console.Read();
 
         }
 

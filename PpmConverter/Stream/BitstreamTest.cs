@@ -66,7 +66,7 @@ namespace JpegConverter
             int[] bits = new int[numb];
             for (int i = 0; i < bits.Length; i++)
             {
-                bits[i] = random.Next(0, 2);
+                bits[i] = 0x82;//random.Next(0, 2);
             }
             long end = DateTime.Now.Ticks;
             Console.WriteLine("Time for generate random BitArray[{1}]: {0}", new TimeSpan(DateTime.FromBinary(end - start).Ticks), numb);

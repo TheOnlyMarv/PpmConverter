@@ -104,19 +104,7 @@ namespace JpegConverter.Huffman
             return retVal;
         }
 
-        private int[] convertToIntArray(string code)
-        {
-            int[] retVal = new int[code.Length];
-            int i = 0;
-            foreach (char zeichen in code)
-            {
-                if (zeichen.Equals('0')) retVal[i++] = 0;
-                else retVal[i++] = 1;
-            }
-            return retVal;
-        }
-
-        private string findCode(int symbol, string code)
+        private String findCode(int symbol, String code)
         {
             if (this.leaf){
                 if (value == symbol) return code;
