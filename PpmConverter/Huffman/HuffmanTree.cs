@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PpmConverter.Huffman
+namespace JpegConverter.Huffman
 {
     class HuffmanTree
     {
@@ -143,20 +143,6 @@ namespace PpmConverter.Huffman
             }
             if (this.leftNode != null) this.leftNode.printRek(code + "0");
             if (this.rightNode != null) this.rightNode.printRek(code + "1");
-        }
-
-        public static void Main(string[] args)
-        {
-            SortedList<float, int> symbols = new SortedList<float, int>(new DuplicateKeyComparer<float>());
-
-            symbols.Add(0.3f, 5);
-            symbols.Add(0.2f, 2);
-            symbols.Add(0.15f, 64);
-            symbols.Add(0.1f, 32);
-            symbols.Add(0.25f, 9);
-
-            HuffmanTree tree = HuffmanTree.createTree(symbols);
-            tree.print();
         }
 
     }

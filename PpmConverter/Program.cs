@@ -1,4 +1,5 @@
-﻿using PpmConverter.Jpeg;
+﻿using JpegConverter.Huffman;
+using JpegConverter.Jpeg;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PpmConverter
+namespace JpegConverter
 {
     class Program
     {
@@ -29,7 +30,7 @@ namespace PpmConverter
             //Console.Read();
 
 
-            SortedList<float, int> symbols = new SortedList<float, int>(new PpmConverter.Huffman.DuplicateKeyComparer<float>());
+            SortedList<float, int> symbols = new SortedList<float, int>(new DuplicateKeyComparer<float>());
 
             symbols.Add(0.3f, 72);
             symbols.Add(0.2f, 97);
@@ -37,7 +38,7 @@ namespace PpmConverter
             symbols.Add(0.1f, 32);
             symbols.Add(0.25f, 111);
 
-            PpmConverter.Huffman.HuffmanTree tree = PpmConverter.Huffman.HuffmanTree.createTree(symbols);
+            HuffmanTree tree = HuffmanTree.createTree(symbols);
             tree.print();
 
             Bitstream bitstream = new Bitstream();

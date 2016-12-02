@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PpmConverter
+namespace JpegConverter
 {
     public static class BitstreamTest
     {
