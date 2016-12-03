@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JpegConverter.Huffman
 {
-    class HuffmanTree
+    public class HuffmanTree
     {
         private int value;
         private bool leaf;
@@ -124,7 +124,7 @@ namespace JpegConverter.Huffman
             return retVal;
         }
 
-        private String findCode(int symbol, String code)
+        public String findCode(int symbol, String code)
         {
             if (this.leaf){
                 if (value == symbol) return code;
