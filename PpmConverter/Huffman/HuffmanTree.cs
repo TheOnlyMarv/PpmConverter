@@ -53,12 +53,6 @@ namespace JpegConverter.Huffman
             if (structure.Count == 1)
                 return structure.Values[0];
 
-            if (structure.Values[structure.Values.Count - 3] == structure.Values[structure.Values.Count - 2])
-            {
-
-            }
-            else
-            {
                 newItem = new HuffmanTree(-1, false, structure.Values[structure.Values.Count - 2], structure.Values[structure.Values.Count - 1]);
                 newKey = structure.Keys[structure.Values.Count - 2] + structure.Keys[structure.Values.Count - 1];
 
@@ -66,8 +60,6 @@ namespace JpegConverter.Huffman
                 structure.RemoveAt(structure.Values.Count - 1);
 
                 structure.Add(newKey, newItem);
-            }
-
 
             return growRightAlgorithm(structure);
         }
