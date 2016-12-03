@@ -13,22 +13,22 @@ namespace JpegConverter
     {
         public static void Main(string[] args)
         {
-            BitstreamTest.StartTests();
-            BitstreamTest.StartBenchmarking(10000000);
-            if (args.Length == 2)
-            {
-                string sourcePath = args[0], destination = args[1];
-                PPMImage image = LoadImageFromFile(sourcePath);
-                YCbCrImage ycrcbMatrix = ConvertToYCbCr(image);
-                Subsampling(ycrcbMatrix);
-                RGBImage rgbImage = ConvertToRGB(ycrcbMatrix);
-                JpegEncoder jpegEncoder = new JpegEncoder();
-                ConvertToJpeg(jpegEncoder, image);
-                SaveJpegIntoFile(jpegEncoder, destination);
-            }
-            Console.Read();
+            //BitstreamTest.StartTests();
+            //BitstreamTest.StartBenchmarking(10000000);
+            //if (args.Length == 2)
+            //{
+            //    string sourcePath = args[0], destination = args[1];
+            //    PPMImage image = LoadImageFromFile(sourcePath);
+            //    YCbCrImage ycrcbMatrix = ConvertToYCbCr(image);
+            //    Subsampling(ycrcbMatrix);
+            //    RGBImage rgbImage = ConvertToRGB(ycrcbMatrix);
+            //    JpegEncoder jpegEncoder = new JpegEncoder();
+            //    ConvertToJpeg(jpegEncoder, image);
+            //    SaveJpegIntoFile(jpegEncoder, destination);
+            //}
+            //Console.Read();
 
-            //SortedList<float, int> symbols = new SortedList<float, int>(new PpmConverter.Huffman.DuplicateKeyComparer<float>());
+            SortedList<float, int> symbols = new SortedList<float, int>(new JpegConverter.Huffman.DuplicateKeyComparer<float>());
 
             //symbols.Add(0.3f, 72);
             //symbols.Add(0.2f, 97);
@@ -36,17 +36,24 @@ namespace JpegConverter
             //symbols.Add(0.1f, 32);
             //symbols.Add(0.25f, 111);
 
-            //PpmConverter.Huffman.HuffmanTree tree = PpmConverter.Huffman.HuffmanTree.createTree(symbols);
-            //tree.print();
+            symbols.Add(4.0f, 1);
+            symbols.Add(4.0f, 2);
+            symbols.Add(6.0f, 3);
+            symbols.Add(6.0f, 4);
+            symbols.Add(7.0f, 5);
+            symbols.Add(9.0f, 6);
 
-            //Bitstream bitstream = new Bitstream();
-            //tree.encode("Hallo", bitstream);
-            //bitstream.Seek(0, System.IO.SeekOrigin.Begin);
-            //String result = tree.decode(bitstream);
+            JpegConverter.Huffman.HuffmanTree tree = JpegConverter.Huffman.HuffmanTree.createTree(symbols);
+            tree.print();
 
-            //Console.WriteLine(result);
+            Bitstream bitstream = new Bitstream();
+            tree.encode("Hallo", bitstream);
+            bitstream.Seek(0, System.IO.SeekOrigin.Begin);
+            String result = tree.decode(bitstream);
 
-            //Console.Read();
+            Console.WriteLine(result);
+
+            Console.Read();
 
         }
 

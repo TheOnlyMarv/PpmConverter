@@ -28,6 +28,7 @@ namespace JpegConverter.Huffman
                 structure.Add(cur.Key, new HuffmanTree(cur.Value, true, null, null));
             }
             return runHuffmanAlgortihm(structure);
+            //return growRightAlgorithm(structure);
         }
 
         private static HuffmanTree runHuffmanAlgortihm(SortedList<float, HuffmanTree> structure) 
@@ -42,6 +43,33 @@ namespace JpegConverter.Huffman
             structure.Add(newKey, newItem);
 
             return runHuffmanAlgortihm(structure);
+        }
+
+        private static HuffmanTree growRightAlgorithm(SortedList<float, HuffmanTree> structure)
+        {
+            HuffmanTree newItem;
+            float newKey;
+
+            if (structure.Count == 1)
+                return structure.Values[0];
+
+            if (structure.Values[structure.Values.Count - 3] == structure.Values[structure.Values.Count - 2])
+            {
+
+            }
+            else
+            {
+                newItem = new HuffmanTree(-1, false, structure.Values[structure.Values.Count - 2], structure.Values[structure.Values.Count - 1]);
+                newKey = structure.Keys[structure.Values.Count - 2] + structure.Keys[structure.Values.Count - 1];
+
+                structure.RemoveAt(structure.Values.Count - 1);
+                structure.RemoveAt(structure.Values.Count - 1);
+
+                structure.Add(newKey, newItem);
+            }
+
+
+            return growRightAlgorithm(structure);
         }
 
         public void encode(string word, Bitstream bitstream)
