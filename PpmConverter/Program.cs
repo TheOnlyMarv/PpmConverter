@@ -43,7 +43,7 @@ namespace JpegConverter
             symbols.Add(7.0f, 5);
             symbols.Add(9.0f, 6);
 
-            JpegConverter.Huffman.HuffmanTree tree = JpegConverter.Huffman.HuffmanTree.createTree(symbols);
+            JpegConverter.Huffman.HuffmanTree tree = JpegConverter.Huffman.HuffmanTree.createNormalTree(symbols);
             tree.print();
 
             Bitstream bitstream = new Bitstream();

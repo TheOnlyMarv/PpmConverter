@@ -20,7 +20,7 @@ namespace JpegConverter.Huffman
             rightNode = right;
         }
 
-        public static HuffmanTree createTree(SortedList<float, int> symbols)
+        public static HuffmanTree createNormalTree(SortedList<float, int> symbols)
         {
             SortedList<float, HuffmanTree> structure = new SortedList<float, HuffmanTree>(new DuplicateKeyComparer<float>());
             foreach (KeyValuePair<float, int> cur in symbols)
@@ -28,7 +28,16 @@ namespace JpegConverter.Huffman
                 structure.Add(cur.Key, new HuffmanTree(cur.Value, true, null, null));
             }
             return runHuffmanAlgortihm(structure);
-            //return growRightAlgorithm(structure);
+        }
+
+        public static HuffmanTree createRightTree(SortedList<float, int> symbols)
+        {
+            SortedList<float, HuffmanTree> structure = new SortedList<float, HuffmanTree>(new DuplicateKeyComparer<float>());
+            foreach (KeyValuePair<float, int> cur in symbols)
+            {
+                structure.Add(cur.Key, new HuffmanTree(cur.Value, true, null, null));
+            }
+            return growRightAlgorithm(structure);
         }
 
         private static HuffmanTree runHuffmanAlgortihm(SortedList<float, HuffmanTree> structure) 
