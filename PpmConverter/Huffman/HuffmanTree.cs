@@ -30,16 +30,6 @@ namespace JpegConverter.Huffman
             return runHuffmanAlgortihm(structure);
         }
 
-        public static HuffmanTree createRightTree(SortedList<float, int> symbols)
-        {
-            SortedList<float, HuffmanTree> structure = new SortedList<float, HuffmanTree>(new DuplicateKeyComparer<float>());
-            foreach (KeyValuePair<float, int> cur in symbols)
-            {
-                structure.Add(cur.Key, new HuffmanTree(cur.Value, true, null, null));
-            }
-            return growRightAlgorithm(structure);
-        }
-
         private static HuffmanTree runHuffmanAlgortihm(SortedList<float, HuffmanTree> structure) 
         {
             if (structure.Count == 1) return structure.Values[0];
@@ -54,23 +44,15 @@ namespace JpegConverter.Huffman
             return runHuffmanAlgortihm(structure);
         }
 
-        private static HuffmanTree growRightAlgorithm(SortedList<float, HuffmanTree> structure)
+        public HuffmanTree growRightAlgorithm()
         {
-            HuffmanTree newItem;
-            float newKey;
+            //Neuer Code
+            return null;
+        }
 
-            if (structure.Count == 1)
-                return structure.Values[0];
-
-                newItem = new HuffmanTree(-1, false, structure.Values[structure.Values.Count - 2], structure.Values[structure.Values.Count - 1]);
-                newKey = structure.Keys[structure.Values.Count - 2] + structure.Keys[structure.Values.Count - 1];
-
-                structure.RemoveAt(structure.Values.Count - 1);
-                structure.RemoveAt(structure.Values.Count - 1);
-
-                structure.Add(newKey, newItem);
-
-            return growRightAlgorithm(structure);
+        public HuffmanTree AvoidOneStar()
+        {
+            return null;
         }
 
         public void encode(string word, Bitstream bitstream)

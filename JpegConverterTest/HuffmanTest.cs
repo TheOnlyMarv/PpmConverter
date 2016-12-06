@@ -42,14 +42,17 @@ namespace JpegConverterTest
             sl.Add(6f, 4);
             sl.Add(7f, 5);
             sl.Add(9f, 6);
-            HuffmanTree ht = HuffmanTree.createRightTree(sl);
+            HuffmanTree orgHt = HuffmanTree.createNormalTree(sl);
+            HuffmanTree ht = orgHt.growRightAlgorithm();
 
-            Assert.AreEqual("100", ht.findCode(1, ""));
-            Assert.AreEqual("101", ht.findCode(2, ""));
-            Assert.AreEqual("110", ht.findCode(3, ""));
-            Assert.AreEqual("111", ht.findCode(4, ""));
-            Assert.AreEqual("00", ht.findCode(5, ""));
-            Assert.AreEqual("01", ht.findCode(6, ""));
+            //HuffmanTree ht = HuffmanTree.createRightTree(sl);
+
+            Assert.AreEqual("111", ht.findCode(1, ""));
+            Assert.AreEqual("110", ht.findCode(2, ""));
+            Assert.AreEqual("101", ht.findCode(3, ""));
+            Assert.AreEqual("100", ht.findCode(4, ""));
+            Assert.AreEqual("01", ht.findCode(5, ""));
+            Assert.AreEqual("00", ht.findCode(6, ""));
         }
     }
 }
