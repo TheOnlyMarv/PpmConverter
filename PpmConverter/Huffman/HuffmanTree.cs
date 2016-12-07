@@ -50,9 +50,21 @@ namespace JpegConverter.Huffman
             return null;
         }
 
-        public HuffmanTree AvoidOneStar()
+        public static HuffmanTree AvoidOneStar(HuffmanTree huffmanTree)
         {
-            return null;
+            HuffmanTree ht = huffmanTree;
+
+            while(!ht.leaf)
+            {
+                ht = ht.rightNode;
+            }
+
+            ht.leaf = false;
+          
+            ht.leftNode = new HuffmanTree(ht.value, true, null, null);
+            ht.rightNode = new HuffmanTree(-1, true, null, null);
+
+            return huffmanTree;
         }
 
         public void encode(string word, Bitstream bitstream)
