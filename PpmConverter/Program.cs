@@ -44,6 +44,7 @@ namespace JpegConverter
             symbols.Add(9.0f, 6);
 
             JpegConverter.Huffman.HuffmanTree tree = JpegConverter.Huffman.HuffmanTree.createNormalTree(symbols);
+            JpegConverter.Huffman.HuffmanTree rightTree = JpegConverter.Huffman.HuffmanTree.createRightTree(tree);
             tree.print();
 
             Bitstream bitstream = new Bitstream();

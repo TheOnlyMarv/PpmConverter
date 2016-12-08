@@ -43,7 +43,7 @@ namespace JpegConverterTest
             sl.Add(7f, 5);
             sl.Add(9f, 6);
             HuffmanTree orgHt = HuffmanTree.createNormalTree(sl);
-            HuffmanTree ht = orgHt.growRightAlgorithm();
+            HuffmanTree ht = HuffmanTree.createRightTree(orgHt);
 
             //HuffmanTree ht = HuffmanTree.createRightTree(sl);
 
