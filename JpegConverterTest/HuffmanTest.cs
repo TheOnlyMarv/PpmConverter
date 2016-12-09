@@ -75,5 +75,26 @@ namespace JpegConverterTest
             Assert.AreEqual("00", newHt.findCode(5, ""));
             Assert.AreEqual("10", newHt.findCode(6, ""));
         }
+
+        [TestMethod]
+        public void TestPackageMergeAlgorithm()
+        {
+            SortedList<float, int> sl = new SortedList<float, int>(new DuplicateKeyComparer<float>());
+            sl.Add(1f, 1);
+            sl.Add(2f, 2);
+            sl.Add(5f, 3);
+            sl.Add(10f, 4);
+            sl.Add(21f, 5);
+
+            HuffmanTree normalHt = HuffmanTree.createNormalTree(sl);
+            Assert.AreEqual("0000", normalHt.findCode(1, ""));
+            Assert.AreEqual("0001", normalHt.findCode(2, ""));
+            Assert.AreEqual("001", normalHt.findCode(3, ""));
+            Assert.AreEqual("01", normalHt.findCode(4, ""));
+            Assert.AreEqual("1", normalHt.findCode(5, ""));
+
+            //HuffmanTree newTree = HuffmanTree.CreateLengthLimitedHuffmanTree(sl, 16);
+            //Assert.AreEqual("0000", normalHt.findCode(1, ""));
+        }
     }
 }
