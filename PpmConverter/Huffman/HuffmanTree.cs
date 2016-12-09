@@ -30,7 +30,7 @@ namespace JpegConverter.Huffman
             return runHuffmanAlgortihm(structure);
         }
 
-        private static HuffmanTree runHuffmanAlgortihm(SortedList<float, HuffmanTree> structure) 
+        private static HuffmanTree runHuffmanAlgortihm(SortedList<float, HuffmanTree> structure)
         {
             if (structure.Count == 1) return structure.Values[0];
             HuffmanTree newItem = new HuffmanTree(-1, false, structure.Values[0], structure.Values[1]);
@@ -44,9 +44,47 @@ namespace JpegConverter.Huffman
             return runHuffmanAlgortihm(structure);
         }
 
-        public HuffmanTree growRightAlgorithm()
+        public static HuffmanTree createRightTree(HuffmanTree tree)
+        {
+            SortedList<int, float> newStructur = new SortedList<int, float>();
+            int tier = 0;
+            HuffmanTree ht = tree;
+            if(ht.leftNode == null && ht.rightNode == null)
+            {
+                return growRightAlgorithm(newStructur);
+            }
+
+            while (!ht.leaf)
+            {
+                if (ht.leftNode != null)
+                {
+                    ht = ht.leftNode;
+                }
+                else if (ht.rightNode != null)
+                {
+                    ht = ht.rightNode;
+                }
+                else
+                {
+                    ht.leaf = true;
+                    createRightTree(ht);
+                }
+                tier++;
+            }
+            newStructur.Add(tier, ht.value);
+            //entfernen des Blattes aus dem Baum
+
+        
+            tier = 0;
+
+            return createRightTree(tree);;
+        }
+
+        public static HuffmanTree growRightAlgorithm(SortedList<int, float> structur)
         {
             //Neuer Code
+
+
             return null;
         }
 
@@ -54,13 +92,13 @@ namespace JpegConverter.Huffman
         {
             HuffmanTree ht = huffmanTree;
 
-            while(!ht.leaf)
+            while (!ht.leaf)
             {
                 ht = ht.rightNode;
             }
 
             ht.leaf = false;
-          
+
             ht.leftNode = new HuffmanTree(ht.value, true, null, null);
             ht.rightNode = new HuffmanTree(-1, true, null, null);
 
@@ -79,7 +117,7 @@ namespace JpegConverter.Huffman
                 {
                     if (symbol.Equals('0')) toWrite.AddLast(0);
                     else toWrite.AddLast(1);
-                }               
+                }
             }
             bitstream.WriteBits(toWrite.ToArray());
         }
@@ -121,7 +159,7 @@ namespace JpegConverter.Huffman
                 int[] curByte = bitstream.ReadBits();
                 for (int j = 0; j < 8; ++j)
                 {
-                    retVal[counter++] = curByte[j]; 
+                    retVal[counter++] = curByte[j];
                 }
             }
             return retVal;
@@ -129,7 +167,8 @@ namespace JpegConverter.Huffman
 
         public String findCode(int symbol, String code)
         {
-            if (this.leaf){
+            if (this.leaf)
+            {
                 if (value == symbol) return code;
                 else return null;
             }
@@ -158,7 +197,7 @@ namespace JpegConverter.Huffman
 
     }
 
-    public class DuplicateKeyComparer<TKey>  
+    public class DuplicateKeyComparer<TKey>
                 :
              IComparer<TKey> where TKey : IComparable
     {
@@ -169,7 +208,7 @@ namespace JpegConverter.Huffman
             int result = x.CompareTo(y);
 
             if (result == 0)
-                return 1;   
+                return 1;
             else
                 return result;
         }
