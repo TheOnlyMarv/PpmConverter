@@ -123,11 +123,6 @@ namespace JpegConverter.Huffman
             CountLevelEntries(LevelNodes, root);
             var initialNodes = CreateIntialNodes();
 
-            foreach (var item in initialNodes)
-            {
-                item.Value.LevelFromTop = this.GetCode(item.Value.Value).Length;
-            }
-
             root = CreateRekurcive(initialNodes, LevelNodes.OrderByDescending(x => x.Key).ToList());
             CodeDictionary = null;
 
