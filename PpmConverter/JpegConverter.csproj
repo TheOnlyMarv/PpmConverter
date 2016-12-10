@@ -63,7 +63,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Huffman\Huffman.cs" />
     <Compile Include="Huffman\HuffmanTree.cs" />
+    <Compile Include="Huffman\Node.cs" />
     <Compile Include="Jpeg\JpegEncoder.cs" />
     <Compile Include="Stream\Bitstream.cs" />
     <Compile Include="Stream\BitstreamTest.cs" />

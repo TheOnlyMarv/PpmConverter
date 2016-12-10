@@ -28,7 +28,7 @@ namespace JpegConverter
             //}
             //Console.Read();
 
-            SortedList<float, int> symbols = new SortedList<float, int>(new JpegConverter.Huffman.DuplicateKeyComparer<float>());
+            //SortedList<float, byte> symbols = new SortedList<float, byte>(new JpegConverter.Huffman.DuplicateKeyComparer<float>());
 
             //symbols.Add(0.3f, 72);
             //symbols.Add(0.2f, 97);
@@ -36,25 +36,25 @@ namespace JpegConverter
             //symbols.Add(0.1f, 32);
             //symbols.Add(0.25f, 111);
 
-            symbols.Add(4.0f, 1);
-            symbols.Add(4.0f, 2);
-            symbols.Add(6.0f, 3);
-            symbols.Add(6.0f, 4);
-            symbols.Add(7.0f, 5);
-            symbols.Add(9.0f, 6);
+            //symbols.Add(4.0f, 1);
+            //symbols.Add(4.0f, 2);
+            //symbols.Add(6.0f, 3);
+            //symbols.Add(6.0f, 4);
+            //symbols.Add(7.0f, 5);
+            //symbols.Add(9.0f, 6);
 
-            JpegConverter.Huffman.HuffmanTree tree = JpegConverter.Huffman.HuffmanTree.createNormalTree(symbols);
-            JpegConverter.Huffman.HuffmanTree rightTree = JpegConverter.Huffman.HuffmanTree.createRightTree(tree);
-            tree.print();
+            //JpegConverter.Huffman.HuffmanTree tree = JpegConverter.Huffman.HuffmanTree.createNormalTree(symbols);
+            //JpegConverter.Huffman.HuffmanTree rightTree = JpegConverter.Huffman.HuffmanTree.createRightTree(tree);
+            //tree.print();
 
-            Bitstream bitstream = new Bitstream();
-            tree.encode("Hallo", bitstream);
-            bitstream.Seek(0, System.IO.SeekOrigin.Begin);
-            String result = tree.decode(bitstream);
+            //Bitstream bitstream = new Bitstream();
+            //tree.encode("Hallo", bitstream);
+            //bitstream.Seek(0, System.IO.SeekOrigin.Begin);
+            //String result = tree.decode(bitstream);
 
-            Console.WriteLine(result);
+            //Console.WriteLine(result);
 
-            Console.Read();
+            //Console.Read();
 
         }
 

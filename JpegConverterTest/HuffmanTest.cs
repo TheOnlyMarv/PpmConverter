@@ -43,16 +43,16 @@ namespace JpegConverterTest
             sl.Add(7f, 5);
             sl.Add(9f, 6);
             HuffmanTree orgHt = HuffmanTree.createNormalTree(sl);
-            HuffmanTree ht = HuffmanTree.createRightTree(orgHt);
+            //HuffmanTree ht = HuffmanTree.createRightTree(orgHt);
 
-            //HuffmanTree ht = HuffmanTree.createRightTree(sl);
+            ////HuffmanTree ht = HuffmanTree.createRightTree(sl);
 
-            Assert.AreEqual("111", ht.findCode(1, ""));
-            Assert.AreEqual("110", ht.findCode(2, ""));
-            Assert.AreEqual("101", ht.findCode(3, ""));
-            Assert.AreEqual("100", ht.findCode(4, ""));
-            Assert.AreEqual("01", ht.findCode(5, ""));
-            Assert.AreEqual("00", ht.findCode(6, ""));
+            //Assert.AreEqual("111", ht.findCode(1, ""));
+            //Assert.AreEqual("110", ht.findCode(2, ""));
+            //Assert.AreEqual("101", ht.findCode(3, ""));
+            //Assert.AreEqual("100", ht.findCode(4, ""));
+            //Assert.AreEqual("01", ht.findCode(5, ""));
+            //Assert.AreEqual("00", ht.findCode(6, ""));
         }
 
         [TestMethod]
@@ -95,6 +95,120 @@ namespace JpegConverterTest
 
             //HuffmanTree newTree = HuffmanTree.CreateLengthLimitedHuffmanTree(sl, 16);
             //Assert.AreEqual("0000", normalHt.findCode(1, ""));
+        }
+
+        [TestMethod]
+        public void TestNewHuffman()
+        {
+            Dictionary<byte, int> sl = new Dictionary<byte, int>();
+            sl.Add(1, 4);
+            sl.Add(2, 4);
+            sl.Add(3, 6);
+            sl.Add(4, 6);
+            sl.Add(5, 7);
+            sl.Add(6, 9);
+            Huffman huffman = new Huffman(sl);
+            huffman.CreateNormalHuffman();
+
+            Assert.AreEqual("010", huffman.GetCode(1));
+            Assert.AreEqual("011", huffman.GetCode(2));
+            Assert.AreEqual("110", huffman.GetCode(3));
+            Assert.AreEqual("111", huffman.GetCode(4));
+            Assert.AreEqual("00", huffman.GetCode(5));
+            Assert.AreEqual("10", huffman.GetCode(6));
+
+
+            Dictionary<byte, int> sl2 = new Dictionary<byte, int>();
+            sl2.Add(1, 4);
+            sl2.Add(2, 4);
+            sl2.Add(3, 7);
+            sl2.Add(4, 8);
+            sl2.Add(5, 10);
+
+            Huffman huffman2 = new Huffman(sl2);
+            huffman2.CreateNormalHuffman();
+
+            Assert.AreEqual("010", huffman2.GetCode(1));
+            Assert.AreEqual("011", huffman2.GetCode(2));
+            Assert.AreEqual("00", huffman2.GetCode(3));
+            Assert.AreEqual("10", huffman2.GetCode(4));
+            Assert.AreEqual("11", huffman2.GetCode(5));
+
+        }
+
+        [TestMethod]
+        public void TestNewHuffmanAvoidingOneStar()
+        {
+            Dictionary<byte, int> sl = new Dictionary<byte, int>();
+            sl.Add(1, 4);
+            sl.Add(2, 4);
+            sl.Add(3, 6);
+            sl.Add(4, 6);
+            sl.Add(5, 7);
+            sl.Add(6, 9);
+            Huffman huffman = new Huffman(sl);
+            huffman.CreateNormalHuffman(true);
+
+            Assert.AreEqual("010", huffman.GetCode(1));
+            Assert.AreEqual("011", huffman.GetCode(2));
+            Assert.AreEqual("110", huffman.GetCode(3));
+            Assert.AreEqual("1110", huffman.GetCode(4));
+            Assert.AreEqual("00", huffman.GetCode(5));
+            Assert.AreEqual("10", huffman.GetCode(6));
+
+            sl = new Dictionary<byte, int>();
+            sl.Add(1, 4);
+            sl.Add(2, 4);
+            sl.Add(3, 7);
+            sl.Add(4, 8);
+            sl.Add(5, 10);
+
+            huffman = new Huffman(sl);
+            huffman.CreateNormalHuffman(true);
+
+            Assert.AreEqual("010", huffman.GetCode(1));
+            Assert.AreEqual("011", huffman.GetCode(2));
+            Assert.AreEqual("00", huffman.GetCode(3));
+            Assert.AreEqual("10", huffman.GetCode(4));
+            Assert.AreEqual("110", huffman.GetCode(5));
+        }
+
+        [TestMethod]
+        public void TestNewRightGrowingHuffman()
+        {
+            Dictionary<byte, int> sl = new Dictionary<byte, int>();
+            sl.Add(1, 4);
+            sl.Add(2, 4);
+            sl.Add(3, 6);
+            sl.Add(4, 6);
+            sl.Add(5, 7);
+            sl.Add(6, 9);
+            Huffman huffman = new Huffman(sl);
+            huffman.CreateRightGrowingHuffman();
+
+            Assert.AreEqual("111", huffman.GetCode(1));
+            Assert.AreEqual("110", huffman.GetCode(2));
+            Assert.AreEqual("101", huffman.GetCode(3));
+            Assert.AreEqual("100", huffman.GetCode(4));
+            Assert.AreEqual("01", huffman.GetCode(5));
+            Assert.AreEqual("00", huffman.GetCode(6));
+
+
+            Dictionary<byte, int> sl2 = new Dictionary<byte, int>();
+            sl2.Add(1, 4);
+            sl2.Add(2, 4);
+            sl2.Add(3, 7);
+            sl2.Add(4, 8);
+            sl2.Add(5, 10);
+
+            Huffman huffman2 = new Huffman(sl2);
+            huffman2.CreateRightGrowingHuffman();
+
+            Assert.AreEqual("111", huffman2.GetCode(1));
+            Assert.AreEqual("110", huffman2.GetCode(2));
+            Assert.AreEqual("10", huffman2.GetCode(3));
+            Assert.AreEqual("01", huffman2.GetCode(4));
+            Assert.AreEqual("00", huffman2.GetCode(5));
         }
     }
 }
