@@ -210,5 +210,26 @@ namespace JpegConverterTest
             Assert.AreEqual("01", huffman2.GetCode(4));
             Assert.AreEqual("00", huffman2.GetCode(5));
         }
+
+        [TestMethod]
+        public void TestNewLimitedHuffman()
+        {
+            Dictionary<byte, int> sl = new Dictionary<byte, int>();
+            sl.Add(1, 4);
+            sl.Add(2, 4);
+            sl.Add(3, 6);
+            sl.Add(4, 6);
+            sl.Add(5, 7);
+            sl.Add(6, 9);
+            Huffman huffman = new Huffman(sl);
+            huffman.CreateLimitedHuffman(3);
+
+            Assert.AreEqual("111", huffman.GetCode(1));
+            Assert.AreEqual("110", huffman.GetCode(2));
+            Assert.AreEqual("101", huffman.GetCode(3));
+            Assert.AreEqual("100", huffman.GetCode(4));
+            Assert.AreEqual("01", huffman.GetCode(5));
+            Assert.AreEqual("00", huffman.GetCode(6));
+        }
     }
 }

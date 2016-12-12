@@ -8,13 +8,13 @@ namespace JpegConverter.Huffman
 {
     public class Huffman
     {
-        private Dictionary<byte, int> Symboles { get; set; }
+        private Dictionary<byte, int> Symbols { get; set; }
         private Node root { get; set; }
-        public Dictionary<byte, string> CodeDictionary { get; set; }
+        private Dictionary<byte, string> CodeDictionary { get; set; }
 
-        public Huffman(Dictionary<byte, int> symboles)
+        public Huffman(Dictionary<byte, int> symbols)
         {
-            this.Symboles = symboles;
+            this.Symbols = symbols;
         }
 
         #region NormalHuffman
@@ -22,7 +22,7 @@ namespace JpegConverter.Huffman
         {
             CodeDictionary = null;
             List<KeyValuePair<int, Node>> nodes = CreateIntialNodes();
-            RunNormalHuffman(nodes); //Sicher ist sicher
+            RunNormalHuffman(nodes);
             if (avoidOneStar)
             {
                 AvoidingOneStar(root);
@@ -31,11 +31,11 @@ namespace JpegConverter.Huffman
 
         private List<KeyValuePair<int, Node>> CreateIntialNodes()
         {
-            List<KeyValuePair<byte, int>> symboles = Symboles.OrderBy(x => x.Value).ToList();
+            List<KeyValuePair<byte, int>> symbols = Symbols.OrderBy(x => x.Value).ToList();
             List<KeyValuePair<int, Node>> result = new List<KeyValuePair<int, Node>>();
-            foreach (var symbole in symboles)
+            foreach (var symbol in symbols)
             {
-                result.Add(new KeyValuePair<int, Node>(symbole.Value, new Node(symbole.Key, symbole.Value)));
+                result.Add(new KeyValuePair<int, Node>(symbol.Value, new Node(symbol.Key, symbol.Value)));
             }
             return result.OrderBy(x => x.Key).ToList();
         }
@@ -55,24 +55,24 @@ namespace JpegConverter.Huffman
         #endregion
 
         #region CodeFinding
-        public string GetCode(byte symbole)
+        public string GetCode(byte symbol)
         {
             if (CodeDictionary == null)
             {
                 CreateCodeDictionary(root);
             }
-            return CodeDictionary[symbole];
+            return CodeDictionary[symbol];
         }
 
         private void CreateCodeDictionary(Node node)
         {
             CodeDictionary = new Dictionary<byte, string>();
-            foreach (var symbole in Symboles)
+            foreach (var symbol in Symbols)
             {
-                CodeDictionary[symbole.Key] = FindCode(node, symbole.Key);
+                CodeDictionary[symbol.Key] = FindCode(node, symbol.Key);
             }
         }
-        private string FindCode(Node node, byte symbole, string code = "")
+        private string FindCode(Node node, byte symbol, string code = "")
         {
             if (node == null)
             {
@@ -80,7 +80,7 @@ namespace JpegConverter.Huffman
             }
             if (node.Leaf)
             {
-                if (node.Value == symbole)
+                if (node.Value == symbol)
                 {
                     return code;
                 }
@@ -89,8 +89,8 @@ namespace JpegConverter.Huffman
                     return null;
                 }
             }
-            string left = FindCode(node.Left, symbole, code + "0");
-            string right = FindCode(node.Right, symbole, code + "1");
+            string left = FindCode(node.Left, symbol, code + "0");
+            string right = FindCode(node.Right, symbol, code + "1");
             if (right != null)
             {
                 return right;
@@ -123,7 +123,7 @@ namespace JpegConverter.Huffman
             CountLevelEntries(LevelNodes, root);
             var initialNodes = CreateIntialNodes();
 
-            root = CreateRekurcive(initialNodes, LevelNodes.OrderByDescending(x => x.Key).ToList());
+            root = CreateRecursive(initialNodes, LevelNodes.OrderByDescending(x => x.Key).ToList());
             CodeDictionary = null;
 
             if (avoidOneStar)
@@ -132,12 +132,12 @@ namespace JpegConverter.Huffman
             }
         }
 
-        private Node CreateRekurcive(List<KeyValuePair<int, Node>> initialNodes, List<KeyValuePair<int, int>> levelNodes, int level = 0)
+        private Node CreateRecursive(List<KeyValuePair<int, Node>> initialNodes, List<KeyValuePair<int, int>> levelNodes, int level = 0)
         {
             if (levelNodes.Count != 0 && levelNodes.First().Key != level)
             {
-                Node right = CreateRekurcive(initialNodes, levelNodes, level + 1);
-                Node left = CreateRekurcive(initialNodes, levelNodes, level + 1);
+                Node right = CreateRecursive(initialNodes, levelNodes, level + 1);
+                Node left = CreateRecursive(initialNodes, levelNodes, level + 1);
                 return new Node(left, right);
             }
             else if (levelNodes.First().Value != 0)
@@ -156,7 +156,7 @@ namespace JpegConverter.Huffman
             else
             {
                 levelNodes.RemoveAt(0);
-                return CreateRekurcive(initialNodes, levelNodes, level);
+                return CreateRecursive(initialNodes, levelNodes, level);
             }
         }
 
@@ -176,6 +176,20 @@ namespace JpegConverter.Huffman
             }
             CountLevelEntries(dictionary, node.Right, level + 1);
             CountLevelEntries(dictionary, node.Left, level + 1);
+        }
+        #endregion
+
+        #region PackageMergedHuffman
+        public void CreateLimitedHuffman(byte limit = 16, bool avoidOneStar = false)
+        {
+            List<KeyValuePair<int, int>> levelList = PackageMerge.Generate(Symbols.OrderBy(x => x.Value).ToList(), avoidOneStar ? limit - 1 : limit);
+            root = CreateRecursive(CreateIntialNodes(), levelList);
+            CodeDictionary = null;
+
+            if (avoidOneStar)
+            {
+                AvoidingOneStar(root);
+            }
         }
         #endregion
     }
