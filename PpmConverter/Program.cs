@@ -69,7 +69,7 @@ namespace JpegConverter
         private static void ConvertToJpeg(JpegEncoder jpegEncoder, PPMImage image)
         {
             Console.Write("Convert to jpegStream...");
-            jpegEncoder.WriteMarker(image);
+            jpegEncoder.WriteMarker(image, null); //Muss später noch gändert werden (NULL)
             Console.WriteLine(" - DONE");
         }
 
