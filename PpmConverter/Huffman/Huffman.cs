@@ -10,11 +10,7 @@ namespace JpegConverter.Huffman
     public class Huffman
     {
         private Dictionary<Symbol, int> Symbols { get; set; }
-<<<<<<< HEAD
-        public Node root { get; set; }
-=======
-        private Node Root { get; set; }
->>>>>>> 3a6d75b618a81f1d8a39d392d73f7bc973fbb16d
+        public Node Root { get; set; }
         public Dictionary<Symbol, string> CodeDictionary { get; set; }
 
         public Huffman(Dictionary<Symbol, int> symbols)

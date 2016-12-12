@@ -151,7 +151,7 @@ namespace JpegConverter.Jpeg
             bitstream.WriteBits(htInfo);
 
             List<JpegConverter.Huffman.Node> nodesAtLevel = new List<JpegConverter.Huffman.Node>();
-            nodesAtLevel.Add(ht.root);
+            nodesAtLevel.Add(ht.Root);
             List<Int32> symbols = new List<Int32>();
             int[] levels = new int[16];
             for (int i = 0; i < 16; ++i)
