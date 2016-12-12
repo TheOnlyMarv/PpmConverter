@@ -28,7 +28,7 @@ namespace JpegConverter
             //}
             //Console.Read();
 
-            //SortedList<float, byte> symbols = new SortedList<float, byte>(new JpegConverter.Huffman.DuplicateKeyComparer<float>());
+            //SortedList<float, Symbol> symbols = new SortedList<float, Symbol>(new JpegConverter.Huffman.DuplicateKeyComparer<float>());
 
             //symbols.Add(0.3f, 72);
             //symbols.Add(0.2f, 97);

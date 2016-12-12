@@ -6,18 +6,19 @@ using System.Threading.Tasks;
 
 namespace JpegConverter.Huffman
 {
+    using Symbol = Int32;
     public class Node
     {
         private int botLevel;
 
-        public byte Value { get; set; }
+        public Symbol Value { get; set; }
         public int Frequency { get; set; }
         public Node Left { get; set; }
         public Node Right { get; set; }
         public bool Leaf { get { return Left == null && Right == null; } }
         public int LevelFromBootom { get { return botLevel; } }
 
-        public Node(byte value, int frequency)
+        public Node(Symbol value, int frequency)
         {
             this.Value = value;
             this.Frequency = frequency;

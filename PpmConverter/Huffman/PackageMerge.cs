@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace JpegConverter.Huffman
 {
+    using Symbol = Int32;
     class PackageMerge
     {
         private static List<List<PackageNode>> PackageLists;
-        public static List<KeyValuePair<int, int>> Generate(List<KeyValuePair<byte, int>> symbols, int limit)
+        public static List<KeyValuePair<int, int>> Generate(List<KeyValuePair<Symbol, int>> symbols, int limit)
         {
             InitializePackageLists(symbols, limit);
             MergeLists();
@@ -20,7 +21,7 @@ namespace JpegConverter.Huffman
         private static List<KeyValuePair<int, int>> CreateLevelCounting(int limit)
         {
             Dictionary<int, int> result = new Dictionary<int, int>();
-            Dictionary<byte, int> symbolCount = CountSymbol(PackageLists[limit]);
+            Dictionary<Symbol, int> symbolCount = CountSymbol(PackageLists[limit]);
             for (int i = 1; i <= limit; i++)
             {
                 int counter = symbolCount.Count(x => x.Value == i);
@@ -32,12 +33,12 @@ namespace JpegConverter.Huffman
             return result.OrderByDescending(x => x.Key).ToList();
         }
 
-        private static Dictionary<byte, int> CountSymbol(List<PackageNode> list)
+        private static Dictionary<Symbol, int> CountSymbol(List<PackageNode> list)
         {
-            Dictionary<byte, int> result = new Dictionary<byte, int>();
+            Dictionary<Symbol, int> result = new Dictionary<Symbol, int>();
             foreach (PackageNode packageNode in list)
             {
-                foreach (byte symbol in packageNode.Symbols)
+                foreach (Symbol symbol in packageNode.Symbols)
                 {
                     try
                     {
@@ -74,7 +75,7 @@ namespace JpegConverter.Huffman
 
         }
 
-        private static void InitializePackageLists(List<KeyValuePair<byte, int>> symbols, int limit)
+        private static void InitializePackageLists(List<KeyValuePair<Symbol, int>> symbols, int limit)
         {
             PackageLists = new List<List<PackageNode>>();
             for (int i = 0; i < limit; i++)
@@ -84,7 +85,7 @@ namespace JpegConverter.Huffman
             PackageLists.Add(new List<PackageNode>());
         }
 
-        private static List<PackageNode> CreateNewOriginalList(List<KeyValuePair<byte, int>> symbols)
+        private static List<PackageNode> CreateNewOriginalList(List<KeyValuePair<Symbol, int>> symbols)
         {
             List<PackageNode> result = new List<PackageNode>();
             foreach (var symbol in symbols)
@@ -94,52 +95,52 @@ namespace JpegConverter.Huffman
             return result.OrderBy(x => x.Frequency).ToList();
         }
     }
-}
 
-struct PackageNode
-{
-    public int Frequency;
-    public List<byte> Symbols;
-    public PackageNode(byte symbol, int frequency)
+    struct PackageNode
     {
-        this.Symbols = new List<byte>();
-        Symbols.Add(symbol);
-        this.Frequency = frequency;
-    }
-    public PackageNode Compine(PackageNode other)
-    {
-        Frequency += other.Frequency;
-        foreach (byte symbol in other.Symbols)
+        public int Frequency;
+        public List<Symbol> Symbols;
+        public PackageNode(Symbol symbol, int frequency)
         {
+            this.Symbols = new List<Symbol>();
             Symbols.Add(symbol);
+            this.Frequency = frequency;
         }
-        return this;
-    }
-    public static PackageNode Compine(PackageNode left, PackageNode right)
-    {
-        PackageNode newPn = new PackageNode();
-        newPn.Frequency = left.Frequency + right.Frequency;
-        newPn.Symbols = new List<byte>();
-        foreach (byte item in left.Symbols)
+        public PackageNode Compine(PackageNode other)
         {
-            newPn.Symbols.Add(item);
+            Frequency += other.Frequency;
+            foreach (Symbol symbol in other.Symbols)
+            {
+                Symbols.Add(symbol);
+            }
+            return this;
         }
-        foreach (byte item in right.Symbols)
+        public static PackageNode Compine(PackageNode left, PackageNode right)
         {
-            newPn.Symbols.Add(item);
+            PackageNode newPn = new PackageNode();
+            newPn.Frequency = left.Frequency + right.Frequency;
+            newPn.Symbols = new List<Symbol>();
+            foreach (Symbol item in left.Symbols)
+            {
+                newPn.Symbols.Add(item);
+            }
+            foreach (Symbol item in right.Symbols)
+            {
+                newPn.Symbols.Add(item);
+            }
+            return newPn;
         }
-        return newPn;
-    }
 
-    public PackageNode Copy()
-    {
-        PackageNode newPn = new PackageNode(Symbols.First(), Frequency);
-        newPn.Symbols = new List<byte>();
-        foreach (byte symbol in Symbols)
+        public PackageNode Copy()
         {
-            newPn.Symbols.Add(symbol);
+            PackageNode newPn = new PackageNode(Symbols.First(), Frequency);
+            newPn.Symbols = new List<Symbol>();
+            foreach (Symbol symbol in Symbols)
+            {
+                newPn.Symbols.Add(symbol);
+            }
+            return newPn;
         }
-        return newPn;
     }
 }
 

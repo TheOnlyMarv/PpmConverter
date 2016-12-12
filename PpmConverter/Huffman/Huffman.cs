@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace JpegConverter.Huffman
 {
+    using Symbol = Int32;
     public class Huffman
     {
-        private Dictionary<byte, int> Symbols { get; set; }
+        private Dictionary<Symbol, int> Symbols { get; set; }
         private Node root { get; set; }
-        private Dictionary<byte, string> CodeDictionary { get; set; }
+        private Dictionary<Symbol, string> CodeDictionary { get; set; }
 
-        public Huffman(Dictionary<byte, int> symbols)
+        public Huffman(Dictionary<Symbol, int> symbols)
         {
             this.Symbols = symbols;
         }
@@ -31,7 +32,7 @@ namespace JpegConverter.Huffman
 
         private List<KeyValuePair<int, Node>> CreateIntialNodes()
         {
-            List<KeyValuePair<byte, int>> symbols = Symbols.OrderBy(x => x.Value).ToList();
+            List<KeyValuePair<Symbol, int>> symbols = Symbols.OrderBy(x => x.Value).ToList();
             List<KeyValuePair<int, Node>> result = new List<KeyValuePair<int, Node>>();
             foreach (var symbol in symbols)
             {
@@ -55,7 +56,7 @@ namespace JpegConverter.Huffman
         #endregion
 
         #region CodeFinding
-        public string GetCode(byte symbol)
+        public string GetCode(Symbol symbol)
         {
             if (CodeDictionary == null)
             {
@@ -66,13 +67,13 @@ namespace JpegConverter.Huffman
 
         private void CreateCodeDictionary(Node node)
         {
-            CodeDictionary = new Dictionary<byte, string>();
+            CodeDictionary = new Dictionary<Symbol, string>();
             foreach (var symbol in Symbols)
             {
                 CodeDictionary[symbol.Key] = FindCode(node, symbol.Key);
             }
         }
-        private string FindCode(Node node, byte symbol, string code = "")
+        private string FindCode(Node node, Symbol symbol, string code = "")
         {
             if (node == null)
             {
@@ -180,7 +181,7 @@ namespace JpegConverter.Huffman
         #endregion
 
         #region PackageMergedHuffman
-        public void CreateLimitedHuffman(byte limit = 16, bool avoidOneStar = false)
+        public void CreateLimitedHuffman(Symbol limit = 16, bool avoidOneStar = false)
         {
             List<KeyValuePair<int, int>> levelList = PackageMerge.Generate(Symbols.OrderBy(x => x.Value).ToList(), avoidOneStar ? limit - 1 : limit);
             root = CreateRecursive(CreateIntialNodes(), levelList);

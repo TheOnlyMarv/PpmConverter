@@ -64,14 +64,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Huffman\Huffman.cs" />
-    <Compile Include="Huffman\HuffmanTree.cs" />
     <Compile Include="Huffman\Node.cs" />
     <Compile Include="Huffman\PackageMerge.cs" />
     <Compile Include="Jpeg\JpegEncoder.cs" />
     <Compile Include="Stream\Bitstream.cs" />
-    <Compile Include="Stream\BitstreamTest.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="Stream\OldBits.cs" />
     <Compile Include="PPMImage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
