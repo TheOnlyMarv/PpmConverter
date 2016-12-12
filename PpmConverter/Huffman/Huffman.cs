@@ -10,7 +10,7 @@ namespace JpegConverter.Huffman
     public class Huffman
     {
         private Dictionary<Symbol, int> Symbols { get; set; }
-        private Node root { get; set; }
+        private Node Root { get; set; }
         private Dictionary<Symbol, string> CodeDictionary { get; set; }
 
         public Huffman(Dictionary<Symbol, int> symbols)
@@ -26,7 +26,7 @@ namespace JpegConverter.Huffman
             RunNormalHuffman(nodes);
             if (avoidOneStar)
             {
-                AvoidingOneStar(root);
+                AvoidingOneStar(Root);
             }
         }
 
@@ -45,7 +45,7 @@ namespace JpegConverter.Huffman
         {
             if (sorted.Count == 1)
             {
-                root = sorted[0].Value;
+                Root = sorted[0].Value;
                 return;
             }
             sorted.Add(new KeyValuePair<int, Node>(sorted[0].Key + sorted[1].Key, new Node(sorted[0].Value, sorted[1].Value)));
@@ -60,7 +60,7 @@ namespace JpegConverter.Huffman
         {
             if (CodeDictionary == null)
             {
-                CreateCodeDictionary(root);
+                CreateCodeDictionary(Root);
             }
             return CodeDictionary[symbol];
         }
@@ -121,15 +121,15 @@ namespace JpegConverter.Huffman
             CreateNormalHuffman();
 
             Dictionary<int, int> LevelNodes = new Dictionary<int, int>();
-            CountLevelEntries(LevelNodes, root);
+            CountLevelEntries(LevelNodes, Root);
             var initialNodes = CreateIntialNodes();
 
-            root = CreateRecursive(initialNodes, LevelNodes.OrderByDescending(x => x.Key).ToList());
+            Root = CreateRecursive(initialNodes, LevelNodes.OrderByDescending(x => x.Key).ToList());
             CodeDictionary = null;
 
             if (avoidOneStar)
             {
-                AvoidingOneStar(root);
+                AvoidingOneStar(Root);
             }
         }
 
@@ -184,13 +184,76 @@ namespace JpegConverter.Huffman
         public void CreateLimitedHuffman(Symbol limit = 16, bool avoidOneStar = false)
         {
             List<KeyValuePair<int, int>> levelList = PackageMerge.Generate(Symbols.OrderBy(x => x.Value).ToList(), avoidOneStar ? limit - 1 : limit);
-            root = CreateRecursive(CreateIntialNodes(), levelList);
+            Root = CreateRecursive(CreateIntialNodes(), levelList);
             CodeDictionary = null;
 
             if (avoidOneStar)
             {
-                AvoidingOneStar(root);
+                AvoidingOneStar(Root);
             }
+        }
+        #endregion
+
+        #region Encode+Decode
+        public void Encode(ICollection<Symbol> symbols, Bitstream stream)
+        {
+            stream.WriteByte((byte)symbols.Count);
+            List<int> toWrite = new List<Symbol>();
+            foreach (Symbol symbol in symbols)
+            {
+                var code = this.GetCode(symbol);
+                for (int i = 0; i < code.Length; i++)
+                {
+                    toWrite.Add(int.Parse(code.Substring(i,1)));
+                }
+            }
+            stream.WriteBits(toWrite.ToArray());
+        }
+        public List<Symbol> Decode(Bitstream bitstream)
+        {
+            int[] toDecode = getAllBits(bitstream);
+            int counter = 8;
+            List<Symbol> returnSymbols = new List<Symbol>();
+
+            byte length = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                length = (byte)((length << 1) + toDecode[i]);
+            }
+            int maxLength = length;
+
+            while (returnSymbols.Count < maxLength)
+            {
+                Node node = Root;
+                while (!node.Leaf)
+                {
+                    if (toDecode[counter++] == 0)
+                    {
+                        node = node.Left;
+                    }
+                    else
+                    {
+                        node = node.Right;
+                    }
+                }
+                returnSymbols.Add(node.Value);
+            }
+            return returnSymbols;
+        }
+
+        private int[] getAllBits(Bitstream bitstream)
+        {
+            int[] retVal = new int[bitstream.Length * 8];
+            int counter = 0;
+            for (int i = 0; i < bitstream.Length; ++i)
+            {
+                int[] curByte = bitstream.ReadBits();
+                for (int j = 0; j < 8; ++j)
+                {
+                    retVal[counter++] = curByte[j];
+                }
+            }
+            return retVal;
         }
         #endregion
     }
