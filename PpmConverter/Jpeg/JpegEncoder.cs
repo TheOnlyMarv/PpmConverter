@@ -150,9 +150,44 @@ namespace JpegConverter.Jpeg
             int[] htInfo = {0, 0, 0, 1, 0, 0, 0, 0};
             bitstream.WriteBits(htInfo);
 
-            // TODO: write amount of symbols for each level from 1 to 16
+            List<JpegConverter.Huffman.Node> nodesAtLevel = new List<JpegConverter.Huffman.Node>();
+            List<Int32> symbols = new List<Int32>();
+            int[] levels = new int[16];
+            for (int i = 0; i < 16; ++i)
+            {
+                foreach (JpegConverter.Huffman.Node curNode in nodesAtLevel)
+                {
+                    if (curNode.Leaf)
+                    {
+                        levels[i] += 1;
+                        nodesAtLevel.Remove(curNode);
+                        symbols.Add(curNode.Value);
+                        continue;
+                    }
+                    if (curNode.Left != null) nodesAtLevel.Add(curNode.Left);
+                    if (curNode.Right != null) nodesAtLevel.Add(curNode.Right);
+                    nodesAtLevel.Remove(curNode);
+                }
+            }
+            foreach (int count in levels)
+            {
+                bitstream.WriteByte((byte)count);
+            }
+            
+            String toWrite = "";
+            foreach (Int32 symbol in symbols)
+            {
+                toWrite += ht.GetCode(symbol);
+            }
 
-            // TODO: write symbols; ordered asc
+            int[] bits = new int[toWrite.Length];
+            int counter = 0;
+            foreach (char bit in toWrite)
+            {
+                if (bit == '0') bits[counter++] = 0;
+                else bits[counter++] = 1;
+            }
+            bitstream.WriteBits(bits);
         }
     }
 }
