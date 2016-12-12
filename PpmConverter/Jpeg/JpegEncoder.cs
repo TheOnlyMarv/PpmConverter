@@ -20,11 +20,12 @@ namespace JpegConverter.Jpeg
             bitstream.FlushIntoFile(path);
         }
 
-        public void WriteMarker(PPMImage image)
+        public void WriteMarker(PPMImage image, JpegConverter.Huffman.Huffman ht)
         {
             WriteStartOfImage();
             WriteApp0();
             WriteSof0(image);
+            WriteDht(ht);
             WirteEndOfImage();
         }
 
@@ -132,6 +133,26 @@ namespace JpegConverter.Jpeg
             bitstream.WriteByte(0x11);
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
             bitstream.WriteByte(0x01);
+        }
+
+        private void WriteDht(JpegConverter.Huffman.Huffman ht)
+        {
+            //Marker
+            bitstream.WriteByte(0xff);
+            bitstream.WriteByte(0xc4);
+
+            //Laenge des Segments
+            bitstream.WriteByte(0x00);
+            int length = 17 + ht.CodeDictionary.Count;
+            bitstream.WriteByte((byte)length);
+
+            // HT Informationen
+            int[] htInfo = {0, 0, 0, 1, 0, 0, 0, 0};
+            bitstream.WriteBits(htInfo);
+
+            // TODO: write amount of symbols for each level from 1 to 16
+
+            // TODO: write symbols; ordered asc
         }
     }
 }
