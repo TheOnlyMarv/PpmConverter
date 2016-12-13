@@ -156,18 +156,18 @@ namespace JpegConverter.Jpeg
             int[] levels = new int[16];
             for (int i = 0; i < 16; ++i)
             {
-                foreach (JpegConverter.Huffman.Node curNode in nodesAtLevel)
+                for (int j = 0; j < nodesAtLevel.Count; ++j)
                 {
-                    if (curNode.Leaf)
+                    if (nodesAtLevel[j].Leaf)
                     {
                         levels[i] += 1;
-                        nodesAtLevel.Remove(curNode);
-                        symbols.Add(curNode.Value);
+                        nodesAtLevel.RemoveAt(j);
+                        symbols.Add(nodesAtLevel[j].Value);
                         continue;
                     }
-                    if (curNode.Left != null) nodesAtLevel.Add(curNode.Left);
-                    if (curNode.Right != null) nodesAtLevel.Add(curNode.Right);
-                    nodesAtLevel.Remove(curNode);
+                    if (nodesAtLevel[j].Left != null) nodesAtLevel.Add(nodesAtLevel[j].Left);
+                    if (nodesAtLevel[j].Right != null) nodesAtLevel.Add(nodesAtLevel[j].Right);
+                    nodesAtLevel.RemoveAt(j);
                 }
             }
             foreach (int count in levels)
