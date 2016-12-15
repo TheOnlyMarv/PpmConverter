@@ -78,7 +78,7 @@ namespace JpegConverter.DCTPascal
             return dctBlock;
         }
 
-        public static int[,] seperierteKosinusTranformation(int[,] block)
+        public static int[,] separierteKosinusTranformation(int[,] block)
         {
             int size = 0;
             if (block.GetLength(0) == block.GetLength(1))
