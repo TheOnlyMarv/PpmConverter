@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DCTPascal\KosinusTransformation.cs" />
     <Compile Include="Huffman\Huffman.cs" />
     <Compile Include="Huffman\Node.cs" />
     <Compile Include="Huffman\PackageMerge.cs" />
