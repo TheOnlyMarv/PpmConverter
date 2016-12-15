@@ -12,24 +12,24 @@ namespace JpegConverter.DCTPascal
         {
             int[,] block = new int[8, 8];
 
-            for(int i = 0; i < farbkanal.GetLength(0); i++)
+            for (int i = 0; i < farbkanal.GetLength(0); i++)
             {
-                for(int j = 0; j < farbkanal.GetLength(1); j++)
+                for (int j = 0; j < farbkanal.GetLength(1); j++)
                 {
-                    if(i % 8 == 0 && j % 8 == 0)
+                    if (i % 8 == 0 && j % 8 == 0)
                     {
                         direkteKosinusTransformation(block);
-                        block = new int[8,8];
+                        block = new int[8, 8];
                     }
-                    block[i % 8, j % 8] = farbkanal[i,j];
+                    block[i % 8, j % 8] = farbkanal[i, j];
                 }
             }
         }
 
         public static int[,] direkteKosinusTransformation(int[,] block)
-        {            
+        {
             int size = 0;
-            if(block.GetLength(0) == block.GetLength(1))
+            if (block.GetLength(0) == block.GetLength(1))
             {
                 size = block.GetLength(0);
             }
@@ -40,9 +40,9 @@ namespace JpegConverter.DCTPascal
             double sumsum = 0;
 
             int[,] dctBlock = new int[size, size];
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
-                for(int j = 0; j < size; j++)
+                for (int j = 0; j < size; j++)
                 {
                     for (int x = 0; x < block.GetLength(0); x++)
                     {
@@ -64,7 +64,7 @@ namespace JpegConverter.DCTPascal
                     }
                     else if (i != 0 && j == 0)
                     {
-                        dctBlock[i, j] =(int)(Math.Round(2.0 / size * 1.0 * 1.0 / Math.Sqrt(2) * sumsum));
+                        dctBlock[i, j] = (int)(Math.Round(2.0 / size * 1.0 * 1.0 / Math.Sqrt(2) * sumsum));
                         sumsum = 0;
                     }
                     else
@@ -90,10 +90,19 @@ namespace JpegConverter.DCTPascal
                 return null;
             }
 
-            int[,] matrix = new int[size, size];
-            int[,] matrixT = new int[size, size];
-            int[,] axat = new int[size, size];
-            int[,] sDCT = new int[size, size];
+            double[,] input = new double[size, size];
+            double[,] matrix = new double[size, size];
+            double[,] matrixT = new double[size, size];
+            double[,] sDCT = new double[size, size];
+            int[,] result = new int[size, size];
+
+            for(int y = 0; y < block.GetLength(1); y++)
+            {
+                for(int x = 0; x < block.GetLength(0); x++)
+                {
+                    input[y, x] = block[y, x];
+                }
+            }
 
             for (int n = 0; n < size; n++)
             {
@@ -101,39 +110,47 @@ namespace JpegConverter.DCTPascal
                 {
                     if (k == 0)
                     {
-                        matrix[n, k] = (int)(Math.Round(1.0 / Math.Sqrt(2) * Math.Sqrt(2.0 / size) * Math.Cos((2.0 * n + 1.0) * (k * Math.PI / (2.0 * size)))));
+                        matrix[n, k] = 1.0 / Math.Sqrt(2.0) * Math.Sqrt(2.0 / size) * Math.Cos((2.0 * n + 1.0) * ((k * Math.PI) / (2.0 * size)));
                         matrixT[k, n] = matrix[n, k];
                     }
                     else
                     {
-                        matrix[n, k] = (int)(Math.Round(1.0 * Math.Sqrt(2.0 / size) * Math.Cos((2.0 * n + 1.0) * (k * Math.PI / (2.0 * size)))));
+                        matrix[n, k] = 1.0 * Math.Sqrt(2.0 / size) * Math.Cos((2.0 * n + 1.0) * ((k * Math.PI) / (2.0 * size)));
                         matrixT[k, n] = matrix[n, k];
                     }
                 }
             }
 
-            axat = matrizenMultiplikation(matrix, matrixT);
-            sDCT = matrizenMultiplikation(axat, block);
+            sDCT = matrizenMultiplikation(matrix, input);
+            sDCT = matrizenMultiplikation(sDCT, matrixT);
 
-            return sDCT;
+            for(int y = 0; y < sDCT.GetLength(1); y++)
+            {
+                for(int x = 0; x < sDCT.GetLength(0); x++)
+                {
+                    result[y, x] = (int)(Math.Round(sDCT[y, x]));
+                }
+            }
+
+            return result;
         }
 
-        private static int[,] matrizenMultiplikation( int[,] matrix, int[,] matrix2)
-        {          
+        private static double[,] matrizenMultiplikation(double[,] matrix, double[,] matrix2)
+        {
             int size = matrix.GetLength(0);
-            int[,] newMatrix = new int[size, size];
-            int produkt = 0;
+            double[,] newMatrix = new double[size, size];
+            double produkt = 0;
             for (int x = 0; x < size; x++)
             {
                 for (int y = 0; y < size; y++)
                 {
-                        for (int j = 0; j < size; j++)
-                        {
-                            produkt = produkt + matrix[x, j] * matrix2[j, y];
-                        }
-                        newMatrix[x, y] = produkt;
-                        produkt = 0;
+                    for (int j = 0; j < size; j++)
+                    {
+                        produkt = produkt + matrix[x, j] * matrix2[j, y];
                     }
+                    newMatrix[x, y] = produkt;
+                    produkt = 0;
+                }
             }
 
             return newMatrix;
@@ -155,13 +172,13 @@ namespace JpegConverter.DCTPascal
 
             int[,] idctBlock = new int[size, size];
 
-            for(int x = 0; x < size; x++)
+            for (int x = 0; x < size; x++)
             {
-                for(int y = 0; y < size; y++)
+                for (int y = 0; y < size; y++)
                 {
-                    for(int i = 0; i < size; i++)
+                    for (int i = 0; i < size; i++)
                     {
-                        for(int j = 0; j < size; j++)
+                        for (int j = 0; j < size; j++)
                         {
                             if (i == 0 && j == 0)
                             {
