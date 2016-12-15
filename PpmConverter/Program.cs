@@ -56,11 +56,6 @@ namespace JpegConverter
 
             //Console.Read();
 
-
-            //Erste Tests
-            //int[,] pixel = { { 255, 255, 255, 255, 255, 255, 255, 255 }, { 255, 255, 255, 255, 255, 255, 255, 255 }, { 255, 255, 255, 255, 255, 255, 255, 255 }, { 255, 255, 255, 255, 255, 255, 255, 255 }, { 255, 255, 255, 255, 255, 255, 255, 255 }, { 255, 255, 255, 255, 255, 255, 255, 255 }, { 255, 255, 255, 255, 255, 255, 255, 255 }, { 255, 255, 255, 255, 255, 255, 255, 255 } };
-            //int[,] dct = DCTPascal.KosinusTransformation.direkteKosinusTransformation(pixel);
-            //int[,] idct = DCTPascal.KosinusTransformation.inverseDiskreteKosinusFormel(dct);
         }
 
         private static void SaveJpegIntoFile(JpegEncoder jpegEncoder, string destination)

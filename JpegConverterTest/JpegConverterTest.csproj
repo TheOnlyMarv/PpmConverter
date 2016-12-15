@@ -52,7 +52,7 @@
   <ItemGroup>
     <Compile Include="BitstreamTest.cs" />
     <Compile Include="HuffmanTest.cs" />
-    <Compile Include="PascalKosinusTransforamtionText.cs" />
+    <Compile Include="PascalKosinusTransforamtionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
