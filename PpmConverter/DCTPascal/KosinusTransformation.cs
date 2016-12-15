@@ -37,13 +37,32 @@ namespace JpegConverter.DCTPascal
             {
                 return null;
             }
+
+            double ci = 1;
+            double cj = 1;
             double sumsum = 0;
 
             int[,] dctBlock = new int[size, size];
             for (int i = 0; i < size; i++)
             {
+                if (i == 0)
+                {
+                    ci = 1.0 / Math.Sqrt(2);
+                }
+                else
+                {
+                    ci = 1;
+                }
                 for (int j = 0; j < size; j++)
                 {
+                    if (j == 0)
+                    {
+                        cj = 1.0 / Math.Sqrt(2);
+                    }
+                    else
+                    {
+                        cj = 1;
+                    }
                     for (int x = 0; x < block.GetLength(0); x++)
                     {
                         for (int y = 0; y < block.GetLength(1); y++)
@@ -52,26 +71,8 @@ namespace JpegConverter.DCTPascal
                         }
                     }
 
-                    if (i == 0 && j == 0)
-                    {
-                        dctBlock[i, j] = (int)(Math.Round(2.0 / size * 1.0 / Math.Sqrt(2) * 1.0 / Math.Sqrt(2) * sumsum));
-                        sumsum = 0;
-                    }
-                    else if (i == 0 && j != 0)
-                    {
-                        dctBlock[i, j] = (int)(Math.Round(2.0 / size * 1.0 / Math.Sqrt(2) * 1.0 * sumsum));
-                        sumsum = 0;
-                    }
-                    else if (i != 0 && j == 0)
-                    {
-                        dctBlock[i, j] = (int)(Math.Round(2.0 / size * 1.0 * 1.0 / Math.Sqrt(2) * sumsum));
-                        sumsum = 0;
-                    }
-                    else
-                    {
-                        dctBlock[i, j] = (int)(Math.Round(2.0 / size * 1.0 * 1.0 * sumsum));
-                        sumsum = 0;
-                    }
+                    dctBlock[i, j] = (int)(Math.Round(2.0 / size * ci * cj * sumsum));
+                    sumsum = 0;
                 }
             }
 
@@ -96,9 +97,9 @@ namespace JpegConverter.DCTPascal
             double[,] sDCT = new double[size, size];
             int[,] result = new int[size, size];
 
-            for(int y = 0; y < block.GetLength(1); y++)
+            for (int y = 0; y < block.GetLength(1); y++)
             {
-                for(int x = 0; x < block.GetLength(0); x++)
+                for (int x = 0; x < block.GetLength(0); x++)
                 {
                     input[y, x] = block[y, x];
                 }
@@ -124,9 +125,9 @@ namespace JpegConverter.DCTPascal
             sDCT = matrizenMultiplikation(matrix, input);
             sDCT = matrizenMultiplikation(sDCT, matrixT);
 
-            for(int y = 0; y < sDCT.GetLength(1); y++)
+            for (int y = 0; y < sDCT.GetLength(1); y++)
             {
-                for(int x = 0; x < sDCT.GetLength(0); x++)
+                for (int x = 0; x < sDCT.GetLength(0); x++)
                 {
                     result[y, x] = (int)(Math.Round(sDCT[y, x]));
                 }
@@ -159,6 +160,8 @@ namespace JpegConverter.DCTPascal
         public static int[,] inverseDiskreteKosinusTransformation(int[,] block)
         {
             int size = 0;
+            double ci = 1;
+            double cj = 1;
             if (block.GetLength(0) == block.GetLength(1))
             {
                 size = block.GetLength(0);
@@ -178,24 +181,25 @@ namespace JpegConverter.DCTPascal
                 {
                     for (int i = 0; i < size; i++)
                     {
+                        if (i == 0)
+                        {
+                            ci = (1.0 / Math.Sqrt(2));
+                        }
+                        else
+                        {
+                            ci = 1;
+                        }
                         for (int j = 0; j < size; j++)
                         {
-                            if (i == 0 && j == 0)
+                            if (j == 0)
                             {
-                                isumsum = isumsum + 2.0 / size * (1.0 / Math.Sqrt(2)) * (1.0 / Math.Sqrt(2)) * block[i, j] * Math.Cos(((2.0 * x + 1.0) * i * Math.PI) / (2.0 * size)) * Math.Cos(((2.0 * y + 1.0) * j * Math.PI) / (2.0 * size));
-                            }
-                            else if (i == 0 && j != 0)
-                            {
-                                isumsum = isumsum + 2.0 / size * (1.0 / Math.Sqrt(2)) * 1.0 * block[i, j] * Math.Cos(((2.0 * x + 1.0) * i * Math.PI) / (2.0 * size)) * Math.Cos(((2.0 * y + 1.0) * j * Math.PI) / (2.0 * size));
-                            }
-                            else if (i != 0 && j == 0)
-                            {
-                                isumsum = isumsum + 2.0 / size * 1.0 * (1.0 / Math.Sqrt(2)) * block[i, j] * Math.Cos(((2.0 * x + 1.0) * i * Math.PI) / (2.0 * size)) * Math.Cos(((2.0 * y + 1.0) * j * Math.PI) / (2.0 * size));
+                                cj = (1.0 / Math.Sqrt(2));
                             }
                             else
                             {
-                                isumsum = isumsum + 2.0 / size * 1.0 * 1.0 * block[i, j] * Math.Cos(((2.0 * x + 1.0) * i * Math.PI) / (2.0 * size)) * Math.Cos(((2.0 * y + 1.0) * j * Math.PI) / (2.0 * size));
+                                cj = 1;
                             }
+                            isumsum = isumsum + 2.0 / size * ci * cj * block[i, j] * Math.Cos(((2.0 * x + 1.0) * i * Math.PI) / (2.0 * size)) * Math.Cos(((2.0 * y + 1.0) * j * Math.PI) / (2.0 * size));
                         }
                     }
                     idctBlock[x, y] = (int)(Math.Round(isumsum));
