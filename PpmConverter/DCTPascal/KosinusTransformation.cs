@@ -94,7 +94,6 @@ namespace JpegConverter.DCTPascal
             double[,] input = new double[size, size];
             double[,] matrix = new double[size, size];
             double[,] matrixT = new double[size, size];
-            //double[,] sDCT = new double[size, size];
             int[,] result = new int[size, size];
 
             for (int y = 0; y < block.GetLength(1); y++)
