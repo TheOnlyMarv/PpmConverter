@@ -94,7 +94,7 @@ namespace JpegConverter.DCTPascal
             double[,] input = new double[size, size];
             double[,] matrix = new double[size, size];
             double[,] matrixT = new double[size, size];
-            double[,] sDCT = new double[size, size];
+            //double[,] sDCT = new double[size, size];
             int[,] result = new int[size, size];
 
             for (int y = 0; y < block.GetLength(1); y++)
@@ -111,25 +111,25 @@ namespace JpegConverter.DCTPascal
                 {
                     if (k == 0)
                     {
-                        matrix[n, k] = 1.0 / Math.Sqrt(2.0) * Math.Sqrt(2.0 / size) * Math.Cos((2.0 * n + 1.0) * ((k * Math.PI) / (2.0 * size)));
-                        matrixT[k, n] = matrix[n, k];
+                        matrix[k, n] = ((1.0 / Math.Sqrt(2.0)) * (Math.Sqrt(2.0 / size) * Math.Cos(((2.0 * n + 1.0) * ((k * Math.PI) / (2.0 * size))))));
+                        matrixT[n, k] = matrix[k, n];
                     }
                     else
                     {
-                        matrix[n, k] = 1.0 * Math.Sqrt(2.0 / size) * Math.Cos((2.0 * n + 1.0) * ((k * Math.PI) / (2.0 * size)));
-                        matrixT[k, n] = matrix[n, k];
+                        matrix[k, n] = (1.0 * (Math.Sqrt(2.0 / size) * Math.Cos(((2.0 * n + 1.0) * ((k * Math.PI) / (2.0 * size))))));
+                        matrixT[n, k] = matrix[k, n];
                     }
                 }
             }
 
-            sDCT = matrizenMultiplikation(matrix, input);
-            sDCT = matrizenMultiplikation(sDCT, matrixT);
+            input = matrizenMultiplikation(matrix, input);
+            input = matrizenMultiplikation(input, matrixT);
 
-            for (int y = 0; y < sDCT.GetLength(1); y++)
+            for (int y = 0; y < input.GetLength(1); y++)
             {
-                for (int x = 0; x < sDCT.GetLength(0); x++)
+                for (int x = 0; x < input.GetLength(0); x++)
                 {
-                    result[y, x] = (int)(Math.Round(sDCT[y, x]));
+                    result[y, x] = (int)(Math.Round(input[y, x]));
                 }
             }
 

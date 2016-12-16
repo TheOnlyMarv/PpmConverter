@@ -79,6 +79,24 @@ namespace JpegConverterTest
             }
         }
 
+
+        [TestMethod]
+        public void TestSepariteDCT3()
+        {
+            int[,] pixel = { { 1, 2, 3 }, { 3, 2, 2 }, { 8, 8, 8 } };
+            int[,] result = { { 12, 0, 0, }, { -7, -1, 0 }, { 4, -1, 0 } };
+
+            int[,] sdct = KosinusTransformation.separierteKosinusTranformation(pixel);
+
+            for (int i = 0; i < sdct.GetLength(0); i++)
+            {
+                for (int j = 0; j < sdct.GetLength(1); j++)
+                {
+                    Assert.AreEqual(result[i, j], sdct[i, j]);
+                }
+            }
+        }
+
         [TestMethod]
         public void TestInverseDCT()
         {
