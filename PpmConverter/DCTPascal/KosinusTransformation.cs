@@ -110,12 +110,12 @@ namespace JpegConverter.DCTPascal
                 {
                     if (k == 0)
                     {
-                        matrix[k, n] = ((1.0 / Math.Sqrt(2.0)) * (Math.Sqrt(2.0 / size) * Math.Cos(((2.0 * n + 1.0) * ((k * Math.PI) / (2.0 * size))))));
+                        matrix[k, n] = (1.0 / Math.Sqrt(2.0)) * Math.Sqrt(2.0 / size) * Math.Cos((2.0 * n + 1.0) * (k * Math.PI) / (2.0 * size));
                         matrixT[n, k] = matrix[k, n];
                     }
                     else
                     {
-                        matrix[k, n] = (1.0 * (Math.Sqrt(2.0 / size) * Math.Cos(((2.0 * n + 1.0) * ((k * Math.PI) / (2.0 * size))))));
+                        matrix[k, n] = 1.0 * Math.Sqrt(2.0 / size) * Math.Cos((2.0 * n + 1.0) * (k * Math.PI) / (2.0 * size));
                         matrixT[n, k] = matrix[k, n];
                     }
                 }
