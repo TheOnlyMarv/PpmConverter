@@ -8,22 +8,44 @@ namespace JpegConverter.DCTPascal
 {
     public class KosinusTransformation
     {
-        private void get8x8Blocks(int[,] farbkanal)
+        private List<int[,]> get8x8Blocks(int[,] channel)
+        {
+            if(channel.GetLength(0) % 8 != 0 && channel.GetLength(1) % 8 != 0)
+            {
+                throw new Exception("image size is not mod 8");
+            }
+
+            List<int[,]> listOfBlocks = new List<int[,]>();
+
+            int indexX = 0;
+            int indexY = 0;
+
+            for (int y = 0; y < (channel.GetLength(0) % 8); ++y)
+            {
+                for (int x = 0; x < (channel.GetLength(1) % 8); ++x)
+                {
+                    listOfBlocks.Add(getBlock(indexY, indexX, channel));
+                    indexX++;
+                }
+                indexX = 0;
+                indexY += 8;
+            }
+            return listOfBlocks;
+        }
+
+        private int[,] getBlock(int y, int x, int[,] channel)
         {
             int[,] block = new int[8, 8];
-
-            for (int i = 0; i < farbkanal.GetLength(0); i++)
+            for (int i = 0; i < 8; ++i)
             {
-                for (int j = 0; j < farbkanal.GetLength(1); j++)
+                for (int j = 0; j < 8; ++j)
                 {
-                    if (i % 8 == 0 && j % 8 == 0)
-                    {
-                        direkteKosinusTransformation(block);
-                        block = new int[8, 8];
-                    }
-                    block[i % 8, j % 8] = farbkanal[i, j];
+                    block[i, j] = channel[y, x++];
                 }
+                x -= 8;
+                y++;
             }
+            return block;
         }
 
         public static int[,] direkteKosinusTransformation(int[,] block)
