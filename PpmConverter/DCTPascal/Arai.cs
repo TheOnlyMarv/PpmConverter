@@ -26,10 +26,11 @@ namespace JpegConverter.DCTPascal
                 temp = step4(temp);
                 temp = step5(temp);
                 temp = step6(temp);
+                temp = step7(temp);
 
                 for(int n = 0; n < 8; n++)
                 {
-                    araiBlock[n, i] = temp[n];
+                    araiBlock[n, i] = temp[n] / 4;
                 }
             }
 
@@ -45,10 +46,11 @@ namespace JpegConverter.DCTPascal
                 temp = step4(temp);
                 temp = step5(temp);
                 temp = step6(temp);
+                temp = step7(temp);
 
                 for(int m = 0; m < 8; m++)
                 {
-                    result[k, m] = (int)Math.Round(temp[m]);
+                    result[k, m] = (int)Math.Round(temp[m] / 4);
                 }
             }
 
@@ -153,6 +155,31 @@ namespace JpegConverter.DCTPascal
             result[5] = block[5] + block[6];
             result[6] = block[3];
             result[7] = block[4] - block[7];
+
+            return result;
+        }
+
+        private static double[] step7(double[] block)
+        {
+            double[] result = new double[8];
+
+            double s0 = 1 / (2 * Math.Sqrt(2));
+            double s1 = 1 / (4 * Math.Cos(1 * Math.PI / 16));
+            double s2 = 1 / (4 * Math.Cos(2 * Math.PI / 16));
+            double s3 = 1 / (4 * Math.Cos(3 * Math.PI / 16));
+            double s4 = 1 / (4 * Math.Cos(4 * Math.PI / 16));
+            double s5 = 1 / (4 * Math.Cos(5 * Math.PI / 16));
+            double s6 = 1 / (4 * Math.Cos(6 * Math.PI / 16));
+            double s7 = 1 / (4 * Math.Cos(7 * Math.PI / 16));
+
+            result[0] = s0 * block[0];
+            result[4] = s4 * block[1];
+            result[2] = s2 * block[2];
+            result[6] = s6 * block[3];
+            result[5] = s5 * block[4];
+            result[1] = s1 * block[5];
+            result[7] = s7 * block[6];
+            result[3] = s3 * block[7];
 
             return result;
         }
