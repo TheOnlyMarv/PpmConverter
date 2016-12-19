@@ -205,106 +205,132 @@ namespace JpegConverter.DCT
         private const double a4 = c6 + c2;
         private const double a5 = c6;
 
-        private double[] Arai(double[] x)
+        public int[,] AraiDCT()
         {
-            double[] result = new double[8];
+            List<int[,]> blocks = SplitImageIntoBlocks();
 
-            double temp0, temp1, temp2, temp3, temp4, temp5, temp6, temp7;
+            for (int bId = 0; bId < blocks.Count; bId++)
+            {
+                int[,] block = blocks[bId];
+                for (int i = 0; i < BLOCK_SIZE; i++)
+                {
+                    Arai(block[i, 0], block[i, 1], block[i, 2], block[i, 3], block[i, 4], block[i, 5], block[i, 6], block[i, 7],
+                        out block[i, 0], out block[i, 1], out block[i, 2], out block[i, 3], out block[i, 4], out block[i, 5], out block[i, 6], out block[i, 7]);
+                }
+
+                for (int i = 0; i < BLOCK_SIZE; i++)
+                {
+                    Arai(block[0, i], block[1, i], block[2, i], block[3, i], block[4, i], block[5, i], block[6, i], block[7, i],
+                        out block[0, i], out block[1, i], out block[2, i], out block[3, i], out block[4, i], out block[5, i], out block[6, i], out block[7, i]);
+                }
+                blocks[bId] = block;
+            }
+
+            TransformedImage = MergeBlockIntoImage(blocks);
+            return TransformedImage;
+        }
+
+        private void Arai(
+            int x0, int x1, int x2, int x3, int x4, int x5, int x6, int x7,
+            out int xo0, out int xo1, out int xo2, out int xo3, out int xo4, out int xo5, out int xo6, out int xo7)
+        {
+
+            Assign(x0, x1, x2, x3, x4, x5, x6, x7, out xo0, out xo1, out xo2, out xo3, out xo4, out xo5, out xo6, out xo7);
+
 
             //Step-1
-            temp0 = Add(x[0], x[7]);
-            temp1 = Add(x[1], x[6]);
-            temp2 = Add(x[2], x[5]);
-            temp3 = Add(x[3], x[4]);
-            temp4 = Sub(x[3], x[4]);
-            temp5 = Sub(x[2], x[5]);
-            temp6 = Sub(x[2], x[6]);
-            temp7 = Sub(x[0], x[7]);
-            Assign(temp0, temp1, temp2, temp3, temp4, temp5, temp6, temp7, out result[0], out result[1], out result[2], out result[3], out result[4], out result[5], out result[6], out result[7]);
+            xo0 = x0 + x7;
+            xo1 = x1 + x6;
+            xo2 = x2 + x5;
+            xo3 = x3 + x4;
+            xo4 = x3 - x4;
+            xo5 = x2 - x5;
+            xo6 = x1 - x6;
+            xo7 = x0 - x7;
+            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
 
             //Step-2
-            temp0 = Add(result[0], result[3]);
-            temp1 = Add(result[1], result[2]);
-            temp2 = Sub(result[1], result[2]);
-            temp3 = Sub(result[0], result[3]);
-            temp4 = Sub(-result[4], result[5]);
-            temp5 = Add(result[5], result[6]);
-            temp6 = Add(result[6], result[7]);
+            xo0 = x0 + x3;
+            xo1 = x1 + x2;
+            xo2 = x1 - x2;
+            xo3 = x0 - x3;
+            xo4 = -x4 - x5;
+            xo5 = x5 + x6;
+            xo6 = x6 + x7;
             //No 7
-            Assign(temp0, temp1, temp2, temp3, temp4, temp5, temp6, temp7, out result[0], out result[1], out result[2], out result[3], out result[4], out result[5], out result[6], out result[7]);
+            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
 
             //Step-3
-            temp0 = Add(result[0], result[1]);
-            temp1 = Sub(result[0], result[1]);
-            temp2 = Add(result[2], result[3]);
+            xo0 = x0 + x1;
+            xo1 = x0- x1;
+            xo2 = x2+x3;
             //No 3-7
-            Assign(temp0, temp1, temp2, temp3, temp4, temp5, temp6, temp7, out result[0], out result[1], out result[2], out result[3], out result[4], out result[5], out result[6], out result[7]);
+            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
 
             //Step-4
             //No 0-1
-            temp2 = Multi(result[2], a1);
+            xo2 = (int)Math.Round((x2 * a1));
             //No 3
-            double tempA5 = Multi(Add(result[4], result[6]), a5);
-            temp4 = Sub(-Multi(result[4], a2), temp5);
-            temp5 = Multi(result[5], a3);
-            temp6 = Sub(Multi(result[6], a4), tempA5);
+            double tempA5 = (x4 + x6) * a5;
+            xo4 = (int)Math.Round((-(x4 * a2) - xo5));
+            xo5 = (int)Math.Round((x5 * a3));
+            xo6 = (int)Math.Round(((x6 * a4) - tempA5));
             //No 7
-            Assign(temp0, temp1, temp2, temp3, temp4, temp5, temp6, temp7, out result[0], out result[1], out result[2], out result[3], out result[4], out result[5], out result[6], out result[7]);
+            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
 
             //Step-5
             //No 0-1
-            temp2 = Add(result[2], result[3]);
-            temp3 = Sub(result[3], result[2]);
+            xo2 = x2 + x3;
+            xo3 = x3 - x2;
             //No 4
-            temp5 = Add(result[5], result[7]);
+            xo5 = x5 + x7;
             //No 6
-            temp7 = Sub(result[7], result[5]);
-            Assign(temp0, temp1, temp2, temp3, temp4, temp5, temp6, temp7, out result[0], out result[1], out result[2], out result[3], out result[4], out result[5], out result[6], out result[7]);
+            xo7 = x7 - x5;
+            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
 
             //Step-6
             //No 0-3
-            temp4 = Add(result[4], result[7]);
-            temp5 = Add(result[5], result[6]);
-            temp6 = Sub(result[6], result[6]);
-            temp7 = Sub(result[7], result[4]);
-            Assign(temp0, temp1, temp2, temp3, temp4, temp5, temp6, temp7, out result[0], out result[1], out result[2], out result[3], out result[4], out result[5], out result[6], out result[7]);
+            xo4 = x4 + x7;
+            xo5 = x5 + x6;
+            xo6 = x5 - x6;
+            xo7 = x7 - x4;
+            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
 
             //Step-7
-            temp0 = Multi(result[0], s0);
-            temp1 = Multi(result[1], s4);
-            temp2 = Multi(result[2], s2);
-            temp3 = Multi(result[3], s6);
-            temp4 = Multi(result[4], s5);
-            temp5 = Multi(result[5], s1);
-            temp6 = Multi(result[6], s7);
-            temp7 = Multi(result[7], s3);
-            Reassign(temp0, temp1, temp2, temp3, temp4, temp5, temp6, temp7, out result[0], out result[1], out result[2], out result[3], out result[4], out result[5], out result[6], out result[7]);
+            xo0 = (int)Math.Round(x0 * s0);
+            xo1 = (int)Math.Round(x1 * s4);
+            xo2 = (int)Math.Round(x2 * s2);
+            xo3 = (int)Math.Round(x3 * s6);
+            xo4 = (int)Math.Round(x4 * s5);
+            xo5 = (int)Math.Round(x5 * s1);
+            xo6 = (int)Math.Round(x6 * s7);
+            xo7 = (int)Math.Round(x7 * s3);
+            Reassign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
 
-            return result;
         }
 
-        private void Assign(double temp0, double temp1, double temp2, double temp3, double temp4, double temp5, double temp6, double temp7, out double x0, out double x1, out double x2, out double x3, out double x4, out double x5, out double x6, out double x7)
+        private void Assign(int xo0, int xo1, int xo2, int xo3, int xo4, int xo5, int xo6, int xo7, out int x0, out int x1, out int x2, out int x3, out int x4, out int x5, out int x6, out int x7)
         {
-            x0 = temp0;
-            x1 = temp1;
-            x2 = temp2;
-            x3 = temp3;
-            x4 = temp4;
-            x5 = temp5;
-            x6 = temp6;
-            x7 = temp7;
+            x0 = xo0;
+            x1 = xo1;
+            x2 = xo2;
+            x3 = xo3;
+            x4 = xo4;
+            x5 = xo5;
+            x6 = xo6;
+            x7 = xo7;
         }
 
-        private void Reassign(double temp0, double temp1, double temp2, double temp3, double temp4, double temp5, double temp6, double temp7, out double x0, out double x1, out double x2, out double x3, out double x4, out double x5, out double x6, out double x7)
+        private void Reassign(int xo0, int xo1, int xo2, int xo3, int xo4, int xo5, int xo6, int xo7, out int x0, out int x1, out int x2, out int x3, out int x4, out int x5, out int x6, out int x7)
         {
-            x0 = temp0;
-            x4 = temp1;
-            x2 = temp2;
-            x6 = temp3;
-            x5 = temp4;
-            x1 = temp5;
-            x7 = temp6;
-            x3 = temp7;
+            x0 = xo0;
+            x4 = xo1;
+            x2 = xo2;
+            x6 = xo3;
+            x5 = xo4;
+            x1 = xo5;
+            x7 = xo6;
+            x3 = xo7;
         }
 
         private double Add(double a, double b)

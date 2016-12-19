@@ -1,1 +1,1 @@
-<Playlist Version="1.0"><Add Test="JpegConverterTest.CosinusTransformaionTest.TestDirectDCT" /><Add Test="JpegConverterTest.CosinusTransformaionTest.TestSeperateDCT" /><Add Test="JpegConverterTest.CosinusTransformaionTest.TestInvereDCT" /></Playlist>
+<Playlist Version="1.0"><Add Test="JpegConverterTest.CosinusTransformaionTest.TestDirectDCT" /><Add Test="JpegConverterTest.CosinusTransformaionTest.TestSeperateDCT" /><Add Test="JpegConverterTest.CosinusTransformaionTest.TestInvereDCT" /><Add Test="JpegConverterTest.CosinusTransformaionTest.TestAraiDCT" /></Playlist>

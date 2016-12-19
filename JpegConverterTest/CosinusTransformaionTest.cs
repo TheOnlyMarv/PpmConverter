@@ -115,5 +115,20 @@ namespace JpegConverterTest
                 }
             }
         }
+
+        [TestMethod]
+        public void TestAraiDCT()
+        {
+            CosinusTransformation ct = new CosinusTransformation(test1);
+            int[,] calculated = ct.AraiDCT();
+
+            for (int i = 0; i < test1.GetLength(0); i++)
+            {
+                for (int j = 0; j < test1.GetLength(1); j++)
+                {
+                    Assert.AreEqual(result1[i, j], calculated[i, j]);
+                }
+            }
+        }
     }
 }
