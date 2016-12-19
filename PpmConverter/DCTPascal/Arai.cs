@@ -30,7 +30,7 @@ namespace JpegConverter.DCTPascal
 
                 for(int n = 0; n < 8; n++)
                 {
-                    araiBlock[n, i] = temp[n] / 4;
+                    araiBlock[n, i] = temp[n];
                 }
             }
 
@@ -50,7 +50,7 @@ namespace JpegConverter.DCTPascal
 
                 for(int m = 0; m < 8; m++)
                 {
-                    result[k, m] = (int)Math.Round(temp[m] / 4);
+                    result[k, m] = (int)Math.Round(temp[m]);
                 }
             }
 
@@ -63,11 +63,11 @@ namespace JpegConverter.DCTPascal
 
             result[0] = block[0] + block[7];
             result[1] = block[1] + block[6];
-            result[2] = block[3] - block[4];
-            result[3] = block[1] - block[6];
-            result[4] = block[2] + block[5];
-            result[5] = block[3] + block[4];
-            result[6] = block[2] - block[5];
+            result[2] = block[2] + block[5];
+            result[3] = block[3] + block[4];
+            result[4] = block[3] - block[4];
+            result[5] = block[2] - block[5];
+            result[6] = block[1] - block[6];
             result[7] = block[0] - block[7];
 
             return result;
@@ -77,13 +77,13 @@ namespace JpegConverter.DCTPascal
         {
             double[] result = new double[8];
 
-            result[0] = block[0] + block[5];
-            result[1] = block[1] - block[4];
-            result[2] = block[2] + block[6];
-            result[3] = block[1] + block[4];
-            result[4] = block[0] - block[5];
-            result[5] = block[3] + block[7];
-            result[6] = block[3] + block[6];
+            result[0] = block[0] + block[3];
+            result[1] = block[1] + block[2];
+            result[2] = block[1] - block[2];
+            result[3] = block[0] - block[3];
+            result[4] = -1 * (block[4] + block[5]);
+            result[5] = block[5] + block[6];
+            result[6] = block[6] + block[7];
             result[7] = block[7];
 
             return result;
@@ -91,38 +91,36 @@ namespace JpegConverter.DCTPascal
 
         private static double[] step3(double[] block)
         {
-            double[] result = new double[9];
+            double[] result = new double[8];
 
-            result[0] = block[0] + block[3];
-            result[1] = block[0] - block[3];
-            result[2] = block[2];
-            result[3] = block[1] + block[4];
-            result[4] = block[2] - block[5];
-            result[5] = block[4];
-            result[6] = block[5];
-            result[7] = block[6];
-            result[8] = block[7];
+            result[0] = block[0] + block[1];
+            result[1] = block[0] - block[1];
+            result[2] = block[2] + block[3];
+            result[3] = block[3];
+            result[4] = block[4];
+            result[5] = block[5];
+            result[6] = block[6];
+            result[7] = block[7];
 
             return result;
         }
 
         private static double[] step4(double[] block)
         {
-            double[] result = new double[9];
-            double m1 = Math.Cos(4 * Math.PI / 16);
-            double m2 = Math.Cos(6 * Math.PI / 16);
-            double m3 = Math.Cos(2 * Math.PI / 16) - Math.Cos(6 * Math.PI / 16);
-            double m4 = Math.Cos(2 * Math.PI / 16) + Math.Cos(6 * Math.PI / 16);
+            double[] result = new double[8];
+            double m1 = Math.Cos(4.0 * Math.PI / 16.0);
+            double m2 = Math.Cos(6.0 * Math.PI / 16.0);
+            double m3 = Math.Cos(2.0 * Math.PI / 16.0) - Math.Cos(6.0 * Math.PI / 16.0);
+            double m4 = Math.Cos(2.0 * Math.PI / 16.0) + Math.Cos(6.0 * Math.PI / 16.0);
 
             result[0] = block[0];
             result[1] = block[1];
-            result[2] = m3 * block[2];
-            result[3] = m1 * block[7];
-            result[4] = m4 * block[6];
-            result[5] = block[5];
-            result[6] = m1 * block[3];
-            result[7] = m2 * block[4];
-            result[8] = block[8];
+            result[2] = m1 * block[2];
+            result[3] = block[3];
+            result[4] = -1 * (m3 * block[4]) - ((block[4] + block[6]) * m2);
+            result[5] = m1 * block[5];
+            result[6] = (m4 * block[6]) - ((block[4] + block[6]) * m2);
+            result[7] = block[7];
 
             return result;
         }
@@ -133,12 +131,12 @@ namespace JpegConverter.DCTPascal
 
             result[0] = block[0];
             result[1] = block[1];
-            result[2] = block[5] + block[6];
-            result[3] = block[5] - block[6];
-            result[4] = block[3] + block[8];
-            result[5] = block[8] - block[3];
-            result[6] = block[2] + block[7];
-            result[7] = block[4] + block[7];
+            result[2] = block[2] + block[3];
+            result[3] = block[3] - block[2];
+            result[4] = block[4];
+            result[5] = block[5] + block[7];
+            result[6] = block[6];
+            result[7] = block[7] - block[5];
 
             return result;
         }
@@ -148,13 +146,13 @@ namespace JpegConverter.DCTPascal
             double[] result = new double[8];
 
             result[0] = block[0];
-            result[1] = block[4] + block[7];
+            result[1] = block[1];
             result[2] = block[2];
-            result[3] = block[5] - block[6];
-            result[4] = block[1];
+            result[3] = block[3];
+            result[4] = block[4] + block[7];
             result[5] = block[5] + block[6];
-            result[6] = block[3];
-            result[7] = block[4] - block[7];
+            result[6] = block[5] - block[6];
+            result[7] = block[7] - block[4];
 
             return result;
         }
@@ -163,23 +161,23 @@ namespace JpegConverter.DCTPascal
         {
             double[] result = new double[8];
 
-            double s0 = 1 / (2 * Math.Sqrt(2));
-            double s1 = 1 / (4 * Math.Cos(1 * Math.PI / 16));
-            double s2 = 1 / (4 * Math.Cos(2 * Math.PI / 16));
-            double s3 = 1 / (4 * Math.Cos(3 * Math.PI / 16));
-            double s4 = 1 / (4 * Math.Cos(4 * Math.PI / 16));
-            double s5 = 1 / (4 * Math.Cos(5 * Math.PI / 16));
-            double s6 = 1 / (4 * Math.Cos(6 * Math.PI / 16));
-            double s7 = 1 / (4 * Math.Cos(7 * Math.PI / 16));
+            double s0 = 1.0 / (2.0 * Math.Sqrt(2.0));
+            double s1 = 1.0 / (4.0 * Math.Cos(1.0 * Math.PI / 16.0));
+            double s2 = 1.0 / (4.0 * Math.Cos(2.0 * Math.PI / 16.0));
+            double s3 = 1.0 / (4.0 * Math.Cos(3.0 * Math.PI / 16.0));
+            double s4 = 1.0 / (4.0 * Math.Cos(4.0 * Math.PI / 16.0));
+            double s5 = 1.0 / (4.0 * Math.Cos(5.0 * Math.PI / 16.0));
+            double s6 = 1.0 / (4.0 * Math.Cos(6.0 * Math.PI / 16.0));
+            double s7 = 1.0 / (4.0 * Math.Cos(7.0 * Math.PI / 16.0));
 
             result[0] = s0 * block[0];
-            result[4] = s4 * block[1];
-            result[2] = s2 * block[2];
-            result[6] = s6 * block[3];
-            result[5] = s5 * block[4];
             result[1] = s1 * block[5];
-            result[7] = s7 * block[6];
+            result[2] = s2 * block[2];
             result[3] = s3 * block[7];
+            result[4] = s4 * block[1];
+            result[5] = s5 * block[4];
+            result[6] = s6 * block[3];
+            result[7] = s7 * block[6];
 
             return result;
         }
