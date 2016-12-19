@@ -212,16 +212,26 @@ namespace JpegConverter.DCT
             for (int bId = 0; bId < blocks.Count; bId++)
             {
                 int[,] block = blocks[bId];
+                double[,] dblock = new double[8, 8];
+
                 for (int i = 0; i < BLOCK_SIZE; i++)
                 {
                     Arai(block[i, 0], block[i, 1], block[i, 2], block[i, 3], block[i, 4], block[i, 5], block[i, 6], block[i, 7],
-                        out block[i, 0], out block[i, 1], out block[i, 2], out block[i, 3], out block[i, 4], out block[i, 5], out block[i, 6], out block[i, 7]);
+                        out dblock[i, 0], out dblock[i, 1], out dblock[i, 2], out dblock[i, 3], out dblock[i, 4], out dblock[i, 5], out dblock[i, 6], out dblock[i, 7]);
                 }
 
                 for (int i = 0; i < BLOCK_SIZE; i++)
                 {
-                    Arai(block[0, i], block[1, i], block[2, i], block[3, i], block[4, i], block[5, i], block[6, i], block[7, i],
-                        out block[0, i], out block[1, i], out block[2, i], out block[3, i], out block[4, i], out block[5, i], out block[6, i], out block[7, i]);
+                    Arai(dblock[0, i], dblock[1, i], dblock[2, i], dblock[3, i], dblock[4, i], dblock[5, i], dblock[6, i], dblock[7, i],
+                        out dblock[0, i], out dblock[1, i], out dblock[2, i], out dblock[3, i], out dblock[4, i], out dblock[5, i], out dblock[6, i], out dblock[7, i]);
+                }
+
+                for (int i = 0; i < BLOCK_SIZE; i++)
+                {
+                    for (int j = 0; j < BLOCK_SIZE; j++)
+                    {
+                        block[i, j] = (int)Math.Round(dblock[i, j]);
+                    }
                 }
                 blocks[bId] = block;
             }
@@ -231,85 +241,86 @@ namespace JpegConverter.DCT
         }
 
         private void Arai(
-            int x0, int x1, int x2, int x3, int x4, int x5, int x6, int x7,
-            out int xo0, out int xo1, out int xo2, out int xo3, out int xo4, out int xo5, out int xo6, out int xo7)
+            double x0, double x1, double x2, double x3, double x4, double x5, double x6, double x7,
+            out double xo0, out double xo1, out double xo2, out double xo3, out double xo4, out double xo5, out double xo6, out double xo7)
         {
 
-            Assign(x0, x1, x2, x3, x4, x5, x6, x7, out xo0, out xo1, out xo2, out xo3, out xo4, out xo5, out xo6, out xo7);
-
+            //Assign(x0, x1, x2, x3, x4, x5, x6, x7, out xo0, out xo1, out xo2, out xo3, out xo4, out xo5, out xo6, out xo7);
+            double t0, t1, t2, t3, t4, t5, t6, t7;
+            double d0 = x0, d1 = x1, d2 = x2, d3 = x3, d4 = x4, d5 = x5, d6 = x6, d7 = x7;
 
             //Step-1
-            xo0 = x0 + x7;
-            xo1 = x1 + x6;
-            xo2 = x2 + x5;
-            xo3 = x3 + x4;
-            xo4 = x3 - x4;
-            xo5 = x2 - x5;
-            xo6 = x1 - x6;
-            xo7 = x0 - x7;
-            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
+            t0 = d0 + d7;
+            t1 = d1 + d6;
+            t2 = d2 + d5;
+            t3 = d3 + d4;
+            t4 = d3 - d4;
+            t5 = d2 - d5;
+            t6 = d1 - d6;
+            t7 = d0 - d7;
+            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
 
             //Step-2
-            xo0 = x0 + x3;
-            xo1 = x1 + x2;
-            xo2 = x1 - x2;
-            xo3 = x0 - x3;
-            xo4 = -x4 - x5;
-            xo5 = x5 + x6;
-            xo6 = x6 + x7;
+            t0 = d0 + d3;
+            t1 = d1 + d2;
+            t2 = d1 - d2;
+            t3 = d0 - d3;
+            t4 = -d4 - d5;
+            t5 = d5 + d6;
+            t6 = d6 + d7;
             //No 7
-            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
+            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
 
             //Step-3
-            xo0 = x0 + x1;
-            xo1 = x0- x1;
-            xo2 = x2+x3;
+            t0 = d0 + d1;
+            t1 = d0 - d1;
+            t2 = d2 + d3;
             //No 3-7
-            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
+            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
 
             //Step-4
             //No 0-1
-            xo2 = (int)Math.Round((x2 * a1));
+            t2 = d2 * a1;
             //No 3
-            double tempA5 = (x4 + x6) * a5;
-            xo4 = (int)Math.Round((-(x4 * a2) - xo5));
-            xo5 = (int)Math.Round((x5 * a3));
-            xo6 = (int)Math.Round(((x6 * a4) - tempA5));
+            double tempA5 = (d4 + d6) * a5;
+            t4 = (-(d4 * a2)) - t5;
+            t5 = d5 * a3;
+            t6 = (d6 * a4) - tempA5;
             //No 7
-            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
+            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
 
             //Step-5
             //No 0-1
-            xo2 = x2 + x3;
-            xo3 = x3 - x2;
+            t2 = d2 + d3;
+            t3 = d3 - d2;
             //No 4
-            xo5 = x5 + x7;
+            t5 = d5 + d7;
             //No 6
-            xo7 = x7 - x5;
-            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
+            t7 = d7 - d5;
+            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
 
             //Step-6
             //No 0-3
-            xo4 = x4 + x7;
-            xo5 = x5 + x6;
-            xo6 = x5 - x6;
-            xo7 = x7 - x4;
-            Assign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
+            t4 = d4 + d7;
+            t5 = d5 + d6;
+            t6 = d5 - d6;
+            t7 = d7 - d4;
+            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
 
             //Step-7
-            xo0 = (int)Math.Round(x0 * s0);
-            xo1 = (int)Math.Round(x1 * s4);
-            xo2 = (int)Math.Round(x2 * s2);
-            xo3 = (int)Math.Round(x3 * s6);
-            xo4 = (int)Math.Round(x4 * s5);
-            xo5 = (int)Math.Round(x5 * s1);
-            xo6 = (int)Math.Round(x6 * s7);
-            xo7 = (int)Math.Round(x7 * s3);
-            Reassign(xo0, xo1, xo2, xo3, xo4, xo5, xo6, xo7, out x0, out x1, out x2, out x3, out x4, out x5, out x6, out x7);
+            t0 = d0 * s0;
+            t1 = d1 * s4;
+            t2 = d2 * s2;
+            t3 = d3 * s6;
+            t4 = d4 * s5;
+            t5 = d5 * s1;
+            t6 = d6 * s7;
+            t7 = d7 * s3;
+            Reassign(t0, t1, t2, t3, t4, t5, t6, t7, out xo0, out xo1, out xo2, out xo3, out xo4, out xo5, out xo6, out xo7);
 
         }
 
-        private void Assign(int xo0, int xo1, int xo2, int xo3, int xo4, int xo5, int xo6, int xo7, out int x0, out int x1, out int x2, out int x3, out int x4, out int x5, out int x6, out int x7)
+        private void Assign(double xo0, double xo1, double xo2, double xo3, double xo4, double xo5, double xo6, double xo7, out double x0, out double x1, out double x2, out double x3, out double x4, out double x5, out double x6, out double x7)
         {
             x0 = xo0;
             x1 = xo1;
@@ -321,7 +332,7 @@ namespace JpegConverter.DCT
             x7 = xo7;
         }
 
-        private void Reassign(int xo0, int xo1, int xo2, int xo3, int xo4, int xo5, int xo6, int xo7, out int x0, out int x1, out int x2, out int x3, out int x4, out int x5, out int x6, out int x7)
+        private void Reassign(double xo0, double xo1, double xo2, double xo3, double xo4, double xo5, double xo6, double xo7, out double x0, out double x1, out double x2, out double x3, out double x4, out double x5, out double x6, out double x7)
         {
             x0 = xo0;
             x4 = xo1;
