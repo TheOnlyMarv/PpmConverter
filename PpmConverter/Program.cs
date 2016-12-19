@@ -69,7 +69,7 @@ namespace JpegConverter
 
             CosinusTransformation ct = new CosinusTransformation(testImage);
 
-            int numOfTests = 20;
+            int numOfTests = 30;
 
             TestDirectDCT(numOfTests, ct);
             TestSeperateDCT(numOfTests, ct);

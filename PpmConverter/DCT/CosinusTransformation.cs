@@ -236,7 +236,7 @@ namespace JpegConverter.DCT
                 blocks[bId] = block;
             }
 
-            //TransformedImage = MergeBlockIntoImage(blocks);
+            TransformedImage = MergeBlockIntoImage(blocks);
             return TransformedImage;
         }
 
