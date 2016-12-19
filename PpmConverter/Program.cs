@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using JpegConverter.DCT;
+using JpegConverter.DCTPascal;
 using System.Threading.Tasks;
 
 namespace JpegConverter
@@ -68,6 +69,7 @@ namespace JpegConverter
             FillPixel(testImage);
 
             CosinusTransformation ct = new CosinusTransformation(testImage);
+            Arai test = new Arai(testImage);
 
             int numOfTests = 30;
 
@@ -75,18 +77,18 @@ namespace JpegConverter
             TestSeperateDCT(numOfTests, ct);
             TestAraiDCT(numOfTests, ct);
 
-            TestAraiDCTPascal(numOfTests, testImage);
+            TestAraiDCTPascal(numOfTests, test);
 
             Console.ReadLine();
         }
 
-        private static void TestAraiDCTPascal(int v, int[,] testImage)
+        private static void TestAraiDCTPascal(int v, Arai test)
         {
             DateTime start = DateTime.Now;
 
             for (int i = 0; i < v; i++)
             {
-                DCTPascal.Arai.araiDCT(testImage);
+                test.araiDCT();
             }
 
             DateTime end = DateTime.Now;
