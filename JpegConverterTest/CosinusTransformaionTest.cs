@@ -57,21 +57,21 @@ namespace JpegConverterTest
         {
             CosinusTransformation ct = new CosinusTransformation(test1);
             double[,] calculated = ct.DirectDCT();
-            for (int x = 0; x < test1.GetLength(0); x++)
+            for (int i = 0; i < test1.GetLength(0); i++)
             {
-                for (int y = 0; y < test1.GetLength(1); y++)
+                for (int j = 0; j < test1.GetLength(1); j++)
                 {
-                    Assert.AreEqual(result1[x, y], calculated[x, y]);
+                    Assert.IsTrue(result1[i, j] - 1 < calculated[i, j] && result1[i, j] + 1 > calculated[i, j], "Value must be greater {0} and smaller {1}. But was: {2}", result1[i, j] - 1, result1[i, j] + 1, calculated[i, j]);
                 }
             }
 
             ct = new CosinusTransformation(test2);
             calculated = ct.DirectDCT();
-            for (int x = 0; x < test2.GetLength(0); x++)
+            for (int i = 0; i < test2.GetLength(0); i++)
             {
-                for (int y = 0; y < test2.GetLength(1); y++)
+                for (int j = 0; j < test2.GetLength(1); j++)
                 {
-                    Assert.AreEqual(result2[x, y], calculated[x, y]);
+                    Assert.IsTrue(result2[i, j] - 1 < calculated[i, j] && result2[i, j] + 1 > calculated[i, j], "Value must be greater {0} and smaller {1}. But was: {2}", result2[i, j] - 1, result2[i, j] + 1, calculated[i, j]);
                 }
             }
         }
@@ -86,17 +86,17 @@ namespace JpegConverterTest
             {
                 for (int j = 0; j < test1.GetLength(1); j++)
                 {
-                    Assert.AreEqual(result1[i, j], calculated[i, j]);
+                    Assert.IsTrue(result1[i, j] - 1 < calculated[i, j] && result1[i, j] + 1 > calculated[i, j], "Value must be greater {0} and smaller {1}. But was: {2}", result1[i, j] - 1, result1[i, j] + 1, calculated[i, j]);
                 }
             }
 
             ct = new CosinusTransformation(test2);
             calculated = ct.SeperateDCT();
-            for (int x = 0; x < test2.GetLength(0); x++)
+            for (int i = 0; i < test2.GetLength(0); i++)
             {
-                for (int y = 0; y < test2.GetLength(1); y++)
+                for (int j = 0; j < test2.GetLength(1); j++)
                 {
-                    Assert.AreEqual(result2[x, y], calculated[x, y]);
+                    Assert.IsTrue(result2[i, j] - 1 < calculated[i, j] && result2[i, j] + 1 > calculated[i, j], "Value must be greater {0} and smaller {1}. But was: {2}", result2[i, j] - 1, result2[i, j] + 1, calculated[i, j]);
                 }
             }
         }
@@ -111,7 +111,7 @@ namespace JpegConverterTest
             {
                 for (int j = 0; j < result1.GetLength(1); j++)
                 {
-                    Assert.AreEqual(test1[i, j], calculated[i, j]);
+                    Assert.IsTrue(test1[i, j] - 1 < calculated[i, j] && test1[i, j] + 1 > calculated[i, j], "Value must be greater {0} and smaller {1}. But was: {2}", test1[i, j] - 1, test1[i, j] + 1, calculated[i, j]);
                 }
             }
         }
@@ -126,7 +126,7 @@ namespace JpegConverterTest
             {
                 for (int j = 0; j < test1.GetLength(1); j++)
                 {
-                    Assert.AreEqual(result1[i, j], calculated[i, j]);
+                    Assert.IsTrue(result1[i, j] - 1 < calculated[i, j] && result1[i, j] + 1 > calculated[i, j], "Value must be greater {0} and smaller {1}. But was: {2}", result1[i, j] - 1, result1[i, j] + 1, calculated[i, j]);
                 }
             }
         }
