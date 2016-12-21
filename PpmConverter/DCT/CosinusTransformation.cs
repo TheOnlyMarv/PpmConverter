@@ -212,15 +212,17 @@ namespace JpegConverter.DCT
             double[,] image = TransformedImage;
 
             int blocksEachRow = OriginalImage.GetLength(0) / BLOCK_SIZE;
+            //List<Task> tasks = new List<Task>();
             for (int bId = 0; bId < (OriginalImage.GetLength(0) * OriginalImage.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
                 int offsetX = (bId % blocksEachRow) * 8;
                 int offsetY = (bId / blocksEachRow) * 8;
-                
+
+                //tasks.Add(Task.Run(() => AraiForOneBlock(new object[] { image, offsetX, offsetY })));
                 AraiForOneBlock(new object[] { image, offsetX, offsetY });
             }
 
-
+            //Task.WaitAll(tasks.ToArray());
             return image;
         }
 

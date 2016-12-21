@@ -71,10 +71,10 @@ namespace JpegConverter
             CosinusTransformation ct = new CosinusTransformation(testImage);
             //Arai test = new Arai(testImage);
 
-            int numOfTests = 500;
+            int numOfTests = 30;
 
-            //TestDirectDCT(numOfTests, ct);
-            //TestSeperateDCT(numOfTests, ct);
+            TestDirectDCT(numOfTests, ct);
+            TestSeperateDCT(numOfTests, ct);
             TestAraiDCT(numOfTests, ct);
 
             //TestAraiDCTPascal(numOfTests, test);
@@ -84,66 +84,67 @@ namespace JpegConverter
 
         private static void TestAraiDCTPascal(int v, Arai test)
         {
-            DateTime start = DateTime.Now;
+            Stopwatch sp = new Stopwatch();
+
+            sp.Start();
 
             for (int i = 0; i < v; i++)
             {
                 test.araiDCT();
             }
 
-            DateTime end = DateTime.Now;
+            sp.Stop();
 
-            TimeSpan time = TimeSpan.FromTicks((end.Ticks - start.Ticks) / v);
 
-            Console.WriteLine("Avg time for pascal arai DCT over " + v + " times: " + time);
+            Console.WriteLine("Avg time for pascal arai DCT over " + v + " times: " + sp.Elapsed.TotalMilliseconds / v);
         }
 
         private static void TestAraiDCT(int v, CosinusTransformation ct)
         {
-            DateTime start = DateTime.Now;
+            Stopwatch sp = new Stopwatch();
+
+            sp.Start();
 
             for (int i = 0; i < v; i++)
             {
                 ct.AraiDCT();
             }
 
-            DateTime end = DateTime.Now;
+            sp.Stop();
 
-            TimeSpan time = TimeSpan.FromTicks((end.Ticks - start.Ticks) / v);
-
-            Console.WriteLine("Avg time for arai DCT over " + v + " times: " + time);
+            Console.WriteLine("Avg time for arai DCT over " + v + " times: " + sp.Elapsed.TotalMilliseconds / v);
         }
 
         private static void TestSeperateDCT(int v, CosinusTransformation ct)
         {
-            DateTime start = DateTime.Now;
+            Stopwatch sp = new Stopwatch();
+
+            sp.Start();
 
             for (int i = 0; i < v; i++)
             {
                 ct.SeperateDCT();
             }
 
-            DateTime end = DateTime.Now;
+            sp.Stop();
 
-            TimeSpan time = TimeSpan.FromTicks((end.Ticks - start.Ticks) / v);
-
-            Console.WriteLine("Avg time for seperate DCT over " + v + " times: " + time);
+            Console.WriteLine("Avg time for seperate DCT over " + v + " times: " + sp.Elapsed.TotalMilliseconds / v);
         }
 
         private static void TestDirectDCT(int v, CosinusTransformation ct)
         {
-            DateTime start = DateTime.Now;
+            Stopwatch sp = new Stopwatch();
+
+            sp.Start();
 
             for (int i = 0; i < v; i++)
             {
                 ct.DirectDCT();
             }
-            
-            DateTime end = DateTime.Now;
 
-            TimeSpan  time = TimeSpan.FromTicks((end.Ticks - start.Ticks) / v);
+            sp.Stop();
 
-            Console.WriteLine("Avg time for direct DCT over " + v + " times: " + time);
+            Console.WriteLine("Avg time for direct DCT over " + v + " times: " + sp.Elapsed.TotalMilliseconds / v);
         }
 
         private static void FillPixel(double[,] testImage)
