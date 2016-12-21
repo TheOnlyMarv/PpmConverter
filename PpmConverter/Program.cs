@@ -65,19 +65,19 @@ namespace JpegConverter
 
         private static void TestPerformanceDCT()
         {
-            int[,] testImage = new int[256, 256];
+            double[,] testImage = new double[256, 256];
             FillPixel(testImage);
 
             CosinusTransformation ct = new CosinusTransformation(testImage);
-            Arai test = new Arai(testImage);
+            //Arai test = new Arai(testImage);
 
-            int numOfTests = 30;
+            int numOfTests = 500;
 
-            TestDirectDCT(numOfTests, ct);
-            TestSeperateDCT(numOfTests, ct);
+            //TestDirectDCT(numOfTests, ct);
+            //TestSeperateDCT(numOfTests, ct);
             TestAraiDCT(numOfTests, ct);
 
-            TestAraiDCTPascal(numOfTests, test);
+            //TestAraiDCTPascal(numOfTests, test);
 
             Console.ReadLine();
         }
@@ -146,7 +146,7 @@ namespace JpegConverter
             Console.WriteLine("Avg time for direct DCT over " + v + " times: " + time);
         }
 
-        private static void FillPixel(int[,] testImage)
+        private static void FillPixel(double[,] testImage)
         {
             for (int x = 0; x < testImage.GetLength(0); x++)
             {

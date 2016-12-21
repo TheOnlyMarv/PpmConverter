@@ -10,7 +10,7 @@ namespace JpegConverterTest
     [TestClass]
     public class CosinusTransformaionTest
     {
-        int[,] test1 = {
+        double[,] test1 = {
                 { 255, 255, 255, 255, 255, 255, 255, 255 },
                 { 255, 255, 255, 255, 255, 255, 255, 255 },
                 { 255, 255, 255, 255, 255, 255, 255, 255 },
@@ -20,7 +20,7 @@ namespace JpegConverterTest
                 { 255, 255, 255, 255, 255, 255, 255, 255 },
                 { 255, 255, 255, 255, 255, 255, 255, 255 }
             };
-        int[,] result1 = {
+        double[,] result1 = {
                 { 2040, 0, 0, 0, 0, 0, 0, 0 },
                 { 0, 0, 0, 0, 0, 0, 0, 0 },
                 { 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -31,7 +31,7 @@ namespace JpegConverterTest
                 { 0, 0, 0, 0, 0, 0, 0, 0 }
             };
 
-        int[,] test2 = { 
+        double[,] test2 = { 
             { 28, 34, 20, 18, 22, 17, 17, 17 }, 
             { 31, 36, 20, 31, 166, 184, 177, 140 }, 
             { 16, 17, 17, 95, 197, 185, 152, 161 }, 
@@ -41,7 +41,7 @@ namespace JpegConverterTest
             { 161, 160, 163, 148, 142, 146, 155, 96 }, 
             { 158, 139, 153, 148, 154, 155, 142, 35 }
         };
-        int[,] result2 = { 
+        double[,] result2 = { 
             { 680, -118, -44, 63, -8, 9, -24, 0 }, 
             { -181, -187, 27, 26, 33, -59, 2, 13 }, 
             { 102, 107, -26, 44, -41, 1, 2, 28 }, 
@@ -56,7 +56,7 @@ namespace JpegConverterTest
         public void TestDirectDCT()
         {
             CosinusTransformation ct = new CosinusTransformation(test1);
-            int[,] calculated = ct.DirectDCT();
+            double[,] calculated = ct.DirectDCT();
             for (int x = 0; x < test1.GetLength(0); x++)
             {
                 for (int y = 0; y < test1.GetLength(1); y++)
@@ -80,7 +80,7 @@ namespace JpegConverterTest
         public void TestSeperateDCT()
         {
             CosinusTransformation ct = new CosinusTransformation(test1);
-            int[,] calculated = ct.SeperateDCT();
+            double[,] calculated = ct.SeperateDCT();
 
             for (int i = 0; i < test1.GetLength(0); i++)
             {
@@ -105,7 +105,7 @@ namespace JpegConverterTest
         public void TestInvereDCT()
         {
             CosinusTransformation ct = new CosinusTransformation(result1);
-            int[,] calculated = ct.InverseDirectDCT();
+            double[,] calculated = ct.InverseDirectDCT();
 
             for (int i = 0; i < result1.GetLength(0); i++)
             {
@@ -120,7 +120,7 @@ namespace JpegConverterTest
         public void TestAraiDCT()
         {
             CosinusTransformation ct = new CosinusTransformation(test1);
-            int[,] calculated = ct.AraiDCT();
+            double[,] calculated = ct.AraiDCT();
 
             for (int i = 0; i < test1.GetLength(0); i++)
             {
