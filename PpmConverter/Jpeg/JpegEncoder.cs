@@ -10,6 +10,8 @@ namespace JpegConverter.Jpeg
     {
         private Bitstream bitstream;
 
+        private const byte SEGMENT_BEGIN = 0xff;
+
         public JpegEncoder()
         {
             bitstream = new Bitstream();
@@ -31,20 +33,21 @@ namespace JpegConverter.Jpeg
 
         private void WirteEndOfImage()
         {
-            bitstream.WriteByte(0xff);
+            bitstream.WriteByte(SEGMENT_BEGIN);
             bitstream.WriteByte(0xd9);
         }
 
         private void WriteStartOfImage()
         {
-            bitstream.WriteByte(0xff);
+            bitstream.WriteByte(SEGMENT_BEGIN);
             bitstream.WriteByte(0xd8);
         }
 
+        #region Segments
         private void WriteApp0()
         {
             //Marker
-            bitstream.WriteByte(0xff);
+            bitstream.WriteByte(SEGMENT_BEGIN);
             bitstream.WriteByte(0xe0);
 
             //Laenge des Segments
@@ -86,7 +89,7 @@ namespace JpegConverter.Jpeg
         private void WriteSof0(PPMImage image)
         {
             //Marker
-            bitstream.WriteByte(0xff);
+            bitstream.WriteByte(SEGMENT_BEGIN);
             bitstream.WriteByte(0xc0);
 
             //Laenge: 8 + anz. Komponenten * 3
@@ -138,7 +141,7 @@ namespace JpegConverter.Jpeg
         private void WriteDht(JpegConverter.Huffman.Huffman ht)
         {
             //Marker
-            bitstream.WriteByte(0xff);
+            bitstream.WriteByte(SEGMENT_BEGIN);
             bitstream.WriteByte(0xc4);
 
             //Laenge des Segments
@@ -161,7 +164,7 @@ namespace JpegConverter.Jpeg
             {
                 bitstream.WriteByte((byte)symbol);
             }
-          
         }
+        #endregion
     }
 }
