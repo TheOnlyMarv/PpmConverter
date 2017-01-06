@@ -55,8 +55,7 @@ namespace JpegConverterTest
         [TestMethod]
         public void TestDirectDCT()
         {
-            CosinusTransformation ct = new CosinusTransformation(test1);
-            double[,] calculated = ct.DirectDCT();
+            double[,] calculated = CosinusTransformation.DirectDCT(test1);
             for (int i = 0; i < test1.GetLength(0); i++)
             {
                 for (int j = 0; j < test1.GetLength(1); j++)
@@ -65,8 +64,7 @@ namespace JpegConverterTest
                 }
             }
 
-            ct = new CosinusTransformation(test2);
-            calculated = ct.DirectDCT();
+            calculated = CosinusTransformation.DirectDCT(test2);
             for (int i = 0; i < test2.GetLength(0); i++)
             {
                 for (int j = 0; j < test2.GetLength(1); j++)
@@ -79,8 +77,7 @@ namespace JpegConverterTest
         [TestMethod]
         public void TestSeperateDCT()
         {
-            CosinusTransformation ct = new CosinusTransformation(test1);
-            double[,] calculated = ct.SeperateDCT();
+            double[,] calculated = CosinusTransformation.SeperateDCT(test1);
 
             for (int i = 0; i < test1.GetLength(0); i++)
             {
@@ -90,8 +87,7 @@ namespace JpegConverterTest
                 }
             }
 
-            ct = new CosinusTransformation(test2);
-            calculated = ct.SeperateDCT();
+            calculated = CosinusTransformation.SeperateDCT(test2);
             for (int i = 0; i < test2.GetLength(0); i++)
             {
                 for (int j = 0; j < test2.GetLength(1); j++)
@@ -104,8 +100,7 @@ namespace JpegConverterTest
         [TestMethod]
         public void TestInvereDCT()
         {
-            CosinusTransformation ct = new CosinusTransformation(result1);
-            double[,] calculated = ct.InverseDirectDCT();
+            double[,] calculated = CosinusTransformation.InverseDirectDCT(result1);
 
             for (int i = 0; i < result1.GetLength(0); i++)
             {
@@ -119,8 +114,7 @@ namespace JpegConverterTest
         [TestMethod]
         public void TestAraiDCT()
         {
-            CosinusTransformation ct = new CosinusTransformation(test1);
-            double[,] calculated = ct.AraiDCT();
+            double[,] calculated = CosinusTransformation.AraiDCT(test1);
 
             for (int i = 0; i < test1.GetLength(0); i++)
             {

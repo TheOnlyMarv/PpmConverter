@@ -9,30 +9,12 @@ namespace JpegConverter.DCT
 {
     public class CosinusTransformation
     {
-        private const int BLOCK_SIZE = 8;
-        private const double ONE_DIV_SQRT2 = 0.70710678118654746;
-        private double[,] OriginalImage { get; set; }
-        private double[,] TransformedImage { get; set; }
-
-        public CosinusTransformation(double[,] image)
-        {
-            if (image.GetLength(0) % BLOCK_SIZE == 0 && image.GetLength(1) % BLOCK_SIZE == 0)
-            {
-                this.OriginalImage = image;
-                this.TransformedImage = image.Clone() as double[,];
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException("Dimensions not 8 divisible");
-            }
-        }
+        private static int BLOCK_SIZE = 8;
+        private static double ONE_DIV_SQRT2 = 0.70710678118654746;
 
         #region Splitting and Merging
-        private double[,] MergeBlockIntoImage(List<double[,]> blocks)
+        private static double[,] MergeBlockIntoImage(List<double[,]> blocks, int sizeX, int sizeY)
         {
-            int sizeX = OriginalImage.GetLength(0);
-            int sizeY = OriginalImage.GetLength(1);
-
             double[,] image = new double[sizeX, sizeY];
 
             int offsetX = 0;
@@ -56,19 +38,19 @@ namespace JpegConverter.DCT
             return image;
         }
 
-        private List<double[,]> SplitImageIntoBlocks()
+        private static List<double[,]> SplitImageIntoBlocks(double[,] image)
         {
             List<double[,]> result = new List<double[,]>();
-            for (int allX = 0; allX < OriginalImage.GetLength(0); allX += BLOCK_SIZE)
+            for (int allX = 0; allX < image.GetLength(0); allX += BLOCK_SIZE)
             {
-                for (int allY = 0; allY < OriginalImage.GetLength(1); allY += BLOCK_SIZE)
+                for (int allY = 0; allY < image.GetLength(1); allY += BLOCK_SIZE)
                 {
                     double[,] block = new double[BLOCK_SIZE, BLOCK_SIZE];
                     for (int x = 0; x < BLOCK_SIZE; x++)
                     {
                         for (int y = 0; y < BLOCK_SIZE; y++)
                         {
-                            block[x, y] = OriginalImage[allX + x, allY + y];
+                            block[x, y] = image[allX + x, allY + y];
                         }
                     }
                     result.Add(block);
@@ -80,9 +62,9 @@ namespace JpegConverter.DCT
         #endregion
 
         #region DirectDCT
-        public double[,] DirectDCT()
+        public static double[,] DirectDCT(double[,] image)
         {
-            List<double[,]> blocks = SplitImageIntoBlocks();
+            List<double[,]> blocks = SplitImageIntoBlocks(image);
 
             for (int bId = 0; bId < blocks.Count; bId++)
             {
@@ -109,16 +91,15 @@ namespace JpegConverter.DCT
                 blocks[bId] = newBlock;
             }
 
-            TransformedImage = MergeBlockIntoImage(blocks);
-            return TransformedImage;
+            return MergeBlockIntoImage(blocks, image.GetLength(0), image.GetLength(1));
         }
 
         #endregion
 
         #region SeperateDCT
-        public double[,] SeperateDCT()
+        public static double[,] SeperateDCT(double[,] image)
         {
-            List<double[,]> blocks = SplitImageIntoBlocks();
+            List<double[,]> blocks = SplitImageIntoBlocks(image);
 
             for (int bId = 0; bId < blocks.Count; bId++)
             {
@@ -143,16 +124,15 @@ namespace JpegConverter.DCT
             }
 
 
-            TransformedImage = MergeBlockIntoImage(blocks);
-            return TransformedImage;
+            return MergeBlockIntoImage(blocks, image.GetLength(0), image.GetLength(1));
         }
 
         #endregion
 
         #region Inverse DirectDCT
-        public double[,] InverseDirectDCT()
+        public static double[,] InverseDirectDCT(double[,] image)
         {
-            List<double[,]> blocks = SplitImageIntoBlocks();
+            List<double[,]> blocks = SplitImageIntoBlocks(image);
 
             for (int bId = 0; bId < blocks.Count; bId++)
             {
@@ -180,8 +160,8 @@ namespace JpegConverter.DCT
                 blocks[bId] = newBlock;
             }
 
-            TransformedImage = MergeBlockIntoImage(blocks);
-            return TransformedImage;
+            image = MergeBlockIntoImage(blocks, image.GetLength(0), image.GetLength(1));
+            return image;
         }
 
         #endregion
@@ -207,34 +187,22 @@ namespace JpegConverter.DCT
         private const double a4 = c6 + c2;
         private const double a5 = c6;
 
-        public double[,] AraiDCT()
+        public static double[,] AraiDCT(double[,] image)
         {
-            double[,] image = TransformedImage;
-
-            int blocksEachRow = OriginalImage.GetLength(0) / BLOCK_SIZE;
-            //List<Task> tasks = new List<Task>();
-            for (int bId = 0; bId < (OriginalImage.GetLength(0) * OriginalImage.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
+            int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
+            for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
                 int offsetX = (bId % blocksEachRow) * 8;
                 int offsetY = (bId / blocksEachRow) * 8;
 
-                //tasks.Add(Task.Run(() => AraiForOneBlock(new object[] { image, offsetX, offsetY })));
-                AraiForOneBlock(new object[] { image, offsetX, offsetY });
+                AraiForOneBlock(image, offsetX, offsetY);
             }
 
-            //Task.WaitAll(tasks.ToArray());
             return image;
         }
 
-        private void AraiForOneBlock(object state)//double[,] image, int offsetX, int offsetY
+        private static void AraiForOneBlock(double[,] image, int offsetX, int offsetY)//double[,] image, int offsetX, int offsetY
         {
-            object[] stateArray = state as object[];
-            double[,] image = stateArray[0] as double[,];
-            int offsetX = Convert.ToInt32(stateArray[1]);
-            int offsetY = Convert.ToInt32(stateArray[2]);
-
-
-
             for (int i = 0; i < BLOCK_SIZE; i++)
             {
                 int realI = offsetX + i;
@@ -250,7 +218,7 @@ namespace JpegConverter.DCT
             }
         }
 
-        private void Arai(
+        private static void Arai(
             double x0, double x1, double x2, double x3, double x4, double x5, double x6, double x7,
             out double xo0, out double xo1, out double xo2, out double xo3, out double xo4, out double xo5, out double xo6, out double xo7)
         {
@@ -329,7 +297,7 @@ namespace JpegConverter.DCT
 
         }
 
-        private void Assign(double xo0, double xo1, double xo2, double xo3, double xo4, double xo5, double xo6, double xo7, out double x0, out double x1, out double x2, out double x3, out double x4, out double x5, out double x6, out double x7)
+        private static void Assign(double xo0, double xo1, double xo2, double xo3, double xo4, double xo5, double xo6, double xo7, out double x0, out double x1, out double x2, out double x3, out double x4, out double x5, out double x6, out double x7)
         {
             x0 = xo0;
             x1 = xo1;
@@ -341,7 +309,7 @@ namespace JpegConverter.DCT
             x7 = xo7;
         }
 
-        private void Reassign(double xo0, double xo1, double xo2, double xo3, double xo4, double xo5, double xo6, double xo7, out double x0, out double x1, out double x2, out double x3, out double x4, out double x5, out double x6, out double x7)
+        private static void Reassign(double xo0, double xo1, double xo2, double xo3, double xo4, double xo5, double xo6, double xo7, out double x0, out double x1, out double x2, out double x3, out double x4, out double x5, out double x6, out double x7)
         {
             x0 = xo0;
             x4 = xo1;
@@ -353,24 +321,11 @@ namespace JpegConverter.DCT
             x3 = xo7;
         }
 
-        private double Add(double a, double b)
-        {
-            return a + b;
-        }
-        private double Sub(double a, double b)
-        {
-            return a - b;
-        }
-        private double Multi(double a, double b)
-        {
-            return a * b;
-        }
-
         #endregion
 
         #region Matrix Multiplications
 
-        private double[,] MatrixMultiplication(double[,] m1, double[,] m2)
+        private static double[,] MatrixMultiplication(double[,] m1, double[,] m2)
         {
             double[,] newMatrix = new double[BLOCK_SIZE, BLOCK_SIZE];
             for (int x = 0; x < BLOCK_SIZE; x++)

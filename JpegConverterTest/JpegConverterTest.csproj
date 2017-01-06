@@ -53,7 +53,6 @@
     <Compile Include="BitstreamTest.cs" />
     <Compile Include="CosinusTransformaionTest.cs" />
     <Compile Include="HuffmanTest.cs" />
-    <Compile Include="PascalKosinusTransforamtionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
