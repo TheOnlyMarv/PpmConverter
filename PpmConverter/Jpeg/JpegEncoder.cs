@@ -143,52 +143,25 @@ namespace JpegConverter.Jpeg
 
             //Laenge des Segments
             bitstream.WriteByte(0x00);
-            int length = 17 + ht.CodeDictionary.Count;
+            int length = 17 + ht.NumberOfSymbols();
             bitstream.WriteByte((byte)length);
 
             // HT Informationen
-            int[] htInfo = {0, 0, 0, 1, 0, 0, 0, 0};
+            int[] htInfo = {0, 0, 0, 0, 0, 0, 0, 0};
             bitstream.WriteBits(htInfo);
 
-            List<JpegConverter.Huffman.Node> nodesAtLevel = new List<JpegConverter.Huffman.Node>();
-            nodesAtLevel.Add(ht.Root);
-            List<Int32> symbols = new List<Int32>();
-            int[] levels = new int[16];
-            for (int i = 0; i < 16; ++i)
-            {
-                for (int j = 0; j < nodesAtLevel.Count; ++j)
-                {
-                    if (nodesAtLevel[j].Leaf)
-                    {
-                        levels[i] += 1;
-                        nodesAtLevel.RemoveAt(j);
-                        symbols.Add(nodesAtLevel[j].Value);
-                        continue;
-                    }
-                    if (nodesAtLevel[j].Left != null) nodesAtLevel.Add(nodesAtLevel[j].Left);
-                    if (nodesAtLevel[j].Right != null) nodesAtLevel.Add(nodesAtLevel[j].Right);
-                    nodesAtLevel.RemoveAt(j);
-                }
-            }
-            foreach (int count in levels)
+            // Anzahl von Symbolen mit Kodelängen von 1..16 (Summe dieser Anzahlen ist Gesamtzahl der Symbole, muss <= 256)
+            foreach (int count in ht.GetCountForEachLevel().Select(x=>x.Value))
             {
                 bitstream.WriteByte((byte)count);
             }
-            
-            String toWrite = "";
-            foreach (Int32 symbol in symbols)
-            {
-                toWrite += ht.GetCode(symbol);
-            }
 
-            int[] bits = new int[toWrite.Length];
-            int counter = 0;
-            foreach (char bit in toWrite)
+            // Tabelle mit den Symbolen in aufsteigender Folge der Kodelängen (n = total Gesamtzahl der Symbole)
+            foreach (int symbol in ht.GetSymbolsAscendingOnCodeLength())
             {
-                if (bit == '0') bits[counter++] = 0;
-                else bits[counter++] = 1;
+                bitstream.WriteByte((byte)symbol);
             }
-            bitstream.WriteBits(bits);
+          
         }
     }
 }

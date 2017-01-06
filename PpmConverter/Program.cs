@@ -16,7 +16,21 @@ namespace JpegConverter
         public static void Main(string[] args)
         {
 
-            TestPerformanceDCT();
+
+            if (args.Length == 1 && string.Compare(args[0], "-test", true) == 0)
+            {
+                TestPerformanceDCT();
+            }
+            else if (args.Length == 1)
+            {
+                JpegEncoder encoder = new JpegEncoder();
+                PPMImage image = LoadImageFromFile(args[0]);
+                Dictionary<int, int> sl = GenerateTestHuffmanSymbols();
+                Huffman.Huffman huffman = new Huffman.Huffman(sl);
+                huffman.CreateLimitedHuffman(16, true);
+                encoder.WriteMarker(image, huffman);
+                encoder.SaveIntoFile("image.data");
+            }
 
             //BitstreamTest.StartTests();
             //BitstreamTest.StartBenchmarking(10000000);
@@ -63,6 +77,19 @@ namespace JpegConverter
 
         }
 
+        private static Dictionary<int,int> GenerateTestHuffmanSymbols()
+        {
+            Dictionary<int, int> sl = new Dictionary<int, int>();
+            sl.Add(1, 4);
+            sl.Add(2, 4);
+            sl.Add(3, 6);
+            sl.Add(4, 6);
+            sl.Add(5, 7);
+            sl.Add(6, 9);
+            return sl;
+        }
+
+        #region DCTPerformanceTests
         private static void TestPerformanceDCT()
         {
             double[,] testImage = new double[256, 256];
@@ -71,7 +98,7 @@ namespace JpegConverter
             CosinusTransformation ct = new CosinusTransformation(testImage);
             //Arai test = new Arai(testImage);
 
-            int numOfTests = 30;
+            int numOfTests = 50;
 
             TestDirectDCT(numOfTests, ct);
             TestSeperateDCT(numOfTests, ct);
@@ -157,6 +184,8 @@ namespace JpegConverter
                 }
             }
         }
+        #endregion
+
 
         private static void SaveJpegIntoFile(JpegEncoder jpegEncoder, string destination)
         {

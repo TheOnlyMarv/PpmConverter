@@ -11,7 +11,7 @@ namespace JpegConverter.Huffman
     {
         private Dictionary<Symbol, int> Symbols { get; set; }
         public Node Root { get; set; }
-        public Dictionary<Symbol, string> CodeDictionary { get; set; }
+        private Dictionary<Symbol, string> CodeDictionary { get; set; }
 
         public Huffman(Dictionary<Symbol, int> symbols)
         {
@@ -56,6 +56,15 @@ namespace JpegConverter.Huffman
         #endregion
 
         #region CodeFinding
+        public int NumberOfSymbols()
+        {
+            if (CodeDictionary == null)
+            {
+                CreateCodeDictionary(Root);
+            }
+            return CodeDictionary.Count;
+        }
+
         public string GetCode(Symbol symbol)
         {
             if (CodeDictionary == null)
@@ -163,6 +172,10 @@ namespace JpegConverter.Huffman
 
         private void CountLevelEntries(Dictionary<int, int> dictionary, Node node, int level = 0)
         {
+            if (node == null)
+            {
+                return;
+            }
             if (node.Leaf)
             {
                 try
@@ -254,6 +267,28 @@ namespace JpegConverter.Huffman
                 }
             }
             return retVal;
+        }
+        #endregion
+
+        #region Utilities
+        public Dictionary<int, int> GetCountForEachLevel()
+        {
+            Dictionary<int, int> result = new Dictionary<int, int>();
+            for (int i = 1; i <= 16; i++)
+            {
+                result[i] = 0;
+            }
+            CountLevelEntries(result, Root);
+            return result;
+        }
+
+        public List<Symbol> GetSymbolsAscendingOnCodeLength()
+        {
+            if (CodeDictionary == null)
+            {
+                CreateCodeDictionary(Root);
+            }
+            return CodeDictionary.OrderBy(x => x.Value.Length).Select(x => x.Key).ToList();
         }
         #endregion
     }
