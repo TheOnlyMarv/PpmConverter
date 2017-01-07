@@ -68,6 +68,7 @@
     <Compile Include="Huffman\Node.cs" />
     <Compile Include="Huffman\PackageMerge.cs" />
     <Compile Include="Jpeg\JpegEncoder.cs" />
+    <Compile Include="Quantisation\Quantisation.cs" />
     <Compile Include="Stream\Bitstream.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="PPMImage.cs" />

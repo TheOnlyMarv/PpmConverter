@@ -54,6 +54,7 @@
     <Compile Include="CosinusTransformaionTest.cs" />
     <Compile Include="HuffmanTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuantisationTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PpmConverter\JpegConverter.csproj">
