@@ -28,7 +28,43 @@ namespace JpegConverter.Jpeg
             WriteApp0();
             WriteSof0(image);
             WriteDht(ht);
+            WriteDqt();
             WirteEndOfImage();
+        }
+
+        private void WriteDqt()
+        {
+            //Marker
+            bitstream.WriteByte(SEGMENT_BEGIN);
+            bitstream.WriteByte(0xdb);
+
+            //Länge 
+            int length = 132;
+            bitstream.WriteByte((byte)(length >> 8));
+            bitstream.WriteByte((byte)length);
+
+            //Luminance QT
+            // bit 0..3: Nummer der QT (0..3, sonst Fehler); bit 4..7: Genauigkeit der QT, 0 = 8 bit, sonst 16 bit
+            int[] bits = { 0, 0, 0, 0, 0, 0, 0, 0 };
+            bitstream.WriteBits(bits);
+
+            // Schreiben der Koeffizienten in ZickZack-Sortierung
+            foreach (int koeffizient in Quantisation.Quantisation.QuantisationTableZickZack)
+            {
+                bitstream.WriteByte((byte)koeffizient);
+            }
+
+
+            //Chrominance QT
+            // bit 0..3: Nummer der QT (0..3, sonst Fehler); bit 4..7: Genauigkeit der QT, 0 = 8 bit, sonst 16 bit
+            int[] bitss = { 0, 0, 0, 0, 0, 0, 0, 1 };
+            bitstream.WriteBits(bitss);
+
+            // Schreiben der Koeffizienten in ZickZack-Sortierung
+            foreach (int koeffizient in Quantisation.Quantisation.QuantisationTableZickZack)
+            {
+                bitstream.WriteByte((byte)koeffizient);
+            }
         }
 
         private void WirteEndOfImage()
@@ -117,9 +153,9 @@ namespace JpegConverter.Jpeg
             //  ID=1
             bitstream.WriteByte(0x01);
             //  Faktor unterabtastung (Bit 0-3 vertikal, 4-7 Horizontal);  Keine Unterabtastung: 0x22, Unterabtastung Faktor 2: 0x11
-            bitstream.WriteByte(0x11);
+            bitstream.WriteByte(0x22);
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
-            bitstream.WriteByte(0x01);
+            bitstream.WriteByte(0x00);
 
             //Komponente Cb
             //  ID=2

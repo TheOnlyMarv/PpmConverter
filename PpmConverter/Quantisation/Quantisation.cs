@@ -26,7 +26,7 @@ namespace JpegConverter.Quantisation
         }
 
         //private static int[] CreateZickZackSorting(int[,] quantisationTable)
-        public static int[] CreateZickZackSorting(int[,] quantisationTable)
+        public static int[] CreateZickZackSorting(int[,] block)
         {
             int[] result = new int[BLOCK_SIZE * BLOCK_SIZE];
             // TODO: Hier Zick Zack Sortierung einbringen :)
@@ -36,7 +36,7 @@ namespace JpegConverter.Quantisation
 
             for(int k = 0; k <64; k++)
             {
-                result[k] = quantisationTable[j, i];
+                result[k] = block[j, i];
                 i = i + direction;
                 j = j - direction;
                 if( j < 0)
