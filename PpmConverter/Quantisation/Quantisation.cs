@@ -25,7 +25,6 @@ namespace JpegConverter.Quantisation
             get { return CreateZickZackSorting(quantisationTable); }
         }
 
-        //private static int[] CreateZickZackSorting(int[,] quantisationTable)
         public static int[] CreateZickZackSorting(int[,] block)
         {
             int[] result = new int[BLOCK_SIZE * BLOCK_SIZE];
