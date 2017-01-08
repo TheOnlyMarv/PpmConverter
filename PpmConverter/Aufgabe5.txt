@@ -12,10 +12,11 @@ Relevant:
 10. DQT (Define Quantizatino Tablle) Segment
 11. SOF0 (Start of Frame 0) Segment
 12. DHT (Define Huffman Table) Segment
-13. EOI (End of Image) Segment
+13. SOS (Start of Scan) Segment
+14. EOI (End of Image) Segment
 
 Welche beschriebene Funktionalität wird nicht verwendet?
-SOS (Start of Scan) Segment
+?
 
 
 Aufgabe 5c:
