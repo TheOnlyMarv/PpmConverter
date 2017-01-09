@@ -64,35 +64,51 @@ namespace JpegConverter.DCT
         #region DirectDCT
         public static double[,] DirectDCT(double[,] image)
         {
-            List<double[,]> blocks = SplitImageIntoBlocks(image);
+            //List<double[,]> blocks = SplitImageIntoBlocks(image);
 
-            for (int bId = 0; bId < blocks.Count; bId++)
+            //for (int bId = offsetY; bId < offsetY + 8; bId++)
+            //{
+            //double[,] block = blocks[bId];
+            //double[,] newBlock = new double[BLOCK_SIZE, BLOCK_SIZE];
+            int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
+            for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
-                double[,] block = blocks[bId];
-                double[,] newBlock = new double[BLOCK_SIZE, BLOCK_SIZE];
-                for (int i = 0; i < block.GetLength(0); i++)
-                {
-                    double ci = i == 0 ? ONE_DIV_SQRT2 : 1.0;
-                    for (int j = 0; j < block.GetLength(1); j++)
-                    {
-                        double cj = j == 0 ? ONE_DIV_SQRT2 : 1.0;
+                int offsetX = (bId % blocksEachRow) * 8;
+                int offsetY = (bId / blocksEachRow) * 8;
 
-                        double innerSum = 0.0;
-                        for (int x = 0; x < BLOCK_SIZE; x++)
-                        {
-                            for (int y = 0; y < BLOCK_SIZE; y++)
-                            {
-                                innerSum += block[x, y] * Math.Cos(((2.0 * x + 1) * i * Math.PI) / (2.0 * BLOCK_SIZE)) * Math.Cos(((2 * y + 1) * j * Math.PI) / (2 * BLOCK_SIZE));
-                            }
-                        }
-                        newBlock[i, j] = (int)(Math.Round(2.0 / BLOCK_SIZE * ci * cj * innerSum));
-                    }
-                }
-                blocks[bId] = newBlock;
+                DirectDCTforOneBlock(image, offsetX, offsetY);
             }
 
-            return MergeBlockIntoImage(blocks, image.GetLength(0), image.GetLength(1));
+            return image;
+            //blocks[bId] = newBlock;
+            //}
+
+            //return MergeBlockIntoImage(blocks, image.GetLength(0), image.GetLength(1));
         }
+
+        private static void DirectDCTforOneBlock(double[,] image, int offsetX, int offsetY)
+        {
+            for (int i = offsetY; i < offsetY + 8; i++)
+            {
+                double ci = i == 0 ? ONE_DIV_SQRT2 : 1.0;
+                for (int j = offsetX; j < offsetX + 8; j++)
+                {
+                    double cj = j == 0 ? ONE_DIV_SQRT2 : 1.0;
+
+                    double innerSum = 0.0;
+                    for (int x = 0; x < BLOCK_SIZE; x++)
+                    {
+                        for (int y = 0; y < BLOCK_SIZE; y++)
+                        {
+                            innerSum += image[x, y] * Math.Cos(((2.0 * y + 1) * i * Math.PI) / (2.0 * BLOCK_SIZE)) * Math.Cos(((2 * x + 1) * j * Math.PI) / (2 * BLOCK_SIZE));
+                        }
+                    }
+                    image[i, j] = (int)(Math.Round(2.0 / BLOCK_SIZE * ci * cj * innerSum));
+                }
+            }
+        }
+
+
 
         #endregion
 
