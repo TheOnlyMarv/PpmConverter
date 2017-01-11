@@ -8,35 +8,50 @@ namespace JpegConverter.Encoding
 {
     public static class RunLengthEncoding
     {
-        public static List<KeyValuePair<byte, int[]>> CreateAcRLE(int[] block)
+        private static int BLOCK_SIZE = 8;
+
+        #region AC RLE
+        public static List<RunLengthAcPair> CreateAcRLE(int[] block)
         {
-            List<KeyValuePair<byte, int>> runLengthPairs = CreateRunLengthPairs(block);
-            List<int[]> bitPattern = CreateBitPatternAndCategory(runLengthPairs);
-            return null;
+            List<RunLengthAcPair> runLengthPairs = CreateRunLengthPairs(block);
+            CreateBitPatternAndCategory(runLengthPairs);
+            CreatePairAsByte(runLengthPairs);
+            return runLengthPairs;
         }
 
-        private static List<int[]> CreateBitPatternAndCategory(List<KeyValuePair<byte, int>> runLengthPairs)
+        private static void CreatePairAsByte(List<RunLengthAcPair> runLengthPairs)
         {
-            List<int[]> bitPattern = new List<int[]>();
+            foreach (var item in runLengthPairs)
+            {
+                item.PairAsByte = (byte)((item.Zeros << 4) | item.Category);
+            }
+        }
+
+        private static void CreateBitPatternAndCategory(List<RunLengthAcPair> runLengthPairs)
+        {
             for (int i = 0; i < runLengthPairs.Count; i++)
             {
-                int number = runLengthPairs[i].Value;
-                int category = GetCategory(number);
-                runLengthPairs[i] = new KeyValuePair<byte, int>(runLengthPairs[i].Key, category);
+                int number = runLengthPairs[i].Koeffizient;
+                byte category = GetCategory(number);
+                runLengthPairs[i].Category = category;
 
                 if (number == 0)
                 {
-                    bitPattern.Add(null);
+                    runLengthPairs[i].BitPattern = null;
                 }
                 else
                 {
-                    int lowerBound = -(int)(Math.Pow(2, category) - 1);
-                    int bitNumber = number < 0 ? Math.Abs(lowerBound - number) : number;
-
-                    int[] pattern = CreateBitPattern(bitNumber, category);
+                    runLengthPairs[i].BitPattern = CreateBitPattern(CreateBitNumber(category, number), category);
                 }
             }
-            return bitPattern;
+        }
+
+        private static int CreateBitNumber(byte category, int number)
+        {
+            int lowerBound = -(int)(Math.Pow(2, category) - 1);
+            int bitNumber = number < 0 ? Math.Abs(lowerBound - number) : number;
+
+            return bitNumber;
         }
 
         private static int[] CreateBitPattern(int bitNumber, int numBits)
@@ -49,14 +64,14 @@ namespace JpegConverter.Encoding
             return result;
         }
 
-        private static int GetCategory(int number)
+        private static byte GetCategory(int number)
         {
-            return (int)(Math.Log(Math.Abs(number), 2) + 1);
+            return (byte)(Math.Log(Math.Abs(number), 2) + 1);
         }
 
-        private static List<KeyValuePair<byte, int>> CreateRunLengthPairs(int[] block)
+        private static List<RunLengthAcPair> CreateRunLengthPairs(int[] block)
         {
-            List<KeyValuePair<byte, int>> pairs = new List<KeyValuePair<byte, int>>();
+            List<RunLengthAcPair> pairs = new List<RunLengthAcPair>();
             byte zeroCounter = 0;
             for (int i = 1; i < block.Length; i++)
             {
@@ -64,21 +79,62 @@ namespace JpegConverter.Encoding
                 {
                     zeroCounter++;
                 }
+                else if (zeroCounter > 15)
+                {
+                    int newPairs = zeroCounter / 16;
+                    for (int j = 0; j < newPairs; j++)
+                    {
+                        pairs.Add(new RunLengthAcPair() { Zeros = zeroCounter, Koeffizient = 0 });
+                        zeroCounter -= 16;
+                    }
+                }
                 else
                 {
-                    pairs.Add(new KeyValuePair<byte, int>(zeroCounter, block[i]));
+                    pairs.Add(new RunLengthAcPair() { Zeros = zeroCounter, Koeffizient = block[i] });
                     zeroCounter = 0;
                 }
 
-                if (zeroCounter > 15)
-                {
-                    pairs.Add(new KeyValuePair<byte, int>(zeroCounter, 0));
-                    zeroCounter = 0;
-                }
+
             }
-            pairs.Add(new KeyValuePair<byte, int>(0, 0));
+            pairs.Add(new RunLengthAcPair() { Zeros = 0, Koeffizient = 0 });
 
             return pairs;
         }
+        #endregion
+
+        #region DC RLE
+        public static RunLengthDcPair CreateDcRLE(int[,] channel)
+        {
+            int difference = 0;
+            int blocksEachRow = channel.GetLength(0) / BLOCK_SIZE;
+            for (int bId = 0; bId < (channel.GetLength(0) * channel.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
+            {
+                int offsetX = (bId % blocksEachRow) * 8;
+                int offsetY = (bId / blocksEachRow) * 8;
+
+                difference -= channel[offsetX, offsetY];
+            }
+
+            byte category = GetCategory(difference);
+            return new RunLengthDcPair() { Difference = difference, Category = GetCategory(difference), BitPattern = CreateBitPattern(CreateBitNumber(category, difference), category) };
+        }
+        #endregion
+    }
+
+    public class RunLengthAcPair
+    {
+        public int Zeros { get; set; }
+        public int Koeffizient { get; set; }
+        public bool EOB { get { return Zeros == 0 && Koeffizient == 0; } }
+        public byte Category { get; set; }
+        public int[] BitPattern { get; set; }
+        public byte PairAsByte { get; set; }
+    }
+
+    public class RunLengthDcPair
+    {
+        public int Difference { get; set; }
+        public byte Category { get; set; }
+        public int[] BitPattern { get; set; }
     }
 }
