@@ -89,7 +89,7 @@ namespace JpegConverter.DCT
         private static void DirectDCTforOneBlock(double[,] image, int offsetX, int offsetY)
         {
             //ändert sich x.x nach zeile 109
-            double[,] tempImage = image;
+            double[,] tempImage = image.Clone() as double[,];
 
             for (int i = offsetY; i < offsetY + 8; i++)
             {
@@ -103,7 +103,7 @@ namespace JpegConverter.DCT
                     {
                         for (int y = 0; y < BLOCK_SIZE; y++)
                         {
-                            innerSum += tempImage[x, y] * Math.Cos(((2.0 * y + 1) * i * Math.PI) / (2.0 * BLOCK_SIZE)) * Math.Cos(((2 * x + 1) * j * Math.PI) / (2 * BLOCK_SIZE));
+                            innerSum += tempImage[y, x] * Math.Cos(((2.0 * y + 1) * i * Math.PI) / (2.0 * BLOCK_SIZE)) * Math.Cos(((2 * x + 1) * j * Math.PI) / (2 * BLOCK_SIZE));
                         }
                     }
                     image[i, j] = (int)(Math.Round(2.0 / BLOCK_SIZE * ci * cj * innerSum));
