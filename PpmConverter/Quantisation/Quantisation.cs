@@ -39,10 +39,43 @@ namespace JpegConverter.Quantisation
             get { return CreateZickZackSorting(quantisationTableForChrominance); }
         }
 
+        public static List<int[]> CreateZickZackSortingCompleteChannel(int[,] channel)
+        {
+            int[] result = new int[BLOCK_SIZE * BLOCK_SIZE];
+            List <int[]> resultList = new List<int[]>();
+
+            List<int[,]> splitted = SplitImageIntoBlocks(channel);
+            foreach (int[,] block in splitted)
+            {
+                resultList.Add(CreateZickZackSorting(block));
+            }
+            return resultList;
+        }
+
+        private static List<int[,]> SplitImageIntoBlocks(int[,] image)
+        {
+            List<int[,]> result = new List<int[,]>();
+            for (int allX = 0; allX < image.GetLength(0); allX += BLOCK_SIZE)
+            {
+                for (int allY = 0; allY < image.GetLength(1); allY += BLOCK_SIZE)
+                {
+                    int[,] block = new int[BLOCK_SIZE, BLOCK_SIZE];
+                    for (int x = 0; x < BLOCK_SIZE; x++)
+                    {
+                        for (int y = 0; y < BLOCK_SIZE; y++)
+                        {
+                            block[x, y] = image[allX + x, allY + y];
+                        }
+                    }
+                    result.Add(block);
+                }
+            }
+            return result;
+        }
+
         public static int[] CreateZickZackSorting(int[,] block)
         {
             int[] result = new int[BLOCK_SIZE * BLOCK_SIZE];
-            // TODO: Hier Zick Zack Sortierung einbringen :)
             int direction = 1;
             int i = 0;
             int j = 0;
@@ -86,7 +119,7 @@ namespace JpegConverter.Quantisation
             return result;
         }
 
-        public static int[,] RunQuantisation(double[,] image, bool useChrominance = false)
+        public static int[,] RunQuantisation(int[,] image, bool useChrominance = false)
         {
             int[,] newImage = new int[image.GetLength(0), image.GetLength(1)];
 
@@ -103,7 +136,7 @@ namespace JpegConverter.Quantisation
             return newImage;
         }
 
-        private static void QuantisationForOneBlock(double[,] image, int offsetX, int offsetY, int[,] newImage, int[,] quantisationTable)
+        private static void QuantisationForOneBlock(int[,] image, int offsetX, int offsetY, int[,] newImage, int[,] quantisationTable)
         {
             for (int y = 0; y < BLOCK_SIZE; y++)
             {
@@ -111,7 +144,7 @@ namespace JpegConverter.Quantisation
                 for (int x = 0; x < BLOCK_SIZE; x++)
                 {
                     int realX = x + offsetX;
-                    newImage[realX, realY] = (int)Math.Round(image[realX, realY] / quantisationTable[x, y]);
+                    newImage[realX, realY] = (int)Math.Round(image[realX, realY] / (double)quantisationTable[x, y]);
                 }
             }
         }

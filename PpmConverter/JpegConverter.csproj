@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Encoding\ImageEncoding.cs" />
     <Compile Include="Encoding\RunLengthEncoding.cs" />
     <Compile Include="DCT\CosinusTransformation.cs" />
     <Compile Include="Huffman\Huffman.cs" />

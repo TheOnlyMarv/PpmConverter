@@ -11,7 +11,7 @@ namespace JpegConverterTest
     [TestClass]
     public class QuantisationTest
     {
-        private double[,] test =
+        private int[,] test =
         {
             {581,-144,56,17,15,-7,25,-9 },
             {-242,133,-48,42,-2,-7,13,-4 },

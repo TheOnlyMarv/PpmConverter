@@ -196,7 +196,7 @@ namespace JpegConverter
             Console.Write("Subsampling...");
             //ycrcbMatrix.SubsampleMatrix();
             //ycrcbMatrix.ExtendMatrix();
-            ycrcbMatrix.subsamplingChanne2();
+            ycrcbMatrix.subsamplingChannel2();
             ycrcbMatrix.subsamplingChannel1();
             Console.WriteLine(" - DONE");
         }

@@ -194,6 +194,28 @@ namespace JpegConverter.DCT
         private const double a4 = c6 + c2;
         private const double a5 = c6;
 
+        public static int[,] AraiDCT(int[,] image)
+        {
+            // Diese Methode bitte erstmal nicht anfassen und Ändern DANKE :) LG Marv
+            double[,] temp = new double[image.GetLength(0), image.GetLength(1)];
+            for (int i = 0; i < temp.GetLength(0); i++)
+            {
+                for (int j = 0; j < temp.GetLength(1); j++)
+                {
+                    temp[i, j] = (double)image[i, j];
+                }
+            }
+            AraiDCT(temp);
+            for (int i = 0; i < temp.GetLength(0); i++)
+            {
+                for (int j = 0; j < temp.GetLength(1); j++)
+                {
+                    image[i, j] = (int)Math.Round(temp[i, j]);
+                }
+            }
+            return image;
+        }
+
         public static double[,] AraiDCT(double[,] image)
         {
             int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
