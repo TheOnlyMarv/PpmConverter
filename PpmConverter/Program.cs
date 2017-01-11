@@ -191,13 +191,13 @@ namespace JpegConverter
         }
 
 
-        private static void Subsampling(YCbCrImage ycrcbMatrix)
+        private static void Subsampling(Image ycrcbMatrix)
         {
             Console.Write("Subsampling...");
             //ycrcbMatrix.SubsampleMatrix();
             //ycrcbMatrix.ExtendMatrix();
-            ycrcbMatrix.subsamplingCb();
-            ycrcbMatrix.subsamplingCr();
+            ycrcbMatrix.subsamplingChanne2();
+            ycrcbMatrix.subsamplingChannel1();
             Console.WriteLine(" - DONE");
         }
 
@@ -208,18 +208,11 @@ namespace JpegConverter
             Console.WriteLine(" - DONE");
         }
 
-        private static RGBImage ConvertToRGB(YCbCrImage ycrcbMatrix)
-        {
-            Console.Write("Converting back to RGB...");
-            RGBImage rgbMatrix = RGBImage.FromYCbCr(ycrcbMatrix);
-            Console.WriteLine(" - DONE");
-            return rgbMatrix;
-        }
 
-        private static YCbCrImage ConvertToYCbCr(PPMImage image)
+        private static Image ConvertToYCbCr(PPMImage image)
         {
             Console.Write("Converting to YCbCr...");
-            YCbCrImage ycrcbMatrix = YCbCrImage.FromRGB(image.Matrix);
+            Image ycrcbMatrix = Image.FromRGBtoYCbCr(image.Matrix);
             Console.WriteLine(" - DONE");
             return ycrcbMatrix;
         }
@@ -231,49 +224,5 @@ namespace JpegConverter
             Console.WriteLine(" - DONE");
             return image;
         }
-        #region DeadCode
-        public static void Old_Main(string[] args)
-        {
-            string sourcePath, destinationPath;
-            PPMImage image;
-            YCbCrImage ycrcbMatrix;
-            RGBImage rgbMatrix;
-            try
-            {
-                switch (args.Length)
-                {
-                    case 0:
-                        Console.WriteLine("Need a source parameter");
-                        break;
-                    case 1:
-                        sourcePath = args[0];
-                        image = LoadImageFromFile(sourcePath);
-                        ycrcbMatrix = ConvertToYCbCr(image);
-                        rgbMatrix = ConvertToRGB(ycrcbMatrix);
-                        break;
-                    case 2:
-                        sourcePath = args[0];
-                        destinationPath = args[1];
-                        image = LoadImageFromFile(sourcePath);
-                        ycrcbMatrix = ConvertToYCbCr(image);
-                        Subsampling(ycrcbMatrix);
-                        rgbMatrix = ConvertToRGB(ycrcbMatrix);
-                        image.Matrix = rgbMatrix;
-                        SaveIntoFile(image, destinationPath);
-                        break;
-                    default:
-                        Console.WriteLine("Wrong number of arguments");
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("\n{0}:\n{1}", ex.GetType().Name, ex.Message);
-            }
-#if DEBUG
-            Console.ReadLine();
-#endif
-        }
-        #endregion
     }
 }

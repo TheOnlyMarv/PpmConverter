@@ -139,12 +139,12 @@ namespace JpegConverter.Jpeg
 
             //Bildgroesse y > 0
             
-            bitstream.WriteByte((byte)(image.Matrix.R.GetLength(1) >> 8));
-            bitstream.WriteByte((byte)image.Matrix.R.GetLength(1));
+            bitstream.WriteByte((byte)(image.Matrix.Channel0.GetLength(1) >> 8));
+            bitstream.WriteByte((byte)image.Matrix.Channel0.GetLength(1));
 
             //Bildgroesse x > 0
-            bitstream.WriteByte((byte)(image.Matrix.R.GetLength(0) >> 8));
-            bitstream.WriteByte((byte)image.Matrix.R.GetLength(0));
+            bitstream.WriteByte((byte)(image.Matrix.Channel0.GetLength(0) >> 8));
+            bitstream.WriteByte((byte)image.Matrix.Channel0.GetLength(0));
 
             //Anzahl Komponenten
             bitstream.WriteByte(0x03);

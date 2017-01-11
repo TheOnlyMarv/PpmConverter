@@ -11,7 +11,7 @@ namespace JpegConverter
     {
         #region Declaration
         private string _typ;
-        private RGBImage _matrix;
+        private Image _matrix;
         private byte _maxValue;
         private static int _stepX = 2;
         private static int _stepY = 2;
@@ -26,7 +26,7 @@ namespace JpegConverter
         }
 
 
-        public RGBImage Matrix
+        public Image Matrix
         {
             get { return _matrix; }
             set { _matrix = value; }
@@ -55,14 +55,14 @@ namespace JpegConverter
             {
 
                 writer.WriteLine(Typ);
-                writer.WriteLine(string.Format("{0} {1}", Matrix.B.GetLength(0).ToString(), Matrix.B.GetLength(1).ToString()));
+                writer.WriteLine(string.Format("{0} {1}", Matrix.Channel2.GetLength(0).ToString(), Matrix.Channel2.GetLength(1).ToString()));
                 writer.WriteLine(MaxValue.ToString());
 
-                for (int y = 0; y < Matrix.R.GetLength(1); y++)
+                for (int y = 0; y < Matrix.Channel0.GetLength(1); y++)
                 {
-                    for (int x = 0; x < Matrix.R.GetLength(0); x++)
+                    for (int x = 0; x < Matrix.Channel0.GetLength(0); x++)
                     {
-                        writer.Write(string.Format("{0} {1} {2} ", Matrix.R.GetValue(x, y), Matrix.G.GetValue(x, y), Matrix.B.GetValue(x, y)));
+                        writer.Write(string.Format("{0} {1} {2} ", Matrix.Channel0.GetValue(x, y), Matrix.Channel1.GetValue(x, y), Matrix.Channel2.GetValue(x, y)));
                     }
                     writer.WriteLine("");
                 }
@@ -119,7 +119,7 @@ namespace JpegConverter
                                         temp = y % PPMImage._stepY;
                                         int newY = y - (temp == 0 ? 0 : temp - PPMImage._stepY);
 
-                                        image._matrix = new RGBImage(newX, newY);
+                                        image._matrix = new Image(newX, newY);
 
                                         state = ReadingState.LfMaxValue;
 
@@ -200,9 +200,9 @@ namespace JpegConverter
                     byte r, g, b;
                     if (byte.TryParse(value[i], out r) && byte.TryParse(value[i + 1], out g) && byte.TryParse(value[i + 2], out b))
                     {
-                        image.Matrix.R[currX, currY] = r;
-                        image.Matrix.G[currX, currY] = g;
-                        image.Matrix.B[currX, currY] = b;
+                        image.Matrix.Channel0[currX, currY] = r;
+                        image.Matrix.Channel1[currX, currY] = g;
+                        image.Matrix.Channel2[currX, currY] = b;
                         if (++currX == orgX)
                         {
                             currX = 0;
@@ -225,21 +225,21 @@ namespace JpegConverter
         {
             for (int x = 0; x < orgX; x++)
             {
-                for (int y = orgY; y < image.Matrix.B.GetLength(1); y++)
+                for (int y = orgY; y < image.Matrix.Channel2.GetLength(1); y++)
                 {
-                    image.Matrix.R[x, y] = image.Matrix.R[x, y - 1];
-                    image.Matrix.G[x, y] = image.Matrix.G[x, y - 1];
-                    image.Matrix.B[x, y] = image.Matrix.B[x, y - 1];
+                    image.Matrix.Channel0[x, y] = image.Matrix.Channel0[x, y - 1];
+                    image.Matrix.Channel1[x, y] = image.Matrix.Channel1[x, y - 1];
+                    image.Matrix.Channel2[x, y] = image.Matrix.Channel2[x, y - 1];
                 }
             }
 
-            for (int y = 0; y < image.Matrix.B.GetLength(1); y++)
+            for (int y = 0; y < image.Matrix.Channel2.GetLength(1); y++)
             {
-                for (int x = orgX; x < image.Matrix.B.GetLength(0); x++)
+                for (int x = orgX; x < image.Matrix.Channel2.GetLength(0); x++)
                 {
-                    image.Matrix.R[x, y] = image.Matrix.R[x - 1, y];
-                    image.Matrix.G[x, y] = image.Matrix.G[x - 1, y];
-                    image.Matrix.B[x, y] = image.Matrix.B[x - 1, y];
+                    image.Matrix.Channel0[x, y] = image.Matrix.Channel0[x - 1, y];
+                    image.Matrix.Channel1[x, y] = image.Matrix.Channel1[x - 1, y];
+                    image.Matrix.Channel2[x, y] = image.Matrix.Channel2[x - 1, y];
                 }
             }
 
