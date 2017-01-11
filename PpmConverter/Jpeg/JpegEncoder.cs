@@ -49,7 +49,7 @@ namespace JpegConverter.Jpeg
             bitstream.WriteBits(bits);
 
             // Schreiben der Koeffizienten in ZickZack-Sortierung
-            foreach (int koeffizient in Quantisation.Quantisation.QuantisationTableZickZack)
+            foreach (int koeffizient in Quantisation.Quantisation.QuantisationTableForLuminanceZickZack)
             {
                 bitstream.WriteByte((byte)koeffizient);
             }
@@ -61,7 +61,7 @@ namespace JpegConverter.Jpeg
             bitstream.WriteBits(bitss);
 
             // Schreiben der Koeffizienten in ZickZack-Sortierung
-            foreach (int koeffizient in Quantisation.Quantisation.QuantisationTableZickZack)
+            foreach (int koeffizient in Quantisation.Quantisation.QuantisationTableForChrominanceZickZack)
             {
                 bitstream.WriteByte((byte)koeffizient);
             }

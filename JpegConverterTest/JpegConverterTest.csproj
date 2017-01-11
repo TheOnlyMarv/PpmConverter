@@ -55,6 +55,7 @@
     <Compile Include="HuffmanTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuantisationTest.cs" />
+    <Compile Include="RunLengthEncodingTest.cs" />
     <Compile Include="ZickZackTest.cs" />
   </ItemGroup>
   <ItemGroup>

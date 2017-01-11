@@ -24,9 +24,29 @@ namespace JpegConverter.Encoding
                 int category = GetCategory(number);
                 runLengthPairs[i] = new KeyValuePair<byte, int>(runLengthPairs[i].Key, category);
 
-                //TODO BitMuster noch erstellen
+                if (number == 0)
+                {
+                    bitPattern.Add(null);
+                }
+                else
+                {
+                    int lowerBound = -(int)(Math.Pow(2, category) - 1);
+                    int bitNumber = number < 0 ? Math.Abs(lowerBound - number) : number;
+
+                    int[] pattern = CreateBitPattern(bitNumber, category);
+                }
             }
             return bitPattern;
+        }
+
+        private static int[] CreateBitPattern(int bitNumber, int numBits)
+        {
+            int[] result = new int[numBits];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = (bitNumber >> numBits - 1 -i) & 1; 
+            }
+            return result;
         }
 
         private static int GetCategory(int number)

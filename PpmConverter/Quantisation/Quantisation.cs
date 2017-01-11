@@ -9,20 +9,34 @@ namespace JpegConverter.Quantisation
     public static class Quantisation
     {
         private static int BLOCK_SIZE = 8;
-        private static int[,] quantisationTable = {
-            {50,50,50,50,50,50,50,50},
-            {50,50,50,50,50,50,50,50},
-            {50,50,50,50,50,50,50,50},
-            {50,50,50,50,50,50,50,50},
-            {50,50,50,50,50,50,50,50},
-            {50,50,50,50,50,50,50,50},
-            {50,50,50,50,50,50,50,50},
-            {50,50,50,50,50,50,50,50},
+        private static int[,] quantisationTableForLuminance = {
+            {16,11,10,16,24,40,51,61},
+            {12,12,14,19,26,58,60,55},
+            {14,15,16,24,40,57,69,56},
+            {14,17,22,29,51,85,80,62},
+            {18,22,37,56,68,109,103,77},
+            {24,35,55,64,81,104,113,92},
+            {49,64,78,87,103,121,120,101},
+            {72,92,95,98,112,100,103,99},
+        };
+        private static int[,] quantisationTableForChrominance = {
+            {17,18,24,47,99,99,99,99},
+            {18,21,26,66,99,99,99,99},
+            {24,26,56,99,99,99,99,99},
+            {47,66,99,99,99,99,99,99},
+            {99,99,99,99,99,99,99,99},
+            {99,99,99,99,99,99,99,99},
+            {99,99,99,99,99,99,99,99},
+            {99,99,99,99,99,99,99,99},
         };
 
-        public static int[] QuantisationTableZickZack 
+        public static int[] QuantisationTableForLuminanceZickZack 
         {
-            get { return CreateZickZackSorting(quantisationTable); }
+            get { return CreateZickZackSorting(quantisationTableForLuminance); }
+        }
+        public static int[] QuantisationTableForChrominanceZickZack
+        {
+            get { return CreateZickZackSorting(quantisationTableForChrominance); }
         }
 
         public static int[] CreateZickZackSorting(int[,] block)
@@ -72,7 +86,7 @@ namespace JpegConverter.Quantisation
             return result;
         }
 
-        public static int[,] RunQuantisation(double[,] image)
+        public static int[,] RunQuantisation(double[,] image, bool useChrominance = false)
         {
             int[,] newImage = new int[image.GetLength(0), image.GetLength(1)];
 
@@ -82,14 +96,14 @@ namespace JpegConverter.Quantisation
                 int offsetX = (bId % blocksEachRow) * 8;
                 int offsetY = (bId / blocksEachRow) * 8;
 
-                QuantisationForOneBlock(image, offsetX, offsetY, newImage);
+                QuantisationForOneBlock(image, offsetX, offsetY, newImage, useChrominance ? quantisationTableForChrominance : quantisationTableForLuminance);
             }
 
 
             return newImage;
         }
 
-        private static void QuantisationForOneBlock(double[,] image, int offsetX, int offsetY, int[,] newImage)
+        private static void QuantisationForOneBlock(double[,] image, int offsetX, int offsetY, int[,] newImage, int[,] quantisationTable)
         {
             for (int y = 0; y < BLOCK_SIZE; y++)
             {
