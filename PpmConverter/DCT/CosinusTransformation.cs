@@ -64,33 +64,21 @@ namespace JpegConverter.DCT
         #region DirectDCT
         public static double[,] DirectDCT(double[,] image)
         {
-            //List<double[,]> blocks = SplitImageIntoBlocks(image);
-
-            //for (int bId = offsetY; bId < offsetY + 8; bId++)
-            //{
-            //double[,] block = blocks[bId];
-            //double[,] newBlock = new double[BLOCK_SIZE, BLOCK_SIZE];
+            double[,] tempImage = image.Clone() as double[,];
             int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
             for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
                 int offsetX = (bId % blocksEachRow) * 8;
                 int offsetY = (bId / blocksEachRow) * 8;
 
-                DirectDCTforOneBlock(image, offsetX, offsetY);
+                DirectDCTforOneBlock(image, tempImage, offsetX, offsetY);
             }
 
             return image;
-            //blocks[bId] = newBlock;
-            //}
-
-            //return MergeBlockIntoImage(blocks, image.GetLength(0), image.GetLength(1));
         }
 
-        private static void DirectDCTforOneBlock(double[,] image, int offsetX, int offsetY)
+        private static void DirectDCTforOneBlock(double[,] image, double[,] tempImage, int offsetX, int offsetY)
         {
-            //ändert sich x.x nach zeile 109
-            double[,] tempImage = image.Clone() as double[,];
-
             for (int i = offsetY; i < offsetY + 8; i++)
             {
                 double ci = i == 0 ? ONE_DIV_SQRT2 : 1.0;
