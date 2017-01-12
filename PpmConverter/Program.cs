@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using JpegConverter.DCT;
 using System.Threading.Tasks;
+using JpegConverter.Encoding;
 
 namespace JpegConverter
 {
@@ -19,6 +20,12 @@ namespace JpegConverter
             if (args.Length == 1 && string.Compare(args[0], "-test", true) == 0)
             {
                 TestPerformanceDCT();
+            }
+            else if (args.Length == 2 && string.Compare(args[0], "-experimental", true) == 0)
+            {
+                PPMImage image = LoadImageFromFile(args[1]);
+                ImageEncoder encoder = new ImageEncoder(image.Matrix);
+                encoder.StartCalculationAndEncoding();
             }
             else if (args.Length == 1)
             {

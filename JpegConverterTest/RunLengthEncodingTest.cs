@@ -55,13 +55,39 @@ namespace JpegConverterTest
             { 158, 139, 153, 148, 154, 155, 142, 35,            28, 34, 20, 18, 22, 17, 17, 17 }
         };
 
-        RunLengthDcPair right2 = new RunLengthDcPair()
+        List<RunLengthDcPair> right2 = new List<RunLengthDcPair>()
         {
-            Difference = -254,
-            Category = 8,
-            BitPattern = new int[] { 0, 0, 0, 0, 0, 0, 0, 1 }
+            new RunLengthDcPair()
+            {
+                Difference = -254,
+                Category = 8,
+                BitPattern = new int[] { 0, 0, 0, 0, 0, 0, 0, 1 }
 
+            },
+
+            new RunLengthDcPair()
+            {
+                Difference = -226,
+                Category = 8,
+                BitPattern = new int[] { 0, 0, 0, 1, 1, 1, 0, 1 }
+
+            },
+            new RunLengthDcPair()
+            {
+                Difference = -190,
+                Category = 8,
+                BitPattern = new int[] { 0, 1, 0, 0, 0, 0, 0, 1 }
+
+            },
+            new RunLengthDcPair()
+            {
+                Difference = -48,
+                Category = 6,
+                BitPattern = new int[] { 0,0,1,1,1,1 }
+
+            }
         };
+
 
         [TestMethod]
         public void TestRunLengthEncodingForAC()
@@ -94,13 +120,18 @@ namespace JpegConverterTest
         [TestMethod]
         public void TestRunLengthEncodingForDC()
         {
-            RunLengthDcPair result = RunLengthEncoding.CreateDcRLE(test2);
+            List<RunLengthDcPair> result = RunLengthEncoding.CreateDcRLE(test2);
+            Assert.IsTrue(result.Count == right2.Count);
 
-            Assert.AreEqual(right2.Difference, result.Difference, String.Format("Difference Expected: {0} but was {1}", right2.Difference, result.Difference));
-            Assert.AreEqual(right2.Category, result.Category, String.Format("Category Expected: {0} but was {1}", right2.Category, result.Category));
-            for (int j = 0; j < right2.BitPattern.Length; j++)
+
+            for (int i = 0; i < result.Count; i++)
             {
-                Assert.AreEqual(right2.BitPattern[j], result.BitPattern[j], String.Format("Bit Expected: {0} but was {1}", right2.BitPattern[j], result.BitPattern[j]));
+                Assert.AreEqual(right2[i].Difference, result[i].Difference, String.Format("Difference Expected: {0} but was {1}", right2[i].Difference, result[i].Difference));
+                Assert.AreEqual(right2[i].Category, result[i].Category, String.Format("Category Expected: {0} but was {1}", right2[i].Category, result[i].Category));
+                for (int j = 0; j < right2[i].BitPattern.Length; j++)
+                {
+                    Assert.AreEqual(right2[i].BitPattern[j], result[i].BitPattern[j], String.Format("Bit Expected: {0} but was {1}", right2[i].BitPattern[j], result[i].BitPattern[j]));
+                }
             }
         }
     }

@@ -11,7 +11,7 @@ namespace JpegConverter.Huffman
     {
         private Dictionary<Symbol, int> Symbols { get; set; }
         public Node Root { get; set; }
-        private Dictionary<Symbol, string> CodeDictionary { get; set; }
+        private Dictionary<Symbol, int[]> CodeDictionary { get; set; }
 
         public Huffman(Dictionary<Symbol, int> symbols)
         {
@@ -65,7 +65,7 @@ namespace JpegConverter.Huffman
             return CodeDictionary.Count;
         }
 
-        public string GetCode(Symbol symbol)
+        public int[] GetCode(Symbol symbol)
         {
             if (CodeDictionary == null)
             {
@@ -76,13 +76,13 @@ namespace JpegConverter.Huffman
 
         private void CreateCodeDictionary(Node node)
         {
-            CodeDictionary = new Dictionary<Symbol, string>();
+            CodeDictionary = new Dictionary<Symbol, int[]>();
             foreach (var symbol in Symbols)
             {
-                CodeDictionary[symbol.Key] = FindCode(node, symbol.Key);
+                CodeDictionary[symbol.Key] = FindCode(node, symbol.Key, new int[0]);
             }
         }
-        private string FindCode(Node node, Symbol symbol, string code = "")
+        private int[] FindCode(Node node, Symbol symbol, int[] code)
         {
             if (node == null)
             {
@@ -99,8 +99,13 @@ namespace JpegConverter.Huffman
                     return null;
                 }
             }
-            string left = FindCode(node.Left, symbol, code + "0");
-            string right = FindCode(node.Right, symbol, code + "1");
+            List<int> forLeft = code.ToList();
+            forLeft.Add(0);
+
+            List<int> forRight = code.ToList();
+            forRight.Add(1);
+            int[] left = FindCode(node.Left, symbol, forLeft.ToArray());
+            int[] right = FindCode(node.Right, symbol, forRight.ToArray());
             if (right != null)
             {
                 return right;
@@ -214,11 +219,7 @@ namespace JpegConverter.Huffman
             List<int> toWrite = new List<Symbol>();
             foreach (Symbol symbol in symbols)
             {
-                var code = this.GetCode(symbol);
-                for (int i = 0; i < code.Length; i++)
-                {
-                    toWrite.Add(int.Parse(code.Substring(i,1)));
-                }
+                toWrite.AddRange(this.GetCode(symbol));
             }
             stream.WriteBits(toWrite.ToArray());
         }

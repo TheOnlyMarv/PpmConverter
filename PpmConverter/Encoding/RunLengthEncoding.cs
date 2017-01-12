@@ -103,20 +103,26 @@ namespace JpegConverter.Encoding
         #endregion
 
         #region DC RLE
-        public static RunLengthDcPair CreateDcRLE(int[,] channel)
+        public static List<RunLengthDcPair> CreateDcRLE(int[,] channel)
         {
-            int difference = 0;
+            List<RunLengthDcPair> result = new List<RunLengthDcPair>();
+
             int blocksEachRow = channel.GetLength(0) / BLOCK_SIZE;
             for (int bId = 0; bId < (channel.GetLength(0) * channel.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
-                int offsetX = (bId % blocksEachRow) * 8;
-                int offsetY = (bId / blocksEachRow) * 8;
+                int difference = 0;
+                for (int binnerId = bId; binnerId < (channel.GetLength(0) * channel.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; binnerId++)
+                {
+                    int offsetY = (binnerId % blocksEachRow) * 8;
+                    int offsetX = (binnerId / blocksEachRow) * 8;
 
-                difference -= channel[offsetX, offsetY];
+                    difference -= channel[offsetX, offsetY];
+                }
+                byte category = GetCategory(difference);
+                result.Add(new RunLengthDcPair() { Difference = difference, Category = GetCategory(difference), BitPattern = CreateBitPattern(CreateBitNumber(category, difference), category) });
             }
 
-            byte category = GetCategory(difference);
-            return new RunLengthDcPair() { Difference = difference, Category = GetCategory(difference), BitPattern = CreateBitPattern(CreateBitNumber(category, difference), category) };
+            return result;
         }
         #endregion
     }

@@ -21,12 +21,14 @@ namespace JpegConverter.Encoding
         private List<RunLengthAcPairBlock> RunLengthAcChannelCb = new List<RunLengthAcPairBlock>();
         private List<RunLengthAcPairBlock> RunLengthAcChannelCr = new List<RunLengthAcPairBlock>();
 
-        RunLengthDcPair RunLengthDcChannelY;
-        RunLengthDcPair RunLengthDcChannelCb;
-        RunLengthDcPair RunLengthDcChannelCr;
+        private List<RunLengthDcPair> RunLengthDcChannelY;
+        private List<RunLengthDcPair> RunLengthDcChannelCb;
+        private List<RunLengthDcPair> RunLengthDcChannelCr;
 
-        Huffman.Huffman huffmanColor;
-        Huffman.Huffman huffmanAcDc;
+        private Huffman.Huffman huffmanYAc;
+        private Huffman.Huffman huffmanCAc;
+        private Huffman.Huffman huffmanYDc;
+        private Huffman.Huffman huffmanCDc;
 
         public ImageEncoder(Image image)
         {
@@ -41,6 +43,119 @@ namespace JpegConverter.Encoding
             RunQuantisation();
             ZickZackSorting();
             CreateRunLengthEncoding();
+            CreateHuffmann();
+        }
+
+        private void CreateHuffmann()
+        {
+            HuffmanForACY();
+            HuffmanForACC();
+            HuffmanForDCY();
+            HuffmanForDCC();
+
+            HuffmanApply();
+        }
+
+        private void HuffmanApply()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HuffmanForDCC()
+        {
+            Dictionary<int, int> dict = new Dictionary<Block, Block>();
+            foreach (var item in RunLengthDcChannelCb)
+            {
+                try
+                {
+                    dict[item.Category] += 1;
+                }
+                catch
+                {
+                    dict[item.Category] = 1;
+                }
+            }
+            foreach (var item in RunLengthDcChannelCr)
+            {
+                try
+                {
+                    dict[item.Category] += 1;
+                }
+                catch
+                {
+                    dict[item.Category] = 1;
+                }
+            }
+            huffmanCDc = new Huffman.Huffman(dict);
+            huffmanCDc.CreateLimitedHuffman(16, true);
+        }
+
+        private void HuffmanForDCY()
+        {
+            Dictionary<int, int> dict = new Dictionary<Block, Block>();
+            foreach (var item in RunLengthDcChannelY)
+            {
+                try
+                {
+                    dict[item.Category] += 1;
+                }
+                catch
+                {
+                    dict[item.Category] = 1;
+                }
+            }
+            huffmanYDc = new Huffman.Huffman(dict);
+            huffmanYDc.CreateLimitedHuffman(16, true);
+        }
+
+        private void HuffmanForACC()
+        {
+            List<RunLengthAcPair> temp = new List<RunLengthAcPair>();
+            foreach (var item in RunLengthAcChannelCb)
+            {
+                temp.AddRange(item);
+            }
+            foreach (var item in RunLengthAcChannelCr)
+            {
+                temp.AddRange(item);
+            }
+            Dictionary<int, int> dict = new Dictionary<Block, Block>();
+            foreach (var item in temp)
+            {
+                try
+                {
+                    dict[item.PairAsByte] += 1;
+                }
+                catch
+                {
+                    dict[item.PairAsByte] = 1;
+                }
+            }
+            huffmanCAc = new Huffman.Huffman(dict);
+            huffmanCAc.CreateLimitedHuffman(16, true);
+        }
+
+        private void HuffmanForACY()
+        {
+            List<RunLengthAcPair> temp = new List<RunLengthAcPair>();
+            foreach (var item in RunLengthAcChannelY)
+            {
+                temp.AddRange(item);
+            }
+            Dictionary<int, int> dict = new Dictionary<Block, Block>();
+            foreach (var item in temp)
+            {
+                try
+                {
+                    dict[item.PairAsByte] += 1;
+                }
+                catch
+                {
+                    dict[item.PairAsByte] = 1;
+                }
+            }
+            huffmanYAc = new Huffman.Huffman(dict);
+            huffmanYAc.CreateLimitedHuffman(16, true);
         }
 
         private void CreateRunLengthEncoding()
@@ -48,6 +163,9 @@ namespace JpegConverter.Encoding
             for (int i = 0; i < ChannelY.Count; i++)
             {
                 RunLengthAcChannelY.Add(RunLengthEncoding.CreateAcRLE(ChannelY[i]));
+            }
+            for (int i = 0; i < ChannelCb.Count; i++)
+            {
                 RunLengthAcChannelCb.Add(RunLengthEncoding.CreateAcRLE(ChannelCb[i]));
                 RunLengthAcChannelCr.Add(RunLengthEncoding.CreateAcRLE(ChannelCr[i]));
             }

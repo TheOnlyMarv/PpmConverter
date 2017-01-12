@@ -27,12 +27,12 @@ namespace JpegConverterTest
             Huffman huffman = new Huffman(sl);
             huffman.CreateNormalHuffman();
 
-            Assert.AreEqual("010", huffman.GetCode(1));
-            Assert.AreEqual("011", huffman.GetCode(2));
-            Assert.AreEqual("110", huffman.GetCode(3));
-            Assert.AreEqual("111", huffman.GetCode(4));
-            Assert.AreEqual("00", huffman.GetCode(5));
-            Assert.AreEqual("10", huffman.GetCode(6));
+            CollectionAssert.AreEqual(new int[] { 0, 1, 0 }, huffman.GetCode(1));
+            CollectionAssert.AreEqual(new int[] { 0, 1, 1 }, huffman.GetCode(2));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 0 }, huffman.GetCode(3));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman.GetCode(4));
+            CollectionAssert.AreEqual(new int[] { 0, 0 }, huffman.GetCode(5));
+            CollectionAssert.AreEqual(new int[] { 1, 0 }, huffman.GetCode(6));
 
 
             Dictionary<Symbol, int> sl2 = new Dictionary<Symbol, int>();
@@ -45,11 +45,11 @@ namespace JpegConverterTest
             Huffman huffman2 = new Huffman(sl2);
             huffman2.CreateNormalHuffman();
 
-            Assert.AreEqual("010", huffman2.GetCode(1));
-            Assert.AreEqual("011", huffman2.GetCode(2));
-            Assert.AreEqual("00", huffman2.GetCode(3));
-            Assert.AreEqual("10", huffman2.GetCode(4));
-            Assert.AreEqual("11", huffman2.GetCode(5));
+            CollectionAssert.AreEqual(new int[] { 0, 1, 0 }, huffman2.GetCode(1));
+            CollectionAssert.AreEqual(new int[] { 0, 1, 1 }, huffman2.GetCode(2));
+            CollectionAssert.AreEqual(new int[] { 0, 0 }, huffman2.GetCode(3));
+            CollectionAssert.AreEqual(new int[] { 1, 0 }, huffman2.GetCode(4));
+            CollectionAssert.AreEqual(new int[] { 1, 1 }, huffman2.GetCode(5));
 
         }
 
@@ -66,12 +66,12 @@ namespace JpegConverterTest
             Huffman huffman = new Huffman(sl);
             huffman.CreateNormalHuffman(true);
 
-            Assert.AreEqual("010", huffman.GetCode(1));
-            Assert.AreEqual("011", huffman.GetCode(2));
-            Assert.AreEqual("110", huffman.GetCode(3));
-            Assert.AreEqual("1110", huffman.GetCode(4));
-            Assert.AreEqual("00", huffman.GetCode(5));
-            Assert.AreEqual("10", huffman.GetCode(6));
+            CollectionAssert.AreEqual(new int[] { 0, 1, 0 }, huffman.GetCode(1));
+            CollectionAssert.AreEqual(new int[] { 0, 1, 1 }, huffman.GetCode(2));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 0 }, huffman.GetCode(3));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 1, 0 }, huffman.GetCode(4));
+            CollectionAssert.AreEqual(new int[] { 0, 0 }, huffman.GetCode(5));
+            CollectionAssert.AreEqual(new int[] { 1, 0 }, huffman.GetCode(6));
 
             sl = new Dictionary<Symbol, int>();
             sl.Add(1, 4);
@@ -83,11 +83,11 @@ namespace JpegConverterTest
             huffman = new Huffman(sl);
             huffman.CreateNormalHuffman(true);
 
-            Assert.AreEqual("010", huffman.GetCode(1));
-            Assert.AreEqual("011", huffman.GetCode(2));
-            Assert.AreEqual("00", huffman.GetCode(3));
-            Assert.AreEqual("10", huffman.GetCode(4));
-            Assert.AreEqual("110", huffman.GetCode(5));
+            CollectionAssert.AreEqual(new int[] { 0, 1, 0 }, huffman.GetCode(1));
+            CollectionAssert.AreEqual(new int[] { 0, 1, 1 }, huffman.GetCode(2));
+            CollectionAssert.AreEqual(new int[] { 0, 0 }, huffman.GetCode(3));
+            CollectionAssert.AreEqual(new int[] { 1, 0 }, huffman.GetCode(4));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 0 }, huffman.GetCode(5));
         }
 
         [TestMethod]
@@ -103,12 +103,12 @@ namespace JpegConverterTest
             Huffman huffman = new Huffman(sl);
             huffman.CreateRightGrowingHuffman();
 
-            Assert.AreEqual("111", huffman.GetCode(1));
-            Assert.AreEqual("110", huffman.GetCode(2));
-            Assert.AreEqual("101", huffman.GetCode(3));
-            Assert.AreEqual("100", huffman.GetCode(4));
-            Assert.AreEqual("01", huffman.GetCode(5));
-            Assert.AreEqual("00", huffman.GetCode(6));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman.GetCode(1));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 0 }, huffman.GetCode(2));
+            CollectionAssert.AreEqual(new int[] { 1, 0, 1 }, huffman.GetCode(3));
+            CollectionAssert.AreEqual(new int[] { 1, 0, 0 }, huffman.GetCode(4));
+            CollectionAssert.AreEqual(new int[] { 0, 1 }, huffman.GetCode(5));
+            CollectionAssert.AreEqual(new int[] { 0, 0 }, huffman.GetCode(6));
 
 
             Dictionary<Symbol, int> sl2 = new Dictionary<Symbol, int>();
@@ -121,11 +121,11 @@ namespace JpegConverterTest
             Huffman huffman2 = new Huffman(sl2);
             huffman2.CreateRightGrowingHuffman();
 
-            Assert.AreEqual("111", huffman2.GetCode(1));
-            Assert.AreEqual("110", huffman2.GetCode(2));
-            Assert.AreEqual("10", huffman2.GetCode(3));
-            Assert.AreEqual("01", huffman2.GetCode(4));
-            Assert.AreEqual("00", huffman2.GetCode(5));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman2.GetCode(1));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 0 }, huffman2.GetCode(2));
+            CollectionAssert.AreEqual(new int[] { 1, 0 }, huffman2.GetCode(3));
+            CollectionAssert.AreEqual(new int[] { 0, 1 }, huffman2.GetCode(4));
+            CollectionAssert.AreEqual(new int[] { 0, 0 }, huffman2.GetCode(5));
         }
 
         [TestMethod]
@@ -141,12 +141,12 @@ namespace JpegConverterTest
             Huffman huffman = new Huffman(sl);
             huffman.CreateLimitedHuffman(3);
 
-            Assert.AreEqual("111", huffman.GetCode(1));
-            Assert.AreEqual("110", huffman.GetCode(2));
-            Assert.AreEqual("101", huffman.GetCode(3));
-            Assert.AreEqual("100", huffman.GetCode(4));
-            Assert.AreEqual("01", huffman.GetCode(5));
-            Assert.AreEqual("00", huffman.GetCode(6));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman.GetCode(1));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 0 }, huffman.GetCode(2));
+            CollectionAssert.AreEqual(new int[] { 1, 0, 1 }, huffman.GetCode(3));
+            CollectionAssert.AreEqual(new int[] { 1, 0, 0 }, huffman.GetCode(4));
+            CollectionAssert.AreEqual(new int[] { 0, 1 }, huffman.GetCode(5));
+            CollectionAssert.AreEqual(new int[] { 0, 0 }, huffman.GetCode(6));
 
 
             sl = new Dictionary<Symbol, int>();
@@ -159,12 +159,12 @@ namespace JpegConverterTest
             huffman = new Huffman(sl);
             huffman.CreateLimitedHuffman(3);
 
-            Assert.AreEqual("111", huffman.GetCode(1));
-            Assert.AreEqual("110", huffman.GetCode(2));
-            Assert.AreEqual("101", huffman.GetCode(3));
-            Assert.AreEqual("100", huffman.GetCode(4));
-            Assert.AreEqual("01", huffman.GetCode(5));
-            Assert.AreEqual("00", huffman.GetCode(6));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman.GetCode(1));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 0 }, huffman.GetCode(2));
+            CollectionAssert.AreEqual(new int[] { 1, 0, 1 }, huffman.GetCode(3));
+            CollectionAssert.AreEqual(new int[] { 1, 0, 0 }, huffman.GetCode(4));
+            CollectionAssert.AreEqual(new int[] { 0, 1 }, huffman.GetCode(5));
+            CollectionAssert.AreEqual(new int[] { 0, 0 }, huffman.GetCode(6));
         }
 
         [TestMethod]
@@ -180,12 +180,12 @@ namespace JpegConverterTest
             Huffman huffman = new Huffman(sl);
             huffman.CreateLimitedHuffman(3);
 
-            Assert.AreEqual("111", huffman.GetCode(1));
-            Assert.AreEqual("110", huffman.GetCode(2));
-            Assert.AreEqual("101", huffman.GetCode(3));
-            Assert.AreEqual("100", huffman.GetCode(4));
-            Assert.AreEqual("01", huffman.GetCode(5));
-            Assert.AreEqual("00", huffman.GetCode(6));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman.GetCode(1));
+            CollectionAssert.AreEqual(new int[] { 1, 1, 0 }, huffman.GetCode(2));
+            CollectionAssert.AreEqual(new int[] { 1, 0, 1 }, huffman.GetCode(3));
+            CollectionAssert.AreEqual(new int[] { 1, 0, 0 }, huffman.GetCode(4));
+            CollectionAssert.AreEqual(new int[] { 0, 1 }, huffman.GetCode(5));
+            CollectionAssert.AreEqual(new int[] { 0, 0 }, huffman.GetCode(6));
 
             Bitstream bitstream = new Bitstream();
             Symbol[] toEncode = { 3, 5, 6, 2, 1, 4 };
