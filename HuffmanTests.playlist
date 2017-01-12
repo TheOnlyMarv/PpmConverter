@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="JpegConverterTest.HuffmanTest.TestNewHuffmanAvoidingOneStar" /><Add Test="JpegConverterTest.HuffmanTest.TestNewLimitedHuffman" /><Add Test="JpegConverterTest.HuffmanTest.TestEncodeAndDecode" /><Add Test="JpegConverterTest.HuffmanTest.TestNewRightGrowingHuffman" /><Add Test="JpegConverterTest.HuffmanTest.TestNewHuffman" /></Playlist>
