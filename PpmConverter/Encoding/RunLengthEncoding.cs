@@ -135,6 +135,7 @@ namespace JpegConverter.Encoding
         public byte Category { get; set; }
         public int[] BitPattern { get; set; }
         public byte PairAsByte { get; set; }
+        public int[] HuffmanCode { get; set; }
     }
 
     public class RunLengthDcPair
@@ -142,5 +143,6 @@ namespace JpegConverter.Encoding
         public int Difference { get; set; }
         public byte Category { get; set; }
         public int[] BitPattern { get; set; }
+        public int[] HuffmanCode { get; set; }
     }
 }

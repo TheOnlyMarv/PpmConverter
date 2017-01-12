@@ -58,7 +58,44 @@ namespace JpegConverter.Encoding
 
         private void HuffmanApply()
         {
-            throw new NotImplementedException();
+            foreach (RunLengthAcPairBlock runLengthAcPairBlock in RunLengthAcChannelY)
+            {
+                foreach (var item in runLengthAcPairBlock)
+                {
+                    item.HuffmanCode = huffmanYAc.GetCode(item.PairAsByte);
+                }
+            }
+
+            foreach (RunLengthAcPairBlock runLengthAcPairBlock in RunLengthAcChannelCb)
+            {
+                foreach (var item in runLengthAcPairBlock)
+                {
+                    item.HuffmanCode = huffmanCAc.GetCode(item.PairAsByte);
+                }
+            }
+
+            foreach (RunLengthAcPairBlock runLengthAcPairBlock in RunLengthAcChannelCr)
+            {
+                foreach (var item in runLengthAcPairBlock)
+                {
+                    item.HuffmanCode = huffmanCAc.GetCode(item.PairAsByte);
+                }
+            }
+
+            foreach (RunLengthDcPair runLengthDcPair in RunLengthDcChannelY)
+            {
+                runLengthDcPair.HuffmanCode = huffmanYDc.GetCode(runLengthDcPair.Category);
+            }
+
+            foreach (RunLengthDcPair runLengthDcPair in RunLengthDcChannelCb)
+            {
+                runLengthDcPair.HuffmanCode = huffmanCDc.GetCode(runLengthDcPair.Category);
+            }
+
+            foreach (RunLengthDcPair runLengthDcPair in RunLengthDcChannelCr)
+            {
+                runLengthDcPair.HuffmanCode = huffmanCDc.GetCode(runLengthDcPair.Category);
+            }
         }
 
         private void HuffmanForDCC()
