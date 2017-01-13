@@ -107,30 +107,30 @@ namespace JpegConverter.Encoding
         {
             List<RunLengthDcPair> result = new List<RunLengthDcPair>();
 
-            int blocksEachRow = channel.GetLength(0) / BLOCK_SIZE;
+            int blocksEachRow = channel.GetLength(1) / BLOCK_SIZE;
             for (int bId = 0; bId < (channel.GetLength(0) * channel.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
-                int offsetY = (bId % blocksEachRow) * 8;
-                int offsetX = (bId / blocksEachRow) * 8;
-                int difference = 0;
-                if (bId == 0)
-                {
-                    difference = channel[offsetX, offsetY];
-                }
-                else
-                {
-                    int ooffsetY = ((bId - 1) % blocksEachRow) * 8;
-                    int ooffsetX = ((bId - 1) / blocksEachRow) * 8;
-                    difference = channel[offsetX, offsetY];
-                }
-                //for (int binnerId = bId; binnerId < (channel.GetLength(0) * channel.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; binnerId++)
-                //{
-                //    int offsetY = (binnerId % blocksEachRow) * 8;
-                //    int offsetX = (binnerId / blocksEachRow) * 8;
+                //    int offsetY = (bId % blocksEachRow) * 8;
+                //    int offsetX = (bId / blocksEachRow) * 8;
+                   int difference = 0;
+                //    if (bId == 0)
+                //    {
+                //        difference = channel[offsetX, offsetY];
+                //    }
+                //    else
+                //    {
+                //        int ooffsetY = ((bId - 1) % blocksEachRow) * 8;
+                //        int ooffsetX = ((bId - 1) / blocksEachRow) * 8;
+                //        difference = channel[offsetX, offsetY];
+                //    }
+                for (int binnerId = bId; binnerId < (channel.GetLength(0) * channel.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; binnerId++)
+            {
+                int offsetY = (binnerId % blocksEachRow) * 8;
+                int offsetX = (binnerId / blocksEachRow) * 8;
 
-                //    difference -= channel[offsetX, offsetY];
-                //}
-                byte category = GetCategory(difference);
+                difference -= channel[offsetX, offsetY];
+            }
+            byte category = GetCategory(difference);
                 result.Add(new RunLengthDcPair() { Difference = difference, Category = GetCategory(difference), BitPattern = CreateBitPattern(CreateBitNumber(category, difference), category) });
             }
 
