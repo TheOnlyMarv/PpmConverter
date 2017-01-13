@@ -107,7 +107,7 @@ namespace JpegConverter.Encoding
         {
             List<RunLengthDcPair> result = new List<RunLengthDcPair>();
 
-            int blocksEachRow = channel.GetLength(0) / BLOCK_SIZE;
+            int blocksEachRow = channel.GetLength(1) / BLOCK_SIZE;
             for (int bId = 0; bId < (channel.GetLength(0) * channel.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
                 int offsetY = (bId % blocksEachRow) * 8;
