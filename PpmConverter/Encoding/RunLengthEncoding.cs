@@ -121,7 +121,7 @@ namespace JpegConverter.Encoding
                 {
                     int ooffsetY = ((bId - 1) % blocksEachRow) * 8;
                     int ooffsetX = ((bId - 1) / blocksEachRow) * 8;
-                    difference = channel[offsetX, offsetY];
+                    difference = channel[offsetX, offsetY] - channel[ooffsetX, ooffsetY];
                 }
                 //for (int binnerId = bId; binnerId < (channel.GetLength(0) * channel.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; binnerId++)
                 //{

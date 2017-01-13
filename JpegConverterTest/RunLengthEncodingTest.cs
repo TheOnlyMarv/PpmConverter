@@ -59,31 +59,31 @@ namespace JpegConverterTest
         {
             new RunLengthDcPair()
             {
-                Difference = -254,
-                Category = 8,
-                BitPattern = new int[] { 0, 0, 0, 0, 0, 0, 0, 1 }
+                Difference = 28,
+                Category = 5,
+                BitPattern = new int[] { 1,1,1,0,0 }
 
             },
 
             new RunLengthDcPair()
             {
-                Difference = -226,
-                Category = 8,
-                BitPattern = new int[] { 0, 0, 0, 1, 1, 1, 0, 1 }
+                Difference = 8,
+                Category = 4,
+                BitPattern = new int[] { 1,0,0,0 }
 
             },
             new RunLengthDcPair()
             {
-                Difference = -190,
-                Category = 8,
-                BitPattern = new int[] { 0, 1, 0, 0, 0, 0, 0, 1 }
+                Difference = 106,
+                Category = 7,
+                BitPattern = new int[] { 1,1,0,1,0,1,0 }
 
             },
             new RunLengthDcPair()
             {
-                Difference = -48,
-                Category = 6,
-                BitPattern = new int[] { 0,0,1,1,1,1 }
+                Difference = -94,
+                Category = 7,
+                BitPattern = new int[] { 0,1,0,0,0,0,1 }
 
             }
         };
