@@ -203,14 +203,22 @@ namespace JpegConverter.Huffman
         #region PackageMergedHuffman
         public void CreateLimitedHuffman(Symbol limit = 16, bool avoidOneStar = false)
         {
-            List<KeyValuePair<int, int>> levelList = PackageMerge.Generate(Symbols.OrderBy(x => x.Value).ToList(), avoidOneStar ? limit - 1 : limit);
-            Root = CreateRecursive(CreateIntialNodes(), levelList);
-            CodeDictionary = null;
-
-            if (avoidOneStar)
+            if (Symbols.Count != 1)
             {
-                AvoidingOneStar(Root);
+                List<KeyValuePair<int, int>> levelList = PackageMerge.Generate(Symbols.OrderBy(x => x.Value).ToList(), avoidOneStar ? limit - 1 : limit);
+                Root = CreateRecursive(CreateIntialNodes(), levelList);
+                if (avoidOneStar)
+                {
+                    AvoidingOneStar(Root);
+                }
             }
+            else
+            {
+                Root = new Node(new Node(Symbols.First().Key, Symbols.First().Value), null);
+            }
+
+            CodeDictionary = null;
+            
         }
         #endregion
 

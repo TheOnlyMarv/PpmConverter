@@ -13,8 +13,8 @@ namespace JpegConverter
         private string _typ;
         private Image _matrix;
         private byte _maxValue;
-        private static int _stepX = 2;
-        private static int _stepY = 2;
+        private static int _stepX = 8;
+        private static int _stepY = 8;
 
         private PPMImage()
         {
