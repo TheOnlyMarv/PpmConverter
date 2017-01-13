@@ -84,9 +84,9 @@ namespace JpegConverter.Jpeg
             for (int i = 0; i < CbBlocks.Count; i++)
             {
                 bitstream.WriteBits(yBlocks[i]);
-                bitstream.WriteBits(yBlocks[i + CbBlocks.Count]);
+                bitstream.WriteBits(yBlocks[i + 1 ]);
                 bitstream.WriteBits(yBlocks[i + CbBlocks.Count * 2]);
-                bitstream.WriteBits(yBlocks[i + CbBlocks.Count * 2]);
+                bitstream.WriteBits(yBlocks[i + CbBlocks.Count * 2 + 1]);
                 bitstream.WriteBits(CbBlocks[i]);
                 bitstream.WriteBits(CrBlocks[i]);
             }
