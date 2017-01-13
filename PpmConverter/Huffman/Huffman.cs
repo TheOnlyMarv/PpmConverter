@@ -12,10 +12,12 @@ namespace JpegConverter.Huffman
         private Dictionary<Symbol, int> Symbols { get; set; }
         public Node Root { get; set; }
         private Dictionary<Symbol, int[]> CodeDictionary { get; set; }
+        public HuffmanTyp Type { get; }
 
-        public Huffman(Dictionary<Symbol, int> symbols)
+        public Huffman(Dictionary<Symbol, int> symbols, HuffmanTyp type)
         {
             this.Symbols = symbols;
+            this.Type = type;
         }
 
         #region NormalHuffman
@@ -292,5 +294,13 @@ namespace JpegConverter.Huffman
             return CodeDictionary.OrderBy(x => x.Value.Length).Select(x => x.Key).ToList();
         }
         #endregion
+    }
+
+    public enum HuffmanTyp
+    {
+        LuminanceAC,
+        LuminanceDC,
+        ChrominanceAC,
+        ChrominanceDC
     }
 }

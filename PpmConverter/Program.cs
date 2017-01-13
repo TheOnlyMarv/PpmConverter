@@ -25,16 +25,28 @@ namespace JpegConverter
             {
                 PPMImage image = LoadImageFromFile(args[1]);
                 ImageEncoder encoder = new ImageEncoder(image.Matrix);
-                encoder.StartCalculationAndEncoding();
+                encoder.WriteToJpegToFile(image, "image.jpg");
             }
             else if (args.Length == 1)
             {
                 JpegEncoder encoder = new JpegEncoder();
                 PPMImage image = LoadImageFromFile(args[0]);
                 Dictionary<int, int> sl = GenerateTestHuffmanSymbols();
-                Huffman.Huffman huffman = new Huffman.Huffman(sl);
-                huffman.CreateLimitedHuffman(16, true);
-                encoder.WriteMarker(image, huffman);
+                
+                List<Huffman.Huffman> huffmanTables = new List<Huffman.Huffman>()
+                {
+                    new Huffman.Huffman(sl, Huffman.HuffmanTyp.ChrominanceAC),
+                    new Huffman.Huffman(sl, Huffman.HuffmanTyp.ChrominanceDC),
+                    new Huffman.Huffman(sl, Huffman.HuffmanTyp.LuminanceAC),
+                    new Huffman.Huffman(sl, Huffman.HuffmanTyp.LuminanceDC),
+                };
+
+                foreach (Huffman.Huffman huffman in huffmanTables)
+                {
+                    huffman.CreateLimitedHuffman(16, true);
+                }
+
+                encoder.WriteMarker(image, huffmanTables, null);
                 encoder.SaveIntoFile("image.data");
             }
 
@@ -193,7 +205,7 @@ namespace JpegConverter
         private static void ConvertToJpeg(JpegEncoder jpegEncoder, PPMImage image)
         {
             Console.Write("Convert to jpegStream...");
-            jpegEncoder.WriteMarker(image, null); //Muss später noch gändert werden (NULL)
+            jpegEncoder.WriteMarker(image, null, null); //Muss später noch gändert werden (NULL)
             Console.WriteLine(" - DONE");
         }
 

@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JpegConverter.Encoding;
 
 namespace JpegConverter.Jpeg
 {
     public class JpegEncoder
     {
+        public static int[] LuminanceAC = { 0, 0, 0, 0 };
+        public static int[] LuminanceDC = { 0, 0, 0, 1 };
+        public static int[] ChrominaceAC = { 0, 0, 1, 0 };
+        public static int[] ChrominaceDC = { 0, 0, 1, 1 };
+
         private Bitstream bitstream;
 
         private const byte SEGMENT_BEGIN = 0xff;
@@ -22,14 +28,134 @@ namespace JpegConverter.Jpeg
             bitstream.FlushIntoFile(path);
         }
 
-        public void WriteMarker(PPMImage image, JpegConverter.Huffman.Huffman ht)
+        public void WriteMarker(PPMImage image, List<JpegConverter.Huffman.Huffman> huffmanTables, Encoding.ImageEncoder encoder)
         {
             WriteStartOfImage();
             WriteApp0();
-            WriteSof0(image);
-            WriteDht(ht);
             WriteDqt();
+            WriteSof0(image);
+            WriteDht(huffmanTables);
+            WriteSos();
+            WirteImageData(encoder);
             WirteEndOfImage();
+        }
+
+        private void WirteImageData(ImageEncoder encoder)
+        {
+            List<int[]> yBlocks = new List<int[]>();
+            foreach (var item in encoder.forChannelY)
+            {
+                int[] dcBits = item.Key.HuffmanCode.Concat(item.Key.BitPattern).ToArray();
+                int[] acBits = new int[0];
+                foreach (RunLengthAcPair rlap in item.Value)
+                {
+                    acBits = acBits.Concat(rlap.HuffmanCode.Concat(rlap.BitPattern ?? new int[]{ } ).ToArray()).ToArray();
+                }
+                int[] block = dcBits.Concat(acBits).ToArray();
+                yBlocks.Add(block);
+            }
+
+            List<int[]> CbBlocks = new List<int[]>();
+            foreach (var item in encoder.forChannelCb)
+            {
+                int[] dcBits = item.Key.HuffmanCode.Concat(item.Key.BitPattern).ToArray();
+                int[] acBits = new int[0];
+                foreach (RunLengthAcPair rlap in item.Value)
+                {
+                    acBits = acBits.Concat(rlap.HuffmanCode.Concat(rlap.BitPattern ?? new int[] { }).ToArray()).ToArray();
+                }
+                int[] block = dcBits.Concat(acBits).ToArray();
+                CbBlocks.Add(block);
+            }
+
+            List<int[]> CrBlocks = new List<int[]>();
+            foreach (var item in encoder.forChannelCr)
+            {
+                int[] dcBits = item.Key.HuffmanCode.Concat(item.Key.BitPattern).ToArray();
+                int[] acBits = new int[0];
+                foreach (RunLengthAcPair rlap in item.Value)
+                {
+                    acBits = acBits.Concat(rlap.HuffmanCode.Concat(rlap.BitPattern ?? new int[] { }).ToArray()).ToArray();
+                }
+                int[] block = dcBits.Concat(acBits).ToArray();
+                CrBlocks.Add(block);
+            }
+
+            for (int i = 0; i < CbBlocks.Count; i++)
+            {
+                bitstream.WriteBits(yBlocks[i]);
+                bitstream.WriteBits(yBlocks[i + CbBlocks.Count]);
+                bitstream.WriteBits(yBlocks[i + CbBlocks.Count * 2]);
+                bitstream.WriteBits(yBlocks[i + CbBlocks.Count * 2]);
+                bitstream.WriteBits(CbBlocks[i]);
+                bitstream.WriteBits(CrBlocks[i]);
+            }
+        }
+
+        private void WriteSos()
+        {
+            //Marker
+            bitstream.WriteByte(SEGMENT_BEGIN);
+            bitstream.WriteByte(0xda);
+
+            //Länge
+            int length = 6 + 2 * 3;
+            bitstream.WriteByte((byte)(length >> 8));
+            bitstream.WriteByte((byte)length);
+
+            //Anz. Komponenten
+            bitstream.WriteByte(0x03);
+
+            //Y
+            //  ID
+            bitstream.WriteByte(0x01);
+            //  HT ID 0-3=AC    4-7=DC
+            bitstream.WriteBits(new int[] {
+                LuminanceDC[0],
+                LuminanceDC[1],
+                LuminanceDC[2],
+                LuminanceDC[3],
+                LuminanceAC[0],
+                LuminanceAC[1],
+                LuminanceAC[2],
+                LuminanceAC[3],
+            });
+
+            //Cb
+            //  ID
+            bitstream.WriteByte(0x02);
+            //  HT ID 0-3=AC    4-7=DC
+            bitstream.WriteBits(new int[] {
+                ChrominaceDC[0],
+                ChrominaceDC[1],
+                ChrominaceDC[2],
+                ChrominaceDC[3],
+                ChrominaceAC[0],
+                ChrominaceAC[1],
+                ChrominaceAC[2],
+                ChrominaceAC[3],
+            });
+
+            //Cr
+            //  ID
+            bitstream.WriteByte(0x03);
+            //  HT ID 0-3=AC    4-7=DC
+            bitstream.WriteBits(new int[] {
+                ChrominaceDC[0],
+                ChrominaceDC[1],
+                ChrominaceDC[2],
+                ChrominaceDC[3],
+                ChrominaceAC[0],
+                ChrominaceAC[1],
+                ChrominaceAC[2],
+                ChrominaceAC[3],
+            });
+
+            //3 Bytes ohne Relevanz
+            bitstream.WriteByte(0x00);
+            bitstream.WriteByte(0x3f);
+            bitstream.WriteByte(0x00);
+
         }
 
         private void WriteDqt()
@@ -174,7 +300,7 @@ namespace JpegConverter.Jpeg
             bitstream.WriteByte(0x01);
         }
 
-        private void WriteDht(JpegConverter.Huffman.Huffman ht)
+        private void WriteDht(List<JpegConverter.Huffman.Huffman> huffmanTables)
         {
             //Marker
             bitstream.WriteByte(SEGMENT_BEGIN);
@@ -182,23 +308,55 @@ namespace JpegConverter.Jpeg
 
             //Laenge des Segments
             bitstream.WriteByte(0x00);
-            int length = 17 + ht.NumberOfSymbols();
+            int length = huffmanTables.Sum(x => x.NumberOfSymbols()) + 17 * huffmanTables.Count;//(17 + huffmanTables.NumberOfSymbols()) * 2;
             bitstream.WriteByte((byte)length);
 
-            // HT Informationen
-            int[] htInfo = {0, 0, 0, 0, 0, 0, 0, 0};
-            bitstream.WriteBits(htInfo);
-
-            // Anzahl von Symbolen mit Kodelängen von 1..16 (Summe dieser Anzahlen ist Gesamtzahl der Symbole, muss <= 256)
-            foreach (int count in ht.GetCountForEachLevel().Select(x=>x.Value))
+            foreach (Huffman.Huffman huffman in huffmanTables)
             {
-                bitstream.WriteByte((byte)count);
-            }
+                int[] id = null;
+                switch (huffman.Type)
+                {
+                    case Huffman.HuffmanTyp.LuminanceAC:
+                        id = LuminanceAC;
+                        break;
+                    case Huffman.HuffmanTyp.LuminanceDC:
+                        id = LuminanceDC;
+                        break;
+                    case Huffman.HuffmanTyp.ChrominanceAC:
+                        id = ChrominaceAC;
+                        break;
+                    case Huffman.HuffmanTyp.ChrominanceDC:
+                        id = ChrominaceDC;
+                        break;
+                    default:
+                        break;
+                }
 
-            // Tabelle mit den Symbolen in aufsteigender Folge der Kodelängen (n = total Gesamtzahl der Symbole)
-            foreach (int symbol in ht.GetSymbolsAscendingOnCodeLength())
-            {
-                bitstream.WriteByte((byte)symbol);
+                // HT Informationen
+                int[] htInfo = {
+                    0,
+                    0,
+                    0,
+                    huffman.Type == Huffman.HuffmanTyp.ChrominanceDC || huffman.Type == Huffman.HuffmanTyp.LuminanceDC ? 0 : 1,
+                    id[0],
+                    id[1],
+                    id[2],
+                    id[3]
+                };
+                bitstream.WriteBits(htInfo);
+
+                // Anzahl von Symbolen mit Kodelängen von 1..16 (Summe dieser Anzahlen ist Gesamtzahl der Symbole, muss <= 256)
+                foreach (int count in huffman.GetCountForEachLevel().Select(x=>x.Value))
+                {
+                    bitstream.WriteByte((byte)count);
+                }
+
+                // Tabelle mit den Symbolen in aufsteigender Folge der Kodelängen (n = total Gesamtzahl der Symbole)
+                foreach (int symbol in huffman.GetSymbolsAscendingOnCodeLength())
+                {
+                    bitstream.WriteByte((byte)symbol);
+                }
+
             }
         }
         #endregion

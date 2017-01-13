@@ -24,7 +24,7 @@ namespace JpegConverterTest
             sl.Add(4, 6);
             sl.Add(5, 7);
             sl.Add(6, 9);
-            Huffman huffman = new Huffman(sl);
+            Huffman huffman = new Huffman(sl, HuffmanTyp.ChrominanceAC);
             huffman.CreateNormalHuffman();
 
             CollectionAssert.AreEqual(new int[] { 0, 1, 0 }, huffman.GetCode(1));
@@ -42,7 +42,7 @@ namespace JpegConverterTest
             sl2.Add(4, 8);
             sl2.Add(5, 10);
 
-            Huffman huffman2 = new Huffman(sl2);
+            Huffman huffman2 = new Huffman(sl2, HuffmanTyp.ChrominanceAC);
             huffman2.CreateNormalHuffman();
 
             CollectionAssert.AreEqual(new int[] { 0, 1, 0 }, huffman2.GetCode(1));
@@ -63,7 +63,7 @@ namespace JpegConverterTest
             sl.Add(4, 6);
             sl.Add(5, 7);
             sl.Add(6, 9);
-            Huffman huffman = new Huffman(sl);
+            Huffman huffman = new Huffman(sl, HuffmanTyp.ChrominanceAC);
             huffman.CreateNormalHuffman(true);
 
             CollectionAssert.AreEqual(new int[] { 0, 1, 0 }, huffman.GetCode(1));
@@ -80,7 +80,7 @@ namespace JpegConverterTest
             sl.Add(4, 8);
             sl.Add(5, 10);
 
-            huffman = new Huffman(sl);
+            huffman = new Huffman(sl, HuffmanTyp.ChrominanceAC);
             huffman.CreateNormalHuffman(true);
 
             CollectionAssert.AreEqual(new int[] { 0, 1, 0 }, huffman.GetCode(1));
@@ -100,7 +100,7 @@ namespace JpegConverterTest
             sl.Add(4, 6);
             sl.Add(5, 7);
             sl.Add(6, 9);
-            Huffman huffman = new Huffman(sl);
+            Huffman huffman = new Huffman(sl, HuffmanTyp.ChrominanceAC);
             huffman.CreateRightGrowingHuffman();
 
             CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman.GetCode(1));
@@ -118,7 +118,7 @@ namespace JpegConverterTest
             sl2.Add(4, 8);
             sl2.Add(5, 10);
 
-            Huffman huffman2 = new Huffman(sl2);
+            Huffman huffman2 = new Huffman(sl2, HuffmanTyp.ChrominanceAC);
             huffman2.CreateRightGrowingHuffman();
 
             CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman2.GetCode(1));
@@ -138,7 +138,7 @@ namespace JpegConverterTest
             sl.Add(4, 6);
             sl.Add(5, 7);
             sl.Add(6, 9);
-            Huffman huffman = new Huffman(sl);
+            Huffman huffman = new Huffman(sl, HuffmanTyp.ChrominanceAC);
             huffman.CreateLimitedHuffman(3);
 
             CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman.GetCode(1));
@@ -156,7 +156,7 @@ namespace JpegConverterTest
             sl.Add(4, 8);
             sl.Add(5, 16);
             sl.Add(6, 32);
-            huffman = new Huffman(sl);
+            huffman = new Huffman(sl, HuffmanTyp.ChrominanceAC);
             huffman.CreateLimitedHuffman(3);
 
             CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman.GetCode(1));
@@ -177,7 +177,7 @@ namespace JpegConverterTest
             sl.Add(4, 6);
             sl.Add(5, 7);
             sl.Add(6, 9);
-            Huffman huffman = new Huffman(sl);
+            Huffman huffman = new Huffman(sl, HuffmanTyp.ChrominanceAC);
             huffman.CreateLimitedHuffman(3);
 
             CollectionAssert.AreEqual(new int[] { 1, 1, 1 }, huffman.GetCode(1));

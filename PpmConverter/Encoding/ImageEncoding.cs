@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace JpegConverter.Encoding
 {
+    using Jpeg;
     using Block = Int32;
     using RunLengthAcPairBlock = List<RunLengthAcPair>;
 
@@ -25,14 +26,21 @@ namespace JpegConverter.Encoding
         private List<RunLengthDcPair> RunLengthDcChannelCb;
         private List<RunLengthDcPair> RunLengthDcChannelCr;
 
+        public List<KeyValuePair<RunLengthDcPair, RunLengthAcPairBlock>> forChannelY;
+        public List<KeyValuePair<RunLengthDcPair, RunLengthAcPairBlock>> forChannelCb;
+        public List<KeyValuePair<RunLengthDcPair, RunLengthAcPairBlock>> forChannelCr;
+
         private Huffman.Huffman huffmanYAc;
         private Huffman.Huffman huffmanCAc;
         private Huffman.Huffman huffmanYDc;
         private Huffman.Huffman huffmanCDc;
 
+        private bool encoded;
+
         public ImageEncoder(Image image)
         {
             this.image = image;
+            encoded = false;
         }
 
         public void StartCalculationAndEncoding()
@@ -44,9 +52,44 @@ namespace JpegConverter.Encoding
             ZickZackSorting();
             CreateRunLengthEncoding();
             CreateHuffmann();
+            PrepareForWritig();
+            encoded = true;
         }
 
-        private void CreateHuffmann()
+        private void PrepareForWritig()
+        {
+            forChannelY = new List<KeyValuePair<RunLengthDcPair, RunLengthAcPairBlock>>();
+            for (int i = 0; i < RunLengthAcChannelY.Count; i++)
+            {
+                forChannelY.Add(new KeyValuePair<RunLengthDcPair, RunLengthAcPairBlock>(RunLengthDcChannelY[i], RunLengthAcChannelY[i]));
+            }
+
+            forChannelCb = new List<KeyValuePair<RunLengthDcPair, RunLengthAcPairBlock>>();
+            for (int i = 0; i < RunLengthAcChannelCb.Count; i++)
+            {
+                forChannelCb.Add(new KeyValuePair<RunLengthDcPair, RunLengthAcPairBlock>(RunLengthDcChannelCb[i], RunLengthAcChannelCb[i]));
+            }
+
+            forChannelCr = new List<KeyValuePair<RunLengthDcPair, RunLengthAcPairBlock>>();
+            for (int i = 0; i < RunLengthAcChannelCr.Count; i++)
+            {
+                forChannelCr.Add(new KeyValuePair<RunLengthDcPair, RunLengthAcPairBlock>(RunLengthDcChannelCr[i], RunLengthAcChannelCr[i]));
+            }
+        }
+
+        public void WriteToJpegToFile(PPMImage ppmImage, string file)
+        {
+            if (!encoded)
+            {
+                StartCalculationAndEncoding();
+            }
+
+            JpegEncoder encoder = new JpegEncoder();
+            encoder.WriteMarker(ppmImage, new List<Huffman.Huffman>() { huffmanYAc, huffmanCAc, huffmanYDc, huffmanCDc }, this);
+            encoder.SaveIntoFile(file);
+        }                                                               
+                                                                        
+        private void CreateHuffmann()                                   
         {
             HuffmanForACY();
             HuffmanForACC();
@@ -123,7 +166,7 @@ namespace JpegConverter.Encoding
                     dict[item.Category] = 1;
                 }
             }
-            huffmanCDc = new Huffman.Huffman(dict);
+            huffmanCDc = new Huffman.Huffman(dict, Huffman.HuffmanTyp.ChrominanceDC);
             huffmanCDc.CreateLimitedHuffman(16, true);
         }
 
@@ -141,7 +184,7 @@ namespace JpegConverter.Encoding
                     dict[item.Category] = 1;
                 }
             }
-            huffmanYDc = new Huffman.Huffman(dict);
+            huffmanYDc = new Huffman.Huffman(dict, Huffman.HuffmanTyp.LuminanceDC);
             huffmanYDc.CreateLimitedHuffman(16, true);
         }
 
@@ -168,7 +211,7 @@ namespace JpegConverter.Encoding
                     dict[item.PairAsByte] = 1;
                 }
             }
-            huffmanCAc = new Huffman.Huffman(dict);
+            huffmanCAc = new Huffman.Huffman(dict, Huffman.HuffmanTyp.ChrominanceAC);
             huffmanCAc.CreateLimitedHuffman(16, true);
         }
 
@@ -191,7 +234,7 @@ namespace JpegConverter.Encoding
                     dict[item.PairAsByte] = 1;
                 }
             }
-            huffmanYAc = new Huffman.Huffman(dict);
+            huffmanYAc = new Huffman.Huffman(dict, Huffman.HuffmanTyp.LuminanceAC);
             huffmanYAc.CreateLimitedHuffman(16, true);
         }
 

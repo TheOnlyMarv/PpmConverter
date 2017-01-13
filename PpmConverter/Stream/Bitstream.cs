@@ -81,6 +81,10 @@ namespace JpegConverter
             if (bufferCounter == 8)
             {
                 stream.WriteByte(bufferByte);
+                if (bufferByte == 0xff)
+                {
+                    stream.WriteByte(0x00);
+                }
                 bufferCounter = 0;
                 bufferByte = 0;
             }
