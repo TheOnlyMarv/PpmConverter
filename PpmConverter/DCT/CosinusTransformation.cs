@@ -230,14 +230,12 @@ namespace JpegConverter.DCT
             return image;
         }
 
-        private static void AraiForOneBlock(double[,] image, int offsetX, int offsetY)//double[,] image, int offsetX, int offsetY
+        private static void AraiForOneBlock(double[,] image, int offsetX, int offsetY)
         {
 
             for (int i = 0; i < BLOCK_SIZE; i++)
             {
                 int realI = offsetX + i;
-                //Arai(image[realI, offsetY + 0], image[realI, offsetY + 1], image[realI, offsetY + 2], image[realI, offsetY + 3], image[realI, offsetY + 4], image[realI, offsetY + 5], image[realI, offsetY + 6], image[realI, offsetY + 7],
-                //    out image[realI, offsetY + 0], out image[realI, offsetY + 1], out image[realI, offsetY + 2], out image[realI, offsetY + 3], out image[realI, offsetY + 4], out image[realI, offsetY + 5], out image[realI, offsetY + 6], out image[realI, offsetY + 7]);
 
                 double t0, t1, t2, t3, t4, t5, t6, t7;
                 double d0 = image[realI, offsetY + 0], d1 = image[realI, offsetY + 1], d2 = image[realI, offsetY + 2], d3 = image[realI, offsetY + 3], d4 = image[realI, offsetY + 4], d5 = image[realI, offsetY + 5], d6 = image[realI, offsetY + 6], d7 = image[realI, offsetY + 7];
