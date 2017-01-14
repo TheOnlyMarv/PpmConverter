@@ -215,12 +215,12 @@ namespace JpegConverter
                     }
                 }
 
-            }
+        }
             catch (IndexOutOfRangeException)
             {
                 throw new IllegalFormatException("Wrong image format");
-            }
-        }
+    }
+}
         private static void FillEmptyPixel(PPMImage image, int orgX, int orgY)
         {
             for (int x = 0; x < orgX; x++)
