@@ -232,13 +232,13 @@ namespace JpegConverter.DCT
 
         private static void AraiForOneBlock(double[,] image, int offsetX, int offsetY)//double[,] image, int offsetX, int offsetY
         {
+
             for (int i = 0; i < BLOCK_SIZE; i++)
             {
                 int realI = offsetX + i;
                 Arai(image[realI, offsetY + 0], image[realI, offsetY + 1], image[realI, offsetY + 2], image[realI, offsetY + 3], image[realI, offsetY + 4], image[realI, offsetY + 5], image[realI, offsetY + 6], image[realI, offsetY + 7],
                     out image[realI, offsetY + 0], out image[realI, offsetY + 1], out image[realI, offsetY + 2], out image[realI, offsetY + 3], out image[realI, offsetY + 4], out image[realI, offsetY + 5], out image[realI, offsetY + 6], out image[realI, offsetY + 7]);
             }
-
             for (int i = 0; i < BLOCK_SIZE; i++)
             {
                 int realI = offsetY + i;
@@ -264,7 +264,17 @@ namespace JpegConverter.DCT
             t5 = d2 - d5;
             t6 = d1 - d6;
             t7 = d0 - d7;
-            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
+
+            //Assign
+            d0 = t0;
+            d1 = t1;
+            d2 = t2;
+            d3 = t3;
+            d4 = t4;
+            d5 = t5;
+            d6 = t6;
+            d7 = t7;
+            
 
             //Step-2
             t0 = d0 + d3;
@@ -275,14 +285,34 @@ namespace JpegConverter.DCT
             t5 = d5 + d6;
             t6 = d6 + d7;
             //No 7
-            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
+
+            //Assign
+            d0 = t0;
+            d1 = t1;
+            d2 = t2;
+            d3 = t3;
+            d4 = t4;
+            d5 = t5;
+            d6 = t6;
+            d7 = t7;
+
 
             //Step-3
             t0 = d0 + d1;
             t1 = d0 - d1;
             t2 = d2 + d3;
             //No 3-7
-            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
+
+            //Assign
+            d0 = t0;
+            d1 = t1;
+            d2 = t2;
+            d3 = t3;
+            d4 = t4;
+            d5 = t5;
+            d6 = t6;
+            d7 = t7;
+
 
             //Step-4
             //No 0-1
@@ -293,7 +323,17 @@ namespace JpegConverter.DCT
             t5 = d5 * a3;
             t6 = (d6 * a4) - tempA5;
             //No 7
-            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
+
+            //Assign
+            d0 = t0;
+            d1 = t1;
+            d2 = t2;
+            d3 = t3;
+            d4 = t4;
+            d5 = t5;
+            d6 = t6;
+            d7 = t7;
+
 
             //Step-5
             //No 0-1
@@ -303,7 +343,17 @@ namespace JpegConverter.DCT
             t5 = d5 + d7;
             //No 6
             t7 = d7 - d5;
-            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
+
+            //Assign
+            d0 = t0;
+            d1 = t1;
+            d2 = t2;
+            d3 = t3;
+            d4 = t4;
+            d5 = t5;
+            d6 = t6;
+            d7 = t7;
+
 
             //Step-6
             //No 0-3
@@ -311,7 +361,17 @@ namespace JpegConverter.DCT
             t5 = d5 + d6;
             t6 = d5 - d6;
             t7 = d7 - d4;
-            Assign(t0, t1, t2, t3, t4, t5, t6, t7, out d0, out d1, out d2, out d3, out d4, out d5, out d6, out d7);
+
+            //Assign
+            d0 = t0;
+            d1 = t1;
+            d2 = t2;
+            d3 = t3;
+            d4 = t4;
+            d5 = t5;
+            d6 = t6;
+            d7 = t7;
+
 
             //Step-7
             t0 = d0 * s0;
@@ -322,34 +382,17 @@ namespace JpegConverter.DCT
             t5 = d5 * s1;
             t6 = d6 * s7;
             t7 = d7 * s3;
-            Reassign(t0, t1, t2, t3, t4, t5, t6, t7, out xo0, out xo1, out xo2, out xo3, out xo4, out xo5, out xo6, out xo7);
 
+            //Reassign
+            xo0 = t0;
+            xo4 = t1;
+            xo2 = t2;
+            xo6 = t3;
+            xo5 = t4;
+            xo1 = t5;
+            xo7 = t6;
+            xo3 = t7;
         }
-
-        private static void Assign(double xo0, double xo1, double xo2, double xo3, double xo4, double xo5, double xo6, double xo7, out double x0, out double x1, out double x2, out double x3, out double x4, out double x5, out double x6, out double x7)
-        {
-            x0 = xo0;
-            x1 = xo1;
-            x2 = xo2;
-            x3 = xo3;
-            x4 = xo4;
-            x5 = xo5;
-            x6 = xo6;
-            x7 = xo7;
-        }
-
-        private static void Reassign(double xo0, double xo1, double xo2, double xo3, double xo4, double xo5, double xo6, double xo7, out double x0, out double x1, out double x2, out double x3, out double x4, out double x5, out double x6, out double x7)
-        {
-            x0 = xo0;
-            x4 = xo1;
-            x2 = xo2;
-            x6 = xo3;
-            x5 = xo4;
-            x1 = xo5;
-            x7 = xo6;
-            x3 = xo7;
-        }
-
         #endregion
 
         #region Matrix Multiplications
