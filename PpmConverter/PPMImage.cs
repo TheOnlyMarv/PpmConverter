@@ -200,9 +200,9 @@ namespace JpegConverter
                     byte r, g, b;
                     if (byte.TryParse(value[i], out r) && byte.TryParse(value[i + 1], out g) && byte.TryParse(value[i + 2], out b))
                     {
-                        image.Matrix.Channel0[currX, currY] = r;
-                        image.Matrix.Channel1[currX, currY] = g;
-                        image.Matrix.Channel2[currX, currY] = b;
+                        image.Matrix.Channel0[currY, currX] = r;
+                        image.Matrix.Channel1[currY, currX] = g;
+                        image.Matrix.Channel2[currY, currX] = b;
                         if (++currX == orgX)
                         {
                             currX = 0;

@@ -285,7 +285,7 @@ namespace JpegConverter.Encoding
             image.extendMatrix();
             image.subsamplingChannel1();
             image.subsamplingChannel2();
-        }
+        } // Bei Farben nochmal überprüfen
 
         private void ConvertingToYCbCr()
         {
