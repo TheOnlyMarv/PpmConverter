@@ -221,8 +221,8 @@ namespace JpegConverter.DCT
             int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
             for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
-                int offsetX = (bId % blocksEachRow) * 8;
-                int offsetY = (bId / blocksEachRow) * 8;
+                int offsetY = (bId % blocksEachRow) * 8;
+                int offsetX = (bId / blocksEachRow) * 8;
 
                 AraiForOneBlock(image, offsetX, offsetY);
             }

@@ -126,8 +126,8 @@ namespace JpegConverter.Quantisation
             int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
             for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
-                int offsetX = (bId % blocksEachRow) * 8;
-                int offsetY = (bId / blocksEachRow) * 8;
+                int offsetY = (bId % blocksEachRow) * 8;
+                int offsetX = (bId / blocksEachRow) * 8;
 
                 QuantisationForOneBlock(image, offsetX, offsetY, newImage, useChrominance ? quantisationTableForChrominance : quantisationTableForLuminance);
             }
@@ -138,12 +138,12 @@ namespace JpegConverter.Quantisation
 
         private static void QuantisationForOneBlock(int[,] image, int offsetX, int offsetY, int[,] newImage, int[,] quantisationTable)
         {
-            for (int y = 0; y < BLOCK_SIZE; y++)
+            for (int x = 0; x < BLOCK_SIZE; x++)
             {
-                int realY = y + offsetY;
-                for (int x = 0; x < BLOCK_SIZE; x++)
+                int realX = x + offsetX;
+                for (int y = 0; y < BLOCK_SIZE; y++)
                 {
-                    int realX = x + offsetX;
+                    int realY = y + offsetY;
                     newImage[realX, realY] = (int)Math.Round(image[realX, realY] / (double)quantisationTable[x, y]);
                 }
             }

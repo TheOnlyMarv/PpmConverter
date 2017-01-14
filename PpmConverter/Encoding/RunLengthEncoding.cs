@@ -123,13 +123,7 @@ namespace JpegConverter.Encoding
                     int ooffsetX = ((bId - 1) / blocksEachRow) * 8;
                     difference = channel[offsetX, offsetY] - channel[ooffsetX, ooffsetY];
                 }
-                //for (int binnerId = bId; binnerId < (channel.GetLength(0) * channel.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; binnerId++)
-                //{
-                //    int offsetY = (binnerId % blocksEachRow) * 8;
-                //    int offsetX = (binnerId / blocksEachRow) * 8;
 
-                //    difference -= channel[offsetX, offsetY];
-                //}
                 byte category = GetCategory(difference);
                 result.Add(new RunLengthDcPair() { Difference = difference, Category = GetCategory(difference), BitPattern = CreateBitPattern(CreateBitNumber(category, difference), category) });
             }
