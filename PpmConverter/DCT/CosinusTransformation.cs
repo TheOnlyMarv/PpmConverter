@@ -281,7 +281,6 @@ namespace JpegConverter.DCT
                 d4 = t4;
                 d5 = t5;
                 d6 = t6;
-                //d7 = t7;
 
 
                 //Step-3
@@ -294,11 +293,6 @@ namespace JpegConverter.DCT
                 d0 = t0;
                 d1 = t1;
                 d2 = t2;
-                //d3 = t3;
-                //d4 = t4;
-                //d5 = t5;
-                //d6 = t6;
-                //d7 = t7;
 
 
                 //Step-4
@@ -312,14 +306,10 @@ namespace JpegConverter.DCT
                 //No 7
 
                 //Assign
-                //d0 = t0;
-                //d1 = t1;
                 d2 = t2;
-                //d3 = t3;
                 d4 = t4;
                 d5 = t5;
                 d6 = t6;
-                //d7 = t7;
 
 
                 //Step-5
@@ -332,13 +322,9 @@ namespace JpegConverter.DCT
                 t7 = d7 - d5;
 
                 //Assign
-                //d0 = t0;
-                //d1 = t1;
                 d2 = t2;
                 d3 = t3;
-                //d4 = t4;
                 d5 = t5;
-                //d6 = t6;
                 d7 = t7;
 
 
@@ -350,10 +336,6 @@ namespace JpegConverter.DCT
                 t7 = d7 - d4;
 
                 //Assign
-                //d0 = t0;
-                //d1 = t1;
-                //d2 = t2;
-                //d3 = t3;
                 d4 = t4;
                 d5 = t5;
                 d6 = t6;
@@ -416,7 +398,6 @@ namespace JpegConverter.DCT
                 d4 = t4;
                 d5 = t5;
                 d6 = t6;
-                //d7 = t7;
 
 
                 //Step-3
@@ -429,12 +410,7 @@ namespace JpegConverter.DCT
                 d0 = t0;
                 d1 = t1;
                 d2 = t2;
-                //d3 = t3;
-                //d4 = t4;
-                //d5 = t5;
-                //d6 = t6;
-                //d7 = t7;
-
+                
 
                 //Step-4
                 //No 0-1
@@ -447,14 +423,10 @@ namespace JpegConverter.DCT
                 //No 7
 
                 //Assign
-                //d0 = t0;
-                //d1 = t1;
                 d2 = t2;
-                //d3 = t3;
                 d4 = t4;
                 d5 = t5;
                 d6 = t6;
-                //d7 = t7;
 
 
                 //Step-5
@@ -467,13 +439,9 @@ namespace JpegConverter.DCT
                 t7 = d7 - d5;
 
                 //Assign
-                //d0 = t0;
-                //d1 = t1;
                 d2 = t2;
                 d3 = t3;
-                //d4 = t4;
                 d5 = t5;
-                //d6 = t6;
                 d7 = t7;
 
 
@@ -485,10 +453,6 @@ namespace JpegConverter.DCT
                 t7 = d7 - d4;
 
                 //Assign
-                //d0 = t0;
-                //d1 = t1;
-                //d2 = t2;
-                //d3 = t3;
                 d4 = t4;
                 d5 = t5;
                 d6 = t6;
