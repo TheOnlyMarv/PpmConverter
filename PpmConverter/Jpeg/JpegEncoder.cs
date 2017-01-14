@@ -302,17 +302,17 @@ namespace JpegConverter.Jpeg
 
         private void WriteDht(List<JpegConverter.Huffman.Huffman> huffmanTables)
         {
+            foreach (Huffman.Huffman huffman in huffmanTables)
+            {
             //Marker
             bitstream.WriteByte(SEGMENT_BEGIN);
             bitstream.WriteByte(0xc4);
 
             //Laenge des Segments
             bitstream.WriteByte(0x00);
-            int length = huffmanTables.Sum(x => x.NumberOfSymbols()) + 17 * huffmanTables.Count;//(17 + huffmanTables.NumberOfSymbols()) * 2;
-            bitstream.WriteByte((byte)length);
+            int length = (17 + huffman.NumberOfSymbols()); //huffmanTables.Sum(x => x.NumberOfSymbols()) + 17 * huffmanTables.Count;//
+                bitstream.WriteByte((byte)length);
 
-            foreach (Huffman.Huffman huffman in huffmanTables)
-            {
                 int[] id = null;
                 switch (huffman.Type)
                 {
