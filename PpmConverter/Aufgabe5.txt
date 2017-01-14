@@ -1,22 +1,6 @@
 ﻿Aufgabe 5a:
-Relevant:
-1. Farbraum-Konvertierung RGB -> YCbCr
-2. Subsampling
-3. DCT-Berechnung
-4. Quantisierung
-5. Zick-Zack-Sortierung
-6. Lauflängen/Differenz Kategorien-Kodierung
-7. Huffman-Tabelle AC/DC, Y/CbCr
-8. SOI (Start of Image) Segment
-9. APP0 Segment
-10. DQT (Define Quantizatino Tablle) Segment
-11. SOF0 (Start of Frame 0) Segment
-12. DHT (Define Huffman Table) Segment
-13. SOS (Start of Scan) Segment
-14. EOI (End of Image) Segment
-
-Welche beschriebene Funktionalität wird nicht verwendet?
-?
+Google Docs Link verwendeten und nichtverwendeten Segmenten:
+https://docs.google.com/spreadsheets/d/1kAfHF9q_xVwil-L7bheiqvjswy0B2q9dFua8bOGUC_E/
 
 
 Aufgabe 5c:
