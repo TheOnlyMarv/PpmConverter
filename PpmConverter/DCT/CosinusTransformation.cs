@@ -64,6 +64,13 @@ namespace JpegConverter.DCT
         #region DirectDCT
         public static double[,] DirectDCT(double[,] image)
         {
+            Action<object> action = (object obj) =>
+            {
+                object[] aobj = (object[])obj;
+                DirectDCTforOneBlock((double[,])aobj[0], (double[,])aobj[1], (int)aobj[2], (int)aobj[3]);
+            };
+            List<Task> taskList = new List<Task>();
+
             double[,] tempImage = image.Clone() as double[,];
             int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
             for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
@@ -71,8 +78,12 @@ namespace JpegConverter.DCT
                 int offsetX = (bId % blocksEachRow) * 8;
                 int offsetY = (bId / blocksEachRow) * 8;
 
-                DirectDCTforOneBlock(image, tempImage, offsetX, offsetY);
+                taskList.Add(new Task(action, new object[] { image, tempImage, offsetX, offsetY }));
+                taskList.Last().Start();
+                //DirectDCTforOneBlock(image, tempImage, offsetX, offsetY);
             }
+
+            Task.WaitAll(taskList.ToArray());
 
             return image;
         }
