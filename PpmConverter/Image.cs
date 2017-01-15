@@ -146,21 +146,21 @@ namespace JpegConverter
             int[,] green = image.Channel1;
             int[,] blue = image.Channel2;
 
-            int maxWidth = image.Channel0.GetLength(0);
-            int maxHeight = image.Channel0.GetLength(1);
+            int maxWidth = image.Channel0.GetLength(1);
+            int maxHeight = image.Channel0.GetLength(0);
 
-            int[,] y = new int[maxWidth, maxHeight];
-            int[,] cb = new int[maxWidth, maxHeight];
-            int[,] cr = new int[maxWidth, maxHeight];
+            int[,] y = new int[maxHeight, maxWidth];
+            int[,] cb = new int[maxHeight, maxWidth];
+            int[,] cr = new int[maxHeight, maxWidth];
 
 
             for (int height = 0; height < maxHeight; height++)
             {
                 for (int width = 0; width < maxWidth; width++)
                 {
-                    y[width, height] = (int)Math.Round(0.299 * red[width, height] + 0.587 * green[width, height] + 0.114 * blue[width, height] + 0)-128;
-                    cb[width, height] = (int)Math.Round(-0.1687 * red[width, height] - 0.3312 * green[width, height] + 0.5 * blue[width, height] + 128)-128;//(blue[width,height] - y[width, height]) * 0.564 + 128);
-                    cr[width, height] = (int)Math.Round(0.5 * red[width, height] - 0.4186 * green[width, height] - 0.0813 * blue[width, height] + 128)-128;
+                    y[height, width] = (int)Math.Round(0.299 * red[height, width] + 0.587 * green[height, width] + 0.114 * blue[height, width] + 0)-128;
+                    cb[height, width] = (int)Math.Round(-0.1687 * red[height, width] - 0.3312 * green[height, width] + 0.5 * blue[height, width] + 128)-128;//(blue[width,height] - y[width, height]) * 0.564 + 128);
+                    cr[height, width] = (int)Math.Round(0.5 * red[height, width] - 0.4186 * green[height, width] - 0.0813 * blue[height, width] + 128)-128;
                 }
             }
             //Debug.WriteLine("r: {0}\tg: {1}\tb: {2}", rgbImage.R[30, 0], rgbImage.G[30, 0], rgbImage.B[30, 0]);

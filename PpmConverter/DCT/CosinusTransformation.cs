@@ -65,7 +65,7 @@ namespace JpegConverter.DCT
         public static double[,] DirectDCT(double[,] image)
         {
             double[,] tempImage = image.Clone() as double[,];
-            int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
+            int blocksEachRow = image.GetLength(1) / BLOCK_SIZE;
             for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
                 int offsetX = (bId % blocksEachRow) * 8;
