@@ -138,13 +138,13 @@ namespace JpegConverter.Quantisation
 
         private static void QuantisationForOneBlock(int[,] image, int offsetX, int offsetY, int[,] newImage, int[,] quantisationTable)
         {
-            for (int x = 0; x < BLOCK_SIZE; x++)
+            for (int y = 0; y < BLOCK_SIZE; y++)
             {
-                int realX = x + offsetX;
-                for (int y = 0; y < BLOCK_SIZE; y++)
+                int realY = y + offsetY;
+                for (int x = 0; x < BLOCK_SIZE; x++)
                 {
-                    int realY = y + offsetY;
-                    newImage[realX, realY] = (int)Math.Round(image[realX, realY] / (double)quantisationTable[x, y]);
+                    int realX = x + offsetX;
+                    newImage[realY, realX] = (int)Math.Round(image[realY, realX] / (double)quantisationTable[y, x]);
                 }
             }
         }

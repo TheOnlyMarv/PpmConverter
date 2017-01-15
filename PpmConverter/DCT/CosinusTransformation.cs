@@ -235,10 +235,10 @@ namespace JpegConverter.DCT
 
             for (int i = 0; i < BLOCK_SIZE; i++)
             {
-                int realI = offsetX + i;
+                int realI = offsetY + i;
 
                 double t0, t1, t2, t3, t4, t5, t6, t7;
-                double d0 = image[realI, offsetY + 0], d1 = image[realI, offsetY + 1], d2 = image[realI, offsetY + 2], d3 = image[realI, offsetY + 3], d4 = image[realI, offsetY + 4], d5 = image[realI, offsetY + 5], d6 = image[realI, offsetY + 6], d7 = image[realI, offsetY + 7];
+                double d0 = image[realI, offsetX + 0], d1 = image[realI, offsetX + 1], d2 = image[realI, offsetX + 2], d3 = image[realI, offsetX + 3], d4 = image[realI, offsetX + 4], d5 = image[realI, offsetX + 5], d6 = image[realI, offsetX + 6], d7 = image[realI, offsetX + 7];
 
                 //Step-1
                 t0 = d0 + d7;
@@ -341,21 +341,21 @@ namespace JpegConverter.DCT
 
 
                 //Step-7
-                image[realI, offsetY + 0] = d0 * s0;
-                image[realI, offsetY + 4] = d1 * s4;
-                image[realI, offsetY + 2] = d2 * s2;
-                image[realI, offsetY + 6] = d3 * s6;
-                image[realI, offsetY + 5] = d4 * s5;
-                image[realI, offsetY + 1] = d5 * s1;
-                image[realI, offsetY + 7] = d6 * s7;
-                image[realI, offsetY + 3] = d7 * s3;
+                image[realI, offsetX + 0] = d0 * s0;
+                image[realI, offsetX + 4] = d1 * s4;
+                image[realI, offsetX + 2] = d2 * s2;
+                image[realI, offsetX + 6] = d3 * s6;
+                image[realI, offsetX + 5] = d4 * s5;
+                image[realI, offsetX + 1] = d5 * s1;
+                image[realI, offsetX + 7] = d6 * s7;
+                image[realI, offsetX + 3] = d7 * s3;
             }
             for (int i = 0; i < BLOCK_SIZE; i++)
             {
-                int realI = offsetY + i;
+                int realI = offsetX + i;
 
                 double t0, t1, t2, t3, t4, t5, t6, t7;
-                double d0 = image[offsetX + 0, realI], d1 = image[offsetX + 1, realI], d2 = image[offsetX + 2, realI], d3 = image[offsetX + 3, realI], d4 = image[offsetX + 4, realI], d5 = image[offsetX + 5, realI], d6 = image[offsetX + 6, realI], d7 = image[offsetX + 7, realI];
+                double d0 = image[offsetY + 0, realI], d1 = image[offsetY + 1, realI], d2 = image[offsetY + 2, realI], d3 = image[offsetY + 3, realI], d4 = image[offsetY + 4, realI], d5 = image[offsetY + 5, realI], d6 = image[offsetY + 6, realI], d7 = image[offsetY + 7, realI];
 
                 //Step-1
                 t0 = d0 + d7;
@@ -458,14 +458,14 @@ namespace JpegConverter.DCT
 
 
                 //Step-7
-                image[offsetX + 0, realI] = d0 * s0;
-                image[offsetX + 4, realI] = d1 * s4;
-                image[offsetX + 2, realI] = d2 * s2;
-                image[offsetX + 6, realI] = d3 * s6;
-                image[offsetX + 5, realI] = d4 * s5;
-                image[offsetX + 1, realI] = d5 * s1;
-                image[offsetX + 7, realI] = d6 * s7;
-                image[offsetX + 3, realI] = d7 * s3;
+                image[offsetY + 0, realI] = d0 * s0;
+                image[offsetY + 4, realI] = d1 * s4;
+                image[offsetY + 2, realI] = d2 * s2;
+                image[offsetY + 6, realI] = d3 * s6;
+                image[offsetY + 5, realI] = d4 * s5;
+                image[offsetY + 1, realI] = d5 * s1;
+                image[offsetY + 7, realI] = d6 * s7;
+                image[offsetY + 3, realI] = d7 * s3;
 
             }
         }

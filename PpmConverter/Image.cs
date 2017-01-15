@@ -117,9 +117,9 @@ namespace JpegConverter
        
         public Image(int x, int y)
         {
-            channel0 = new int[x, y];
-            channel1 = new int[x, y];
-            channel2 = new int[x, y];
+            channel0 = new int[y, x];
+            channel1 = new int[y, x];
+            channel2 = new int[y, x];
         }
 
         public int[,] Channel0

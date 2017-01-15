@@ -223,23 +223,23 @@ namespace JpegConverter
 }
         private static void FillEmptyPixel(PPMImage image, int orgX, int orgY)
         {
-            for (int x = 0; x < orgX; x++)
+            for (int y = 0; y < orgY; y++)
             {
-                for (int y = orgY; y < image.Matrix.Channel2.GetLength(1); y++)
+                for (int x = orgX; x < image.Matrix.Channel2.GetLength(1); x++)
                 {
-                    image.Matrix.Channel0[x, y] = image.Matrix.Channel0[x, y - 1];
-                    image.Matrix.Channel1[x, y] = image.Matrix.Channel1[x, y - 1];
-                    image.Matrix.Channel2[x, y] = image.Matrix.Channel2[x, y - 1];
+                    image.Matrix.Channel0[y, x] = image.Matrix.Channel0[y, x - 1];
+                    image.Matrix.Channel1[y, x] = image.Matrix.Channel1[y, x - 1];
+                    image.Matrix.Channel2[y, x] = image.Matrix.Channel2[y, x - 1];
                 }
             }
 
-            for (int y = 0; y < image.Matrix.Channel2.GetLength(1); y++)
+            for (int x = 0; x < image.Matrix.Channel2.GetLength(1); x++)
             {
-                for (int x = orgX; x < image.Matrix.Channel2.GetLength(0); x++)
+                for (int y = orgY; y < image.Matrix.Channel2.GetLength(0); y++)
                 {
-                    image.Matrix.Channel0[x, y] = image.Matrix.Channel0[x - 1, y];
-                    image.Matrix.Channel1[x, y] = image.Matrix.Channel1[x - 1, y];
-                    image.Matrix.Channel2[x, y] = image.Matrix.Channel2[x - 1, y];
+                    image.Matrix.Channel0[y, x] = image.Matrix.Channel0[y - 1, x];
+                    image.Matrix.Channel1[y, x] = image.Matrix.Channel1[y - 1, x];
+                    image.Matrix.Channel2[y, x] = image.Matrix.Channel2[y - 1, x];
                 }
             }
 
