@@ -218,11 +218,11 @@ namespace JpegConverter.DCT
 
         public static double[,] AraiDCT(double[,] image)
         {
-            int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
+            int blocksEachRow = image.GetLength(1) / BLOCK_SIZE;
             for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
-                int offsetY = (bId % blocksEachRow) * 8;
-                int offsetX = (bId / blocksEachRow) * 8;
+                int offsetX = (bId % blocksEachRow) * 8;
+                int offsetY = (bId / blocksEachRow) * 8;
 
                 AraiForOneBlock(image, offsetX, offsetY);
             }
@@ -232,7 +232,124 @@ namespace JpegConverter.DCT
 
         private static void AraiForOneBlock(double[,] image, int offsetX, int offsetY)
         {
+            for (int i = 0; i < BLOCK_SIZE; i++)
+            {
+                int realI = offsetX + i;
 
+                double t0, t1, t2, t3, t4, t5, t6, t7;
+                double d0 = image[offsetY + 0, realI], d1 = image[offsetY + 1, realI], d2 = image[offsetY + 2, realI], d3 = image[offsetY + 3, realI], d4 = image[offsetY + 4, realI], d5 = image[offsetY + 5, realI], d6 = image[offsetY + 6, realI], d7 = image[offsetY + 7, realI];
+
+                //Step-1
+                t0 = d0 + d7;
+                t1 = d1 + d6;
+                t2 = d2 + d5;
+                t3 = d3 + d4;
+                t4 = d3 - d4;
+                t5 = d2 - d5;
+                t6 = d1 - d6;
+                t7 = d0 - d7;
+
+                //Assign
+                d0 = t0;
+                d1 = t1;
+                d2 = t2;
+                d3 = t3;
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+                d7 = t7;
+
+
+                //Step-2
+                t0 = d0 + d3;
+                t1 = d1 + d2;
+                t2 = d1 - d2;
+                t3 = d0 - d3;
+                t4 = -d4 - d5;
+                t5 = d5 + d6;
+                t6 = d6 + d7;
+                //No 7
+
+                //Assign
+                d0 = t0;
+                d1 = t1;
+                d2 = t2;
+                d3 = t3;
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+
+
+                //Step-3
+                t0 = d0 + d1;
+                t1 = d0 - d1;
+                t2 = d2 + d3;
+                //No 3-7
+
+                //Assign
+                d0 = t0;
+                d1 = t1;
+                d2 = t2;
+
+
+                //Step-4
+                //No 0-1
+                t2 = d2 * a1;
+                //No 3
+                double tempA5 = (d4 + d6) * a5;
+                t4 = -(d4 * a2) - tempA5;
+                t5 = d5 * a3;
+                t6 = (d6 * a4) - tempA5;
+                //No 7
+
+                //Assign
+                d2 = t2;
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+
+
+                //Step-5
+                //No 0-1
+                t2 = d2 + d3;
+                t3 = d3 - d2;
+                //No 4
+                t5 = d5 + d7;
+                //No 6
+                t7 = d7 - d5;
+
+                //Assign
+                d2 = t2;
+                d3 = t3;
+                d5 = t5;
+                d7 = t7;
+
+
+                //Step-6
+                //No 0-3
+                t4 = d4 + d7;
+                t5 = d5 + d6;
+                t6 = d5 - d6;
+                t7 = d7 - d4;
+
+                //Assign
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+                d7 = t7;
+
+
+                //Step-7
+                image[offsetY + 0, realI] = d0 * s0;
+                image[offsetY + 4, realI] = d1 * s4;
+                image[offsetY + 2, realI] = d2 * s2;
+                image[offsetY + 6, realI] = d3 * s6;
+                image[offsetY + 5, realI] = d4 * s5;
+                image[offsetY + 1, realI] = d5 * s1;
+                image[offsetY + 7, realI] = d6 * s7;
+                image[offsetY + 3, realI] = d7 * s3;
+
+            }
             for (int i = 0; i < BLOCK_SIZE; i++)
             {
                 int realI = offsetY + i;
@@ -350,124 +467,7 @@ namespace JpegConverter.DCT
                 image[realI, offsetX + 7] = d6 * s7;
                 image[realI, offsetX + 3] = d7 * s3;
             }
-            for (int i = 0; i < BLOCK_SIZE; i++)
-            {
-                int realI = offsetX + i;
-
-                double t0, t1, t2, t3, t4, t5, t6, t7;
-                double d0 = image[offsetY + 0, realI], d1 = image[offsetY + 1, realI], d2 = image[offsetY + 2, realI], d3 = image[offsetY + 3, realI], d4 = image[offsetY + 4, realI], d5 = image[offsetY + 5, realI], d6 = image[offsetY + 6, realI], d7 = image[offsetY + 7, realI];
-
-                //Step-1
-                t0 = d0 + d7;
-                t1 = d1 + d6;
-                t2 = d2 + d5;
-                t3 = d3 + d4;
-                t4 = d3 - d4;
-                t5 = d2 - d5;
-                t6 = d1 - d6;
-                t7 = d0 - d7;
-
-                //Assign
-                d0 = t0;
-                d1 = t1;
-                d2 = t2;
-                d3 = t3;
-                d4 = t4;
-                d5 = t5;
-                d6 = t6;
-                d7 = t7;
-
-
-                //Step-2
-                t0 = d0 + d3;
-                t1 = d1 + d2;
-                t2 = d1 - d2;
-                t3 = d0 - d3;
-                t4 = -d4 - d5;
-                t5 = d5 + d6;
-                t6 = d6 + d7;
-                //No 7
-
-                //Assign
-                d0 = t0;
-                d1 = t1;
-                d2 = t2;
-                d3 = t3;
-                d4 = t4;
-                d5 = t5;
-                d6 = t6;
-
-
-                //Step-3
-                t0 = d0 + d1;
-                t1 = d0 - d1;
-                t2 = d2 + d3;
-                //No 3-7
-
-                //Assign
-                d0 = t0;
-                d1 = t1;
-                d2 = t2;
-                
-
-                //Step-4
-                //No 0-1
-                t2 = d2 * a1;
-                //No 3
-                double tempA5 = (d4 + d6) * a5;
-                t4 = -(d4 * a2) - tempA5;
-                t5 = d5 * a3;
-                t6 = (d6 * a4) - tempA5;
-                //No 7
-
-                //Assign
-                d2 = t2;
-                d4 = t4;
-                d5 = t5;
-                d6 = t6;
-
-
-                //Step-5
-                //No 0-1
-                t2 = d2 + d3;
-                t3 = d3 - d2;
-                //No 4
-                t5 = d5 + d7;
-                //No 6
-                t7 = d7 - d5;
-
-                //Assign
-                d2 = t2;
-                d3 = t3;
-                d5 = t5;
-                d7 = t7;
-
-
-                //Step-6
-                //No 0-3
-                t4 = d4 + d7;
-                t5 = d5 + d6;
-                t6 = d5 - d6;
-                t7 = d7 - d4;
-
-                //Assign
-                d4 = t4;
-                d5 = t5;
-                d6 = t6;
-                d7 = t7;
-
-
-                //Step-7
-                image[offsetY + 0, realI] = d0 * s0;
-                image[offsetY + 4, realI] = d1 * s4;
-                image[offsetY + 2, realI] = d2 * s2;
-                image[offsetY + 6, realI] = d3 * s6;
-                image[offsetY + 5, realI] = d4 * s5;
-                image[offsetY + 1, realI] = d5 * s1;
-                image[offsetY + 7, realI] = d6 * s7;
-                image[offsetY + 3, realI] = d7 * s3;
-
-            }
+            
         }
         #endregion
 
