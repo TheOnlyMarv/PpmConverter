@@ -64,6 +64,13 @@ namespace JpegConverter.DCT
         #region DirectDCT
         public static double[,] DirectDCT(double[,] image)
         {
+            Action<object> action = (object obj) =>
+            {
+                object[] aobj = (object[])obj;
+                DirectDCTforOneBlock((double[,])aobj[0], (double[,])aobj[1], (int)aobj[2], (int)aobj[3]);
+            };
+            List<Task> taskList = new List<Task>();
+
             double[,] tempImage = image.Clone() as double[,];
             int blocksEachRow = image.GetLength(1) / BLOCK_SIZE;
             for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
@@ -71,8 +78,11 @@ namespace JpegConverter.DCT
                 int offsetX = (bId % blocksEachRow) * 8;
                 int offsetY = (bId / blocksEachRow) * 8;
 
-                DirectDCTforOneBlock(image, tempImage, offsetX, offsetY);
+                taskList.Add(new Task(action, new object[] { image, tempImage, offsetX, offsetY }));
+                taskList.Last().Start();
             }
+
+            Task.WaitAll(taskList.ToArray());
 
             return image;
         }
@@ -106,33 +116,36 @@ namespace JpegConverter.DCT
         #region SeperateDCT
         public static double[,] SeperateDCT(double[,] image)
         {
-            List<double[,]> blocks = SplitImageIntoBlocks(image);
 
-            for (int bId = 0; bId < blocks.Count; bId++)
+            int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
+            for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
-                double[,] block = blocks[bId];
-
-                double[,] cMatrix = new double[BLOCK_SIZE, BLOCK_SIZE];
-                double[,] cMatrixT = new double[BLOCK_SIZE, BLOCK_SIZE];
-
-                for (int n = 0; n < BLOCK_SIZE; n++)
-                {
-                    for (int k = 0; k < BLOCK_SIZE; k++)
-                    {
-                        double c0 = k == 0 ? ONE_DIV_SQRT2 : 1.0;
-                        cMatrix[k, n] = c0 * Math.Sqrt(2.0 / BLOCK_SIZE) * Math.Cos((2.0 * n + 1.0) * (k * Math.PI) / (2.0 * BLOCK_SIZE));
-                        cMatrixT[n, k] = cMatrix[k, n];
-                    }
-                }
-                double[,] temp = MatrixMultiplication(cMatrix, block);
-                block = MatrixMultiplication(temp, cMatrixT);
-
-                blocks[bId] = block;
+                int offsetY = (bId % blocksEachRow) * 8;
+                int offsetX = (bId / blocksEachRow) * 8;
+                
+                SeperateDCTforOneBlock(image, offsetY, offsetX);
             }
-
-
-            return MergeBlockIntoImage(blocks, image.GetLength(0), image.GetLength(1));
+            return image;
         }
+
+        private static void SeperateDCTforOneBlock(double[,] image, int offsetY, int offsetX)
+        {
+            double[,] cMatrix = new double[BLOCK_SIZE, BLOCK_SIZE];
+            double[,] cMatrixT = new double[BLOCK_SIZE, BLOCK_SIZE];
+
+            for (int n = 0; n < BLOCK_SIZE; n++)
+            {
+                for (int k = 0; k < BLOCK_SIZE; k++)
+                {
+                    double c0 = k == 0 ? ONE_DIV_SQRT2 : 1.0;
+                    cMatrix[k, n] = c0 * Math.Sqrt(2.0 / BLOCK_SIZE) * Math.Cos((2.0 * n + 1.0) * (k * Math.PI) / (2.0 * BLOCK_SIZE));
+                    cMatrixT[n, k] = cMatrix[k, n];
+                }
+            }
+            double[,] temp = MatrixMultiplication(cMatrix, image, offsetX, offsetY);
+            MatrixMultiplicationIntoOrgImg(temp, cMatrixT, image, offsetX, offsetY);
+        }
+
 
         #endregion
 
@@ -226,7 +239,6 @@ namespace JpegConverter.DCT
 
                 AraiForOneBlock(image, offsetX, offsetY);
             }
-
             return image;
         }
 
@@ -472,8 +484,23 @@ namespace JpegConverter.DCT
         #endregion
 
         #region Matrix Multiplications
+        private static void MatrixMultiplicationIntoOrgImg(double[,] m1, double[,] m2, double[,] image, int offsetX, int offsetY)
+        {
+            for (int x = 0; x < BLOCK_SIZE; x++)
+            {
+                for (int y = 0; y < BLOCK_SIZE; y++)
+                {
+                    double product = 0;
+                    for (int j = 0; j < BLOCK_SIZE; j++)
+                    {
+                        product = product + m1[x, j] * m2[j, y];
+                    }
+                    image[offsetX + x, offsetY + y] = product;
+                }
+            }
+        }
 
-        private static double[,] MatrixMultiplication(double[,] m1, double[,] m2)
+        private static double[,] MatrixMultiplication(double[,] m1, double[,] m2, int offsetX, int offsetY)
         {
             double[,] newMatrix = new double[BLOCK_SIZE, BLOCK_SIZE];
             for (int x = 0; x < BLOCK_SIZE; x++)
@@ -483,7 +510,7 @@ namespace JpegConverter.DCT
                     double product = 0;
                     for (int j = 0; j < BLOCK_SIZE; j++)
                     {
-                        product = product + m1[x, j] * m2[j, y];
+                        product = product + m1[x, j] * m2[offsetX + j, offsetY + y];
                     }
                     newMatrix[x, y] = product;
                 }
