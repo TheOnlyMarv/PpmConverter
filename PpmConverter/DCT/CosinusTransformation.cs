@@ -109,8 +109,6 @@ namespace JpegConverter.DCT
             }
         }
 
-
-
         #endregion
 
         #region SeperateDCT
@@ -152,36 +150,35 @@ namespace JpegConverter.DCT
         #region Inverse DirectDCT
         public static double[,] InverseDirectDCT(double[,] image)
         {
-            List<double[,]> blocks = SplitImageIntoBlocks(image);
-
-            for (int bId = 0; bId < blocks.Count; bId++)
+            int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
+            for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
-                double[,] block = blocks[bId];
+                int offsetY = (bId % blocksEachRow) * 8;
+                int offsetX = (bId / blocksEachRow) * 8;
 
-                double[,] newBlock = new double[BLOCK_SIZE, BLOCK_SIZE];
-
-                for (int x = 0; x < BLOCK_SIZE; x++)
-                {
-                    for (int y = 0; y < BLOCK_SIZE; y++)
-                    {
-                        double isumsum = 0;
-                        for (int i = 0; i < BLOCK_SIZE; i++)
-                        {
-                            double ci = i == 0 ? ONE_DIV_SQRT2 : 1.0;
-                            for (int j = 0; j < BLOCK_SIZE; j++)
-                            {
-                                double cj = j == 0 ? ONE_DIV_SQRT2 : 1.0;
-                                isumsum += 2.0 / BLOCK_SIZE * ci * cj * block[i, j] * Math.Cos(((2.0 * x + 1.0) * i * Math.PI) / (2.0 * BLOCK_SIZE)) * Math.Cos(((2.0 * y + 1.0) * j * Math.PI) / (2.0 * BLOCK_SIZE));
-                            }
-                        }
-                        newBlock[x, y] = Math.Round(isumsum);
-                    }
-                }
-                blocks[bId] = newBlock;
+                InverseDirectDCTforOneBlock(image, offsetY, offsetX);
             }
-
-            image = MergeBlockIntoImage(blocks, image.GetLength(0), image.GetLength(1));
             return image;
+        }
+
+        private static void InverseDirectDCTforOneBlock(double[,] image, int offsetY, int offsetX) {
+            for (int x = 0; x < BLOCK_SIZE; x++)
+            {
+                for (int y = 0; y < BLOCK_SIZE; y++)
+                {
+                    double isumsum = 0;
+                    for (int i = 0; i < BLOCK_SIZE; i++)
+                    {
+                        double ci = i == 0 ? ONE_DIV_SQRT2 : 1.0;
+                        for (int j = 0; j < BLOCK_SIZE; j++)
+                        {
+                            double cj = j == 0 ? ONE_DIV_SQRT2 : 1.0;
+                            isumsum += 2.0 / BLOCK_SIZE * ci * cj * image[i+offsetX, j+offsetY] * Math.Cos(((2.0 * x + 1.0) * i * Math.PI) / (2.0 * BLOCK_SIZE)) * Math.Cos(((2.0 * y + 1.0) * j * Math.PI) / (2.0 * BLOCK_SIZE));
+                        }
+                    }
+                    image[x+offsetX, y+offsetY] = Math.Round(isumsum);
+                }
+            }
         }
 
         #endregion
