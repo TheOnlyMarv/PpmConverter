@@ -46,6 +46,9 @@ namespace JpegConverter
         {
             get { return _stepY; }
         }
+
+        public int OrgX { get; set; }
+        public int OrgY { get; set; }
         #endregion
 
         #region Methods
@@ -111,6 +114,8 @@ namespace JpegConverter
                                 {
                                     if (int.TryParse(xy[0], out x) && int.TryParse(xy[1], out y))
                                     {
+                                        image.OrgX = x;
+                                        image.OrgY = y; 
                                         orgX = x;
                                         int temp = x % PPMImage._stepX;
                                         int newX = x - (temp == 0 ? 0 : temp - PPMImage._stepX);

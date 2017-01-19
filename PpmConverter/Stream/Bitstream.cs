@@ -97,27 +97,6 @@ namespace JpegConverter
             {
                 WriteBit(bits[i]);
             }
-            //byte counter = 0;
-            //byte b = 0;
-            //for (int i = 0; i < bits.Length; i++)
-            //{
-            //    b = (byte)((b << 1) + bits[i]);
-            //    if (++counter == 8)
-            //    {
-            //        WriteByte(b);
-            //        counter = 0;
-            //        b = 0;
-            //    }
-            //}
-            //if (counter != 0)
-            //{
-            //    byte temp = 0;
-            //    for (int i = 0; i < 8 - counter; i++)
-            //    {
-            //        temp = (byte)((temp << 1) + 1);
-            //    }
-            //    WriteByte((byte)((b << 8 - counter) + temp));
-            //}
         }
 
         public override int ReadByte()
