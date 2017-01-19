@@ -94,7 +94,7 @@ namespace JpegConverter.Jpeg
                 bitstream.WriteBits(yBlocks[indexA]);
                 bitstream.WriteBits(yBlocks[(indexA++) + offset]);
                 bitstream.WriteBits(yBlocks[indexA + offset]);
-
+                //bitstream.WriteBits(yBlocks[i]);
                 bitstream.WriteBits(CbBlocks[i]);
                 bitstream.WriteBits(CrBlocks[i]);
             }

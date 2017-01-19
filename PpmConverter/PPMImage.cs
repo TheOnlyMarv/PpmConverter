@@ -70,7 +70,7 @@ namespace JpegConverter
         }
 
         public static PPMImage LoadImageFromFile(string path)
-        { 
+        {
             if (!File.Exists(path))
             {
                 throw new FileNotFoundException(path + " not found");
@@ -215,12 +215,12 @@ namespace JpegConverter
                     }
                 }
 
-        }
+            }
             catch (IndexOutOfRangeException)
             {
                 throw new IllegalFormatException("Wrong image format");
-    }
-}
+            }
+        }
         private static void FillEmptyPixel(PPMImage image, int orgX, int orgY)
         {
             for (int y = 0; y < orgY; y++)
