@@ -68,6 +68,7 @@ namespace JpegConverter
         }
         public override void WriteByte(byte b)
         {
+            WriteIncompleteByte();
             stream.WriteByte(b);
         }
 
@@ -154,7 +155,7 @@ namespace JpegConverter
 
         public override void Flush()
         {
-            WriteIncompleteByte();
+            //WriteIncompleteByte();
             stream.Flush();
         }
 
@@ -166,6 +167,7 @@ namespace JpegConverter
             }
             if (bufferCounter == 8)
             {
+                bufferCounter = 0;
                 WriteByte(bufferByte);
             }
         }

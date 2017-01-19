@@ -10,9 +10,9 @@ namespace JpegConverter.Jpeg
     public class JpegEncoder
     {
         public static int[] LuminanceAC = { 0, 0, 0, 0 };
-        public static int[] LuminanceDC = { 0, 0, 0, 1 };
-        public static int[] ChrominaceAC = { 0, 0, 1, 0 };
-        public static int[] ChrominaceDC = { 0, 0, 1, 1 };
+        public static int[] LuminanceDC = { 0, 0, 0, 0 };
+        public static int[] ChrominaceAC = { 0, 0, 0, 1 };
+        public static int[] ChrominaceDC = { 0, 0, 0, 1 };
 
         private Bitstream bitstream;
 
