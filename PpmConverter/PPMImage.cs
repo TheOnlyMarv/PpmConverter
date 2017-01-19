@@ -58,11 +58,11 @@ namespace JpegConverter
                 writer.WriteLine(string.Format("{0} {1}", Matrix.Channel2.GetLength(0).ToString(), Matrix.Channel2.GetLength(1).ToString()));
                 writer.WriteLine(MaxValue.ToString());
 
-                for (int y = 0; y < Matrix.Channel0.GetLength(1); y++)
+                for (int y = 0; y < Matrix.Channel0.GetLength(0); y++)
                 {
-                    for (int x = 0; x < Matrix.Channel0.GetLength(0); x++)
+                    for (int x = 0; x < Matrix.Channel0.GetLength(1); x++)
                     {
-                        writer.Write(string.Format("{0} {1} {2} ", Matrix.Channel0.GetValue(x, y), Matrix.Channel1.GetValue(x, y), Matrix.Channel2.GetValue(x, y)));
+                        writer.Write(string.Format("{0} {1} {2} ", Matrix.Channel0.GetValue(y, x), Matrix.Channel1.GetValue(y, x), Matrix.Channel2.GetValue(y, x)));
                     }
                     writer.WriteLine("");
                 }

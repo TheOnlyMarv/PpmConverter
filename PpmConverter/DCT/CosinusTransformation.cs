@@ -72,7 +72,7 @@ namespace JpegConverter.DCT
             List<Task> taskList = new List<Task>();
 
             double[,] tempImage = image.Clone() as double[,];
-            int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
+            int blocksEachRow = image.GetLength(1) / BLOCK_SIZE;
             for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
             {
                 int offsetX = (bId % blocksEachRow) * 8;
@@ -108,6 +108,8 @@ namespace JpegConverter.DCT
                 }
             }
         }
+
+
 
         #endregion
 
@@ -156,10 +158,7 @@ namespace JpegConverter.DCT
                 int offsetY = (bId % blocksEachRow) * 8;
                 int offsetX = (bId / blocksEachRow) * 8;
 
-                InverseDirectDCTforOneBlock(image, offsetY, offsetX);
-            }
-            return image;
-        }
+                double[,] newBlock = new double[BLOCK_SIZE, BLOCK_SIZE];
 
         private static void InverseDirectDCTforOneBlock(double[,] image, int offsetY, int offsetX) {
             for (int x = 0; x < BLOCK_SIZE; x++)
