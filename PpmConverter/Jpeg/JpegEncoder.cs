@@ -81,21 +81,24 @@ namespace JpegConverter.Jpeg
                 CrBlocks.Add(block);
             }
 
-            //int row = 0;
-            //int xLength = image.Matrix.Channel0.GetLength(1);
-            //int yLength = image.Matrix.Channel0.GetLength(0);
-            //for (int chromId = 0; chromId < CbBlocks.Count; chromId++)
-            //{
+            int Bb = image.Matrix.Channel0.GetLength(1) / 8;
+            int offset = Bb - 1;
+            int indexA = 0;
+            for (int i = 0; i < CbBlocks.Count; i++)
+            {
+                if (i%(Bb/2)==0 && i!=0)
+                {
+                    indexA += Bb;
+                }
+                bitstream.WriteBits(yBlocks[indexA++]);
+                bitstream.WriteBits(yBlocks[indexA]);
+                bitstream.WriteBits(yBlocks[(indexA++) + offset]);
+                bitstream.WriteBits(yBlocks[indexA + offset]);
 
+                bitstream.WriteBits(CbBlocks[i]);
+                bitstream.WriteBits(CrBlocks[i]);
+            }
 
-
-            //    bitstream.WriteBits(yBlocks[lumId * 2]);
-            //    bitstream.WriteBits(yBlocks[chromId + 1 ]);
-            //    bitstream.WriteBits(yBlocks[chromId + CbBlocks.Count * 2]);
-            //    bitstream.WriteBits(yBlocks[chromId + CbBlocks.Count * 2 + 1]);
-            //    bitstream.WriteBits(CbBlocks[chromId]);
-            //    bitstream.WriteBits(CrBlocks[chromId]);
-            //}
         }
 
         private void WriteSos()
