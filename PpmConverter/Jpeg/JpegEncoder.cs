@@ -36,11 +36,11 @@ namespace JpegConverter.Jpeg
             WriteSof0(image);
             WriteDht(huffmanTables);
             WriteSos();
-            WirteImageData(encoder);
+            WirteImageData(encoder, image);
             WirteEndOfImage();
         }
 
-        private void WirteImageData(ImageEncoder encoder)
+        private void WirteImageData(ImageEncoder encoder, PPMImage image)
         {
             List<int[]> yBlocks = new List<int[]>();
             foreach (var item in encoder.forChannelY)
@@ -81,15 +81,21 @@ namespace JpegConverter.Jpeg
                 CrBlocks.Add(block);
             }
 
-            for (int i = 0; i < CbBlocks.Count; i++)
-            {
-                bitstream.WriteBits(yBlocks[i]);
-                bitstream.WriteBits(yBlocks[i + 1 ]);
-                bitstream.WriteBits(yBlocks[i + CbBlocks.Count * 2]);
-                bitstream.WriteBits(yBlocks[i + CbBlocks.Count * 2 + 1]);
-                bitstream.WriteBits(CbBlocks[i]);
-                bitstream.WriteBits(CrBlocks[i]);
-            }
+            //int row = 0;
+            //int xLength = image.Matrix.Channel0.GetLength(1);
+            //int yLength = image.Matrix.Channel0.GetLength(0);
+            //for (int chromId = 0; chromId < CbBlocks.Count; chromId++)
+            //{
+
+
+
+            //    bitstream.WriteBits(yBlocks[lumId * 2]);
+            //    bitstream.WriteBits(yBlocks[chromId + 1 ]);
+            //    bitstream.WriteBits(yBlocks[chromId + CbBlocks.Count * 2]);
+            //    bitstream.WriteBits(yBlocks[chromId + CbBlocks.Count * 2 + 1]);
+            //    bitstream.WriteBits(CbBlocks[chromId]);
+            //    bitstream.WriteBits(CrBlocks[chromId]);
+            //}
         }
 
         private void WriteSos()

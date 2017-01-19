@@ -163,13 +163,14 @@ namespace JpegConverter
         {
             while (bufferCounter != 8 && bufferCounter != 0)
             {
-                bufferByte += (byte)(1 << (7 - bufferCounter++));
+                //bufferByte += (byte)(1 << (7 - bufferCounter++));
+                WriteBit(1);
             }
-            if (bufferCounter == 8)
-            {
-                bufferCounter = 0;
-                WriteByte(bufferByte);
-            }
+            //if (bufferCounter == 8)
+            //{
+            //    bufferCounter = 0;
+            //    WriteByte(bufferByte);
+            //}
         }
 
         public override long Seek(long offset, SeekOrigin origin)
