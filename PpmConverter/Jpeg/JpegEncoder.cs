@@ -310,7 +310,7 @@ namespace JpegConverter.Jpeg
 
             //Laenge des Segments
             bitstream.WriteByte(0x00);
-            int length = (17 + huffman.NumberOfSymbols()); //huffmanTables.Sum(x => x.NumberOfSymbols()) + 17 * huffmanTables.Count;//
+            int length = (19 + huffman.NumberOfSymbols()); //huffmanTables.Sum(x => x.NumberOfSymbols()) + 17 * huffmanTables.Count;//
                 bitstream.WriteByte((byte)length);
 
                 int[] id = null;

@@ -158,8 +158,10 @@ namespace JpegConverter.DCT
                 int offsetY = (bId % blocksEachRow) * 8;
                 int offsetX = (bId / blocksEachRow) * 8;
 
-                double[,] newBlock = new double[BLOCK_SIZE, BLOCK_SIZE];
-
+                InverseDirectDCTforOneBlock(image, offsetY, offsetX);
+            }
+            return image;
+        }
         private static void InverseDirectDCTforOneBlock(double[,] image, int offsetY, int offsetX) {
             for (int x = 0; x < BLOCK_SIZE; x++)
             {

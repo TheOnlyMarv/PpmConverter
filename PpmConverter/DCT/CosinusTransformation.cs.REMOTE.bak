@@ -1,0 +1,523 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace JpegConverter.DCT
+{
+    public class CosinusTransformation
+    {
+        private static int BLOCK_SIZE = 8;
+        private static double ONE_DIV_SQRT2 = 0.70710678118654746;
+
+        #region Splitting and Merging
+        private static double[,] MergeBlockIntoImage(List<double[,]> blocks, int sizeX, int sizeY)
+        {
+            double[,] image = new double[sizeX, sizeY];
+
+            int offsetX = 0;
+            int offsetY = 0;
+            foreach (double[,] block in blocks)
+            {
+                for (int x = 0; x < block.GetLength(0); x++)
+                {
+                    for (int y = 0; y < block.GetLength(1); y++)
+                    {
+                        image[x + offsetX, y + offsetY] = block[x, y];
+                    }
+                }
+                offsetY += 8;
+                if (offsetY >= sizeY)
+                {
+                    offsetX += 8;
+                    offsetY = 0;
+                }
+            }
+            return image;
+        }
+
+        private static List<double[,]> SplitImageIntoBlocks(double[,] image)
+        {
+            List<double[,]> result = new List<double[,]>();
+            for (int allX = 0; allX < image.GetLength(0); allX += BLOCK_SIZE)
+            {
+                for (int allY = 0; allY < image.GetLength(1); allY += BLOCK_SIZE)
+                {
+                    double[,] block = new double[BLOCK_SIZE, BLOCK_SIZE];
+                    for (int x = 0; x < BLOCK_SIZE; x++)
+                    {
+                        for (int y = 0; y < BLOCK_SIZE; y++)
+                        {
+                            block[x, y] = image[allX + x, allY + y];
+                        }
+                    }
+                    result.Add(block);
+                }
+            }
+            return result;
+        }
+
+        #endregion
+
+        #region DirectDCT
+        public static double[,] DirectDCT(double[,] image)
+        {
+            Action<object> action = (object obj) =>
+            {
+                object[] aobj = (object[])obj;
+                DirectDCTforOneBlock((double[,])aobj[0], (double[,])aobj[1], (int)aobj[2], (int)aobj[3]);
+            };
+            List<Task> taskList = new List<Task>();
+
+            double[,] tempImage = image.Clone() as double[,];
+            int blocksEachRow = image.GetLength(1) / BLOCK_SIZE;
+            for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
+            {
+                int offsetX = (bId % blocksEachRow) * 8;
+                int offsetY = (bId / blocksEachRow) * 8;
+
+                taskList.Add(new Task(action, new object[] { image, tempImage, offsetX, offsetY }));
+                taskList.Last().Start();
+            }
+
+            Task.WaitAll(taskList.ToArray());
+
+            return image;
+        }
+
+        private static void DirectDCTforOneBlock(double[,] image, double[,] tempImage, int offsetX, int offsetY)
+        {
+            for (int i = offsetY; i < offsetY + 8; i++)
+            {
+                double ci = i == 0 ? ONE_DIV_SQRT2 : 1.0;
+                for (int j = offsetX; j < offsetX + 8; j++)
+                {
+                    double cj = j == 0 ? ONE_DIV_SQRT2 : 1.0;
+
+                    double innerSum = 0.0;
+                    for (int x = 0; x < BLOCK_SIZE; x++)
+                    {
+                        for (int y = 0; y < BLOCK_SIZE; y++)
+                        {
+                            innerSum += tempImage[y, x] * Math.Cos(((2.0 * y + 1) * i * Math.PI) / (2.0 * BLOCK_SIZE)) * Math.Cos(((2 * x + 1) * j * Math.PI) / (2 * BLOCK_SIZE));
+                        }
+                    }
+                    image[i, j] = (int)(Math.Round(2.0 / BLOCK_SIZE * ci * cj * innerSum));
+                }
+            }
+        }
+
+
+
+        #endregion
+
+        #region SeperateDCT
+        public static double[,] SeperateDCT(double[,] image)
+        {
+
+            int blocksEachRow = image.GetLength(0) / BLOCK_SIZE;
+            for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
+            {
+                int offsetY = (bId % blocksEachRow) * 8;
+                int offsetX = (bId / blocksEachRow) * 8;
+                
+                SeperateDCTforOneBlock(image, offsetY, offsetX);
+            }
+            return image;
+        }
+
+        private static void SeperateDCTforOneBlock(double[,] image, int offsetY, int offsetX)
+        {
+            double[,] cMatrix = new double[BLOCK_SIZE, BLOCK_SIZE];
+            double[,] cMatrixT = new double[BLOCK_SIZE, BLOCK_SIZE];
+
+            for (int n = 0; n < BLOCK_SIZE; n++)
+            {
+                for (int k = 0; k < BLOCK_SIZE; k++)
+                {
+                    double c0 = k == 0 ? ONE_DIV_SQRT2 : 1.0;
+                    cMatrix[k, n] = c0 * Math.Sqrt(2.0 / BLOCK_SIZE) * Math.Cos((2.0 * n + 1.0) * (k * Math.PI) / (2.0 * BLOCK_SIZE));
+                    cMatrixT[n, k] = cMatrix[k, n];
+                }
+            }
+            double[,] temp = MatrixMultiplication(cMatrix, image, offsetX, offsetY);
+            MatrixMultiplicationIntoOrgImg(temp, cMatrixT, image, offsetX, offsetY);
+        }
+
+
+        #endregion
+
+        #region Inverse DirectDCT
+        public static double[,] InverseDirectDCT(double[,] image)
+        {
+            List<double[,]> blocks = SplitImageIntoBlocks(image);
+
+            for (int bId = 0; bId < blocks.Count; bId++)
+            {
+                double[,] block = blocks[bId];
+
+                double[,] newBlock = new double[BLOCK_SIZE, BLOCK_SIZE];
+
+                for (int x = 0; x < BLOCK_SIZE; x++)
+                {
+                    for (int y = 0; y < BLOCK_SIZE; y++)
+                    {
+                        double isumsum = 0;
+                        for (int i = 0; i < BLOCK_SIZE; i++)
+                        {
+                            double ci = i == 0 ? ONE_DIV_SQRT2 : 1.0;
+                            for (int j = 0; j < BLOCK_SIZE; j++)
+                            {
+                                double cj = j == 0 ? ONE_DIV_SQRT2 : 1.0;
+                                isumsum += 2.0 / BLOCK_SIZE * ci * cj * block[i, j] * Math.Cos(((2.0 * x + 1.0) * i * Math.PI) / (2.0 * BLOCK_SIZE)) * Math.Cos(((2.0 * y + 1.0) * j * Math.PI) / (2.0 * BLOCK_SIZE));
+                            }
+                        }
+                        newBlock[x, y] = Math.Round(isumsum);
+                    }
+                }
+                blocks[bId] = newBlock;
+            }
+
+            image = MergeBlockIntoImage(blocks, image.GetLength(0), image.GetLength(1));
+            return image;
+        }
+
+        #endregion
+
+        #region Arai DCT
+
+        private static double s0 = 1d/(2d * Math.Sqrt(2d));
+        private static double s1 = 1d / (4d * Math.Cos((1d * Math.PI) / 16d));
+        private static double s2 = 1d / (4d * Math.Cos((2d * Math.PI) / 16d));
+        private static double s3 = 1d / (4d * Math.Cos((3d * Math.PI) / 16d));
+        private static double s4 = 1d / (4d * Math.Cos((4d * Math.PI) / 16d));
+        private static double s5 = 1d / (4d * Math.Cos((5d * Math.PI) / 16d));
+        private static double s6 = 1d / (4d * Math.Cos((6d * Math.PI) / 16d));
+        private static double s7 = 1d / (4d * Math.Cos((7d * Math.PI) / 16d));
+
+        private static double c2 = Math.Cos((2d * Math.PI) / 16d);
+        private static double c4 = Math.Cos((4d * Math.PI) / 16d);
+        private static double c6 = Math.Cos((6d * Math.PI) / 16d);
+                
+        private static double a1 = c4;
+        private static double a2 = c2 - c6;
+        private static double a3 = c4;
+        private static double a4 = c6 + c2;
+        private static double a5 = c6;
+
+        public static int[,] AraiDCT(int[,] image)
+        {
+            // Diese Methode bitte erstmal nicht anfassen und Ändern DANKE :) LG Marv
+            double[,] temp = new double[image.GetLength(0), image.GetLength(1)];
+            for (int i = 0; i < temp.GetLength(0); i++)
+            {
+                for (int j = 0; j < temp.GetLength(1); j++)
+                {
+                    temp[i, j] = (double)image[i, j];
+                }
+            }
+            AraiDCT(temp);
+            for (int i = 0; i < temp.GetLength(0); i++)
+            {
+                for (int j = 0; j < temp.GetLength(1); j++)
+                {
+                    image[i, j] = (int)Math.Round(temp[i, j]);
+                }
+            }
+            return image;
+        }
+
+        public static double[,] AraiDCT(double[,] image)
+        {
+            int blocksEachRow = image.GetLength(1) / BLOCK_SIZE;
+            for (int bId = 0; bId < (image.GetLength(0) * image.GetLength(1)) / BLOCK_SIZE / BLOCK_SIZE; bId++)
+            {
+                int offsetX = (bId % blocksEachRow) * 8;
+                int offsetY = (bId / blocksEachRow) * 8;
+
+                AraiForOneBlock(image, offsetX, offsetY);
+            }
+            return image;
+        }
+
+        private static void AraiForOneBlock(double[,] image, int offsetX, int offsetY)
+        {
+            for (int i = 0; i < BLOCK_SIZE; i++)
+            {
+                int realI = offsetX + i;
+
+                double t0, t1, t2, t3, t4, t5, t6, t7;
+                double d0 = image[offsetY + 0, realI], d1 = image[offsetY + 1, realI], d2 = image[offsetY + 2, realI], d3 = image[offsetY + 3, realI], d4 = image[offsetY + 4, realI], d5 = image[offsetY + 5, realI], d6 = image[offsetY + 6, realI], d7 = image[offsetY + 7, realI];
+
+                //Step-1
+                t0 = d0 + d7;
+                t1 = d1 + d6;
+                t2 = d2 + d5;
+                t3 = d3 + d4;
+                t4 = d3 - d4;
+                t5 = d2 - d5;
+                t6 = d1 - d6;
+                t7 = d0 - d7;
+
+                //Assign
+                d0 = t0;
+                d1 = t1;
+                d2 = t2;
+                d3 = t3;
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+                d7 = t7;
+
+
+                //Step-2
+                t0 = d0 + d3;
+                t1 = d1 + d2;
+                t2 = d1 - d2;
+                t3 = d0 - d3;
+                t4 = -d4 - d5;
+                t5 = d5 + d6;
+                t6 = d6 + d7;
+                //No 7
+
+                //Assign
+                d0 = t0;
+                d1 = t1;
+                d2 = t2;
+                d3 = t3;
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+
+
+                //Step-3
+                t0 = d0 + d1;
+                t1 = d0 - d1;
+                t2 = d2 + d3;
+                //No 3-7
+
+                //Assign
+                d0 = t0;
+                d1 = t1;
+                d2 = t2;
+
+
+                //Step-4
+                //No 0-1
+                t2 = d2 * a1;
+                //No 3
+                double tempA5 = (d4 + d6) * a5;
+                t4 = -(d4 * a2) - tempA5;
+                t5 = d5 * a3;
+                t6 = (d6 * a4) - tempA5;
+                //No 7
+
+                //Assign
+                d2 = t2;
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+
+
+                //Step-5
+                //No 0-1
+                t2 = d2 + d3;
+                t3 = d3 - d2;
+                //No 4
+                t5 = d5 + d7;
+                //No 6
+                t7 = d7 - d5;
+
+                //Assign
+                d2 = t2;
+                d3 = t3;
+                d5 = t5;
+                d7 = t7;
+
+
+                //Step-6
+                //No 0-3
+                t4 = d4 + d7;
+                t5 = d5 + d6;
+                t6 = d5 - d6;
+                t7 = d7 - d4;
+
+                //Assign
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+                d7 = t7;
+
+
+                //Step-7
+                image[offsetY + 0, realI] = d0 * s0;
+                image[offsetY + 4, realI] = d1 * s4;
+                image[offsetY + 2, realI] = d2 * s2;
+                image[offsetY + 6, realI] = d3 * s6;
+                image[offsetY + 5, realI] = d4 * s5;
+                image[offsetY + 1, realI] = d5 * s1;
+                image[offsetY + 7, realI] = d6 * s7;
+                image[offsetY + 3, realI] = d7 * s3;
+
+            }
+            for (int i = 0; i < BLOCK_SIZE; i++)
+            {
+                int realI = offsetY + i;
+
+                double t0, t1, t2, t3, t4, t5, t6, t7;
+                double d0 = image[realI, offsetX + 0], d1 = image[realI, offsetX + 1], d2 = image[realI, offsetX + 2], d3 = image[realI, offsetX + 3], d4 = image[realI, offsetX + 4], d5 = image[realI, offsetX + 5], d6 = image[realI, offsetX + 6], d7 = image[realI, offsetX + 7];
+
+                //Step-1
+                t0 = d0 + d7;
+                t1 = d1 + d6;
+                t2 = d2 + d5;
+                t3 = d3 + d4;
+                t4 = d3 - d4;
+                t5 = d2 - d5;
+                t6 = d1 - d6;
+                t7 = d0 - d7;
+
+                //Assign
+                d0 = t0;
+                d1 = t1;
+                d2 = t2;
+                d3 = t3;
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+                d7 = t7;
+
+
+                //Step-2
+                t0 = d0 + d3;
+                t1 = d1 + d2;
+                t2 = d1 - d2;
+                t3 = d0 - d3;
+                t4 = -d4 - d5;
+                t5 = d5 + d6;
+                t6 = d6 + d7;
+                //No 7
+
+                //Assign
+                d0 = t0;
+                d1 = t1;
+                d2 = t2;
+                d3 = t3;
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+
+
+                //Step-3
+                t0 = d0 + d1;
+                t1 = d0 - d1;
+                t2 = d2 + d3;
+                //No 3-7
+
+                //Assign
+                d0 = t0;
+                d1 = t1;
+                d2 = t2;
+
+
+                //Step-4
+                //No 0-1
+                t2 = d2 * a1;
+                //No 3
+                double tempA5 = (d4 + d6) * a5;
+                t4 = -(d4 * a2) - tempA5;
+                t5 = d5 * a3;
+                t6 = (d6 * a4) - tempA5;
+                //No 7
+
+                //Assign
+                d2 = t2;
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+
+
+                //Step-5
+                //No 0-1
+                t2 = d2 + d3;
+                t3 = d3 - d2;
+                //No 4
+                t5 = d5 + d7;
+                //No 6
+                t7 = d7 - d5;
+
+                //Assign
+                d2 = t2;
+                d3 = t3;
+                d5 = t5;
+                d7 = t7;
+
+
+                //Step-6
+                //No 0-3
+                t4 = d4 + d7;
+                t5 = d5 + d6;
+                t6 = d5 - d6;
+                t7 = d7 - d4;
+
+                //Assign
+                d4 = t4;
+                d5 = t5;
+                d6 = t6;
+                d7 = t7;
+
+
+                //Step-7
+                image[realI, offsetX + 0] = d0 * s0;
+                image[realI, offsetX + 4] = d1 * s4;
+                image[realI, offsetX + 2] = d2 * s2;
+                image[realI, offsetX + 6] = d3 * s6;
+                image[realI, offsetX + 5] = d4 * s5;
+                image[realI, offsetX + 1] = d5 * s1;
+                image[realI, offsetX + 7] = d6 * s7;
+                image[realI, offsetX + 3] = d7 * s3;
+            }
+            
+        }
+        #endregion
+
+        #region Matrix Multiplications
+        private static void MatrixMultiplicationIntoOrgImg(double[,] m1, double[,] m2, double[,] image, int offsetX, int offsetY)
+        {
+            for (int x = 0; x < BLOCK_SIZE; x++)
+            {
+                for (int y = 0; y < BLOCK_SIZE; y++)
+                {
+                    double product = 0;
+                    for (int j = 0; j < BLOCK_SIZE; j++)
+                    {
+                        product = product + m1[x, j] * m2[j, y];
+                    }
+                    image[offsetX + x, offsetY + y] = product;
+                }
+            }
+        }
+
+        private static double[,] MatrixMultiplication(double[,] m1, double[,] m2, int offsetX, int offsetY)
+        {
+            double[,] newMatrix = new double[BLOCK_SIZE, BLOCK_SIZE];
+            for (int x = 0; x < BLOCK_SIZE; x++)
+            {
+                for (int y = 0; y < BLOCK_SIZE; y++)
+                {
+                    double product = 0;
+                    for (int j = 0; j < BLOCK_SIZE; j++)
+                    {
+                        product = product + m1[x, j] * m2[offsetX + j, offsetY + y];
+                    }
+                    newMatrix[x, y] = product;
+                }
+            }
+            return newMatrix;
+        }
+
+        #endregion
+    }
+}
