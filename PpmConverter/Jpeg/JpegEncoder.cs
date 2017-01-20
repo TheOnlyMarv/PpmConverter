@@ -308,7 +308,7 @@ namespace JpegConverter.Jpeg
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
             bitstream.WriteByte(0x01);
         }
-
+        
         private void WriteDht(List<JpegConverter.Huffman.Huffman> huffmanTables)
         {
             foreach (Huffman.Huffman huffman in huffmanTables)
