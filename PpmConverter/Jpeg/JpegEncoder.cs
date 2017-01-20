@@ -94,7 +94,7 @@ namespace JpegConverter.Jpeg
                 bitstream.WriteBits(yBlocks[indexA]);
                 bitstream.WriteBits(yBlocks[(indexA++) + offset]);
                 bitstream.WriteBits(yBlocks[indexA + offset]);
-
+                //bitstream.WriteBits(yBlocks[i]);
                 bitstream.WriteBits(CbBlocks[i]);
                 bitstream.WriteBits(CrBlocks[i]);
             }
@@ -274,12 +274,12 @@ namespace JpegConverter.Jpeg
 
             //Bildgroesse y > 0
             
-            bitstream.WriteByte((byte)(image.Matrix.Channel0.GetLength(0) >> 8));
-            bitstream.WriteByte((byte)image.Matrix.Channel0.GetLength(0));
+            bitstream.WriteByte((byte)(image.OrgY >> 8));
+            bitstream.WriteByte((byte)image.OrgY);
 
             //Bildgroesse x > 0
-            bitstream.WriteByte((byte)(image.Matrix.Channel0.GetLength(1) >> 8));
-            bitstream.WriteByte((byte)image.Matrix.Channel0.GetLength(1));
+            bitstream.WriteByte((byte)(image.OrgX >> 8));
+            bitstream.WriteByte((byte)image.OrgX);
 
             //Anzahl Komponenten
             bitstream.WriteByte(0x03);

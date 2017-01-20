@@ -84,9 +84,10 @@ namespace JpegConverter.Encoding
                     int newPairs = zeroCounter / 16;
                     for (int j = 0; j < newPairs; j++)
                     {
-                        pairs.Add(new RunLengthAcPair() { Zeros = zeroCounter, Koeffizient = 0 });
+                        pairs.Add(new RunLengthAcPair() { Zeros = zeroCounter > 16 ? 15 : zeroCounter, Koeffizient = 0 });
                         zeroCounter -= 16;
                     }
+                    pairs.Add(new RunLengthAcPair() { Zeros = zeroCounter, Koeffizient = block[i] });
                 }
                 else
                 {
