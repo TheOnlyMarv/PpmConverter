@@ -36,11 +36,11 @@ namespace JpegConverter.Jpeg
             WriteSof0(image);
             WriteDht(huffmanTables);
             WriteSos();
-            WirteImageData(encoder, image);
-            WirteEndOfImage();
+            WriteImageData(encoder, image);
+            WriteEndOfImage();
         }
 
-        private void WirteImageData(ImageEncoder encoder, PPMImage image)
+        private void WriteImageData(ImageEncoder encoder, PPMImage image)
         {
             List<int[]> yBlocks = new List<int[]>();
             foreach (var item in encoder.forChannelY)
@@ -202,7 +202,7 @@ namespace JpegConverter.Jpeg
             }
         }
 
-        private void WirteEndOfImage()
+        private void WriteEndOfImage()
         {
             bitstream.WriteByte(SEGMENT_BEGIN);
             bitstream.WriteByte(0xd9);
@@ -360,7 +360,6 @@ namespace JpegConverter.Jpeg
                     bitstream.WriteByte((byte)count);
                 }
 
-                //List<Int32> tmp = huffman.GetSymbolsAscendingOnCodeLength();
                 // Tabelle mit den Symbolen in aufsteigender Folge der Kodelängen (n = total Gesamtzahl der Symbole)
                 foreach (int symbol in huffman.GetSymbolsAscendingOnCodeLength())
                 {
