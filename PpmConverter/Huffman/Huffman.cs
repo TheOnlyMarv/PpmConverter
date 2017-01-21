@@ -11,7 +11,7 @@ namespace JpegConverter.Huffman
     {
         private Dictionary<Symbol, int> Symbols { get; set; }
         public Node Root { get; set; }
-        private Dictionary<Symbol, int[]> CodeDictionary { get; set; }
+        public Dictionary<Symbol, int[]> CodeDictionary { get; set; }
         public HuffmanTyp Type { get; private set; }
 
         public Huffman(Dictionary<Symbol, int> symbols, HuffmanTyp type)
