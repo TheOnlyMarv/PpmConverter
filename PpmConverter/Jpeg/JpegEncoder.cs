@@ -288,7 +288,7 @@ namespace JpegConverter.Jpeg
             //  ID=1
             bitstream.WriteByte(0x01);
             //  Faktor unterabtastung (Bit 0-3 vertikal, 4-7 Horizontal);  Keine Unterabtastung: 0x22, Unterabtastung Faktor 2: 0x11
-            bitstream.WriteByte(0x11);
+            bitstream.WriteByte(0x22);
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
             bitstream.WriteByte(0x00);
 
