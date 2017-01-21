@@ -360,10 +360,12 @@ namespace JpegConverter.Jpeg
                     bitstream.WriteByte((byte)count);
                 }
 
+                //List<Int32> tmp = huffman.GetSymbolsAscendingOnCodeLength();
                 // Tabelle mit den Symbolen in aufsteigender Folge der Kodelängen (n = total Gesamtzahl der Symbole)
                 foreach (int symbol in huffman.GetSymbolsAscendingOnCodeLength())
                 {
                     bitstream.WriteByte((byte)symbol);
+                    if (((byte)symbol).Equals(0xff)) bitstream.WriteByte(0x00);
                 }
 
             }

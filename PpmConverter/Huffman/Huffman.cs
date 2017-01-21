@@ -299,7 +299,32 @@ namespace JpegConverter.Huffman
             {
                 CreateCodeDictionary(Root);
             }
-            return CodeDictionary.OrderBy(x => x.Value.Length).Select(x => x.Key).ToList();
+            List<KeyValuePair<int, Symbol>> strangeList = new List<KeyValuePair<int, Symbol>>(); 
+            CodeDictionary.OrderBy(x => x.Value.Length);
+            int indexCount = 0;
+            foreach (int count in GetCountForEachLevel().Select(x => x.Value))
+            {
+                for (int i = count; i > 0; i--)
+                {
+                    int newKey = GetAsOneIntValue(CodeDictionary.Values.ToArray()[indexCount]);
+                    Symbol newValue = CodeDictionary.Keys.ToArray()[indexCount++];
+                    strangeList.Add(new KeyValuePair<int, Symbol>(newKey, newValue));
+                }
+            }
+            strangeList.Sort((x, y) => x.Key.CompareTo(y.Key));
+            List<Symbol> retVal = strangeList.Select(x => x.Value).ToList();
+            return retVal;
+        }
+
+        private int GetAsOneIntValue(int[] input)
+        {
+            int retVal = 0;
+            for (int i = 0; i < input.Length; i++)
+            {
+                retVal *= 10;
+                retVal += input[i];
+            }
+            return retVal;
         }
         #endregion
     }
