@@ -362,14 +362,24 @@ namespace JpegConverter.Jpeg
 
                 //List<Int32> tmp = huffman.GetSymbolsAscendingOnCodeLength();
                 // Tabelle mit den Symbolen in aufsteigender Folge der Kodelängen (n = total Gesamtzahl der Symbole)
-                foreach (int symbol in huffman.GetSymbolsAscendingOnCodeLength())
+                foreach (var symbol in huffman.CodeDictionary.OrderBy(x => BinaryToByte(x.Value)))
                 {
-                    bitstream.WriteByte((byte)symbol);
-                    if (((byte)symbol).Equals(0xff)) bitstream.WriteByte(0x00);
+                    bitstream.WriteByte((byte)symbol.Key);
+                    //if (((byte)symbol).Equals(0xff)) bitstream.WriteByte(0x00);
                 }
 
             }
         }
         #endregion
+
+        private byte BinaryToByte(int[] binary)
+        {
+            byte result = 0;
+            for (int i = 0; i < binary.Length; i++)
+            {
+                result = (byte)(result << 1 | binary[i]);
+            }
+            return result;
+        }
     }
 }
