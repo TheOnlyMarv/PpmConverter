@@ -72,7 +72,7 @@ namespace JpegConverter.Encoding
         private static List<RunLengthAcPair> CreateRunLengthPairs(int[] block)
         {
             List<RunLengthAcPair> pairs = new List<RunLengthAcPair>();
-            byte zeroCounter = 0;
+            int zeroCounter = 0;
             for (int i = 1; i < block.Length; i++)
             {
                 if (block[i] == 0)
@@ -84,10 +84,12 @@ namespace JpegConverter.Encoding
                     int newPairs = zeroCounter / 16;
                     for (int j = 0; j < newPairs; j++)
                     {
-                        pairs.Add(new RunLengthAcPair() { Zeros = zeroCounter > 16 ? 15 : zeroCounter, Koeffizient = 0 });
+                        pairs.Add(new RunLengthAcPair() { Zeros = zeroCounter >= 16 ? 15 : (zeroCounter-1), Koeffizient = 0 });
                         zeroCounter -= 16;
+                        zeroCounter = zeroCounter < 0 ? 0 : zeroCounter;
                     }
                     pairs.Add(new RunLengthAcPair() { Zeros = zeroCounter, Koeffizient = block[i] });
+                    zeroCounter = 0;
                 }
                 else
                 {
