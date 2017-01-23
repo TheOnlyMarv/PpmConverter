@@ -46,7 +46,7 @@ namespace JpegConverter.Encoding
         public void StartCalculationAndEncoding()
         {
             ConvertingToYCbCr();
-            SubSamplingImage();
+            //SubSamplingImage();
             DCTCalculation();
             RunQuantisation();
             ZickZackSorting();

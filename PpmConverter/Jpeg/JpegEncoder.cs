@@ -81,20 +81,27 @@ namespace JpegConverter.Jpeg
                 CrBlocks.Add(block);
             }
 
-            int Bb = image.Matrix.Channel0.GetLength(1) / 8;
-            int offset = Bb - 1;
-            int indexA = 0;
-            for (int i = 0; i < CbBlocks.Count; i++)
+            //int Bb = image.Matrix.Channel0.GetLength(1) / 8;
+            //int offset = Bb - 1;
+            //int indexA = 0;
+            //for (int i = 0; i < CbBlocks.Count; i++)
+            //{
+            //    if (i%(Bb/2)==0 && i!=0)
+            //    {
+            //        indexA += Bb;
+            //    }
+            //    bitstream.WriteBits(yBlocks[indexA++]);
+            //    bitstream.WriteBits(yBlocks[indexA]);
+            //    bitstream.WriteBits(yBlocks[(indexA++) + offset]);
+            //    bitstream.WriteBits(yBlocks[indexA + offset]);
+            //    //bitstream.WriteBits(yBlocks[i]);
+            //    bitstream.WriteBits(CbBlocks[i]);
+            //    bitstream.WriteBits(CrBlocks[i]);
+            //}
+
+            for(int i = 0; i < CbBlocks.Count; i++)
             {
-                if (i%(Bb/2)==0 && i!=0)
-                {
-                    indexA += Bb;
-                }
-                bitstream.WriteBits(yBlocks[indexA++]);
-                bitstream.WriteBits(yBlocks[indexA]);
-                bitstream.WriteBits(yBlocks[(indexA++) + offset]);
-                bitstream.WriteBits(yBlocks[indexA + offset]);
-                //bitstream.WriteBits(yBlocks[i]);
+                bitstream.WriteBits(yBlocks[i]);
                 bitstream.WriteBits(CbBlocks[i]);
                 bitstream.WriteBits(CrBlocks[i]);
             }
@@ -296,7 +303,7 @@ namespace JpegConverter.Jpeg
             //  ID=2
             bitstream.WriteByte(0x02);
             //  Faktor unterabtastung (Bit 0-3 vertikal, 4-7 Horizontal);  Keine Unterabtastung: 0x22, Unterabtastung Faktor 2: 0x11
-            bitstream.WriteByte(0x11);
+            bitstream.WriteByte(0x22);
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
             bitstream.WriteByte(0x01);
 
@@ -304,7 +311,7 @@ namespace JpegConverter.Jpeg
             //  ID=2
             bitstream.WriteByte(0x03);
             //  Faktor unterabtastung (Bit 0-3 vertikal, 4-7 Horizontal);  Keine Unterabtastung: 0x22, Unterabtastung Faktor 2: 0x11
-            bitstream.WriteByte(0x11);
+            bitstream.WriteByte(0x22);
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
             bitstream.WriteByte(0x01);
         }
