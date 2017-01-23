@@ -250,11 +250,11 @@ namespace JpegConverter.Jpeg
 
             //x-Dichte != 0 hier: 0x0048
             bitstream.WriteByte(0x00);
-            bitstream.WriteByte(0x48);
+            bitstream.WriteByte(0x01);
 
             //y-Dichte != 0 hier: 0x0048
             bitstream.WriteByte(0x00);
-            bitstream.WriteByte(0x48);
+            bitstream.WriteByte(0x01);
 
             //groesse x y vorschaubild 0 = kein Vorschaubild
             bitstream.WriteByte(0x00);
@@ -295,7 +295,7 @@ namespace JpegConverter.Jpeg
             //  ID=1
             bitstream.WriteByte(0x01);
             //  Faktor unterabtastung (Bit 0-3 vertikal, 4-7 Horizontal);  Keine Unterabtastung: 0x22, Unterabtastung Faktor 2: 0x11
-            bitstream.WriteByte(0x22);
+            bitstream.WriteByte(0x11);
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
             bitstream.WriteByte(0x00);
 
@@ -303,7 +303,7 @@ namespace JpegConverter.Jpeg
             //  ID=2
             bitstream.WriteByte(0x02);
             //  Faktor unterabtastung (Bit 0-3 vertikal, 4-7 Horizontal);  Keine Unterabtastung: 0x22, Unterabtastung Faktor 2: 0x11
-            bitstream.WriteByte(0x22);
+            bitstream.WriteByte(0x11);
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
             bitstream.WriteByte(0x01);
 
@@ -311,7 +311,7 @@ namespace JpegConverter.Jpeg
             //  ID=2
             bitstream.WriteByte(0x03);
             //  Faktor unterabtastung (Bit 0-3 vertikal, 4-7 Horizontal);  Keine Unterabtastung: 0x22, Unterabtastung Faktor 2: 0x11
-            bitstream.WriteByte(0x22);
+            bitstream.WriteByte(0x11);
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
             bitstream.WriteByte(0x01);
         }
