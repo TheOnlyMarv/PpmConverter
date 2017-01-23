@@ -158,9 +158,9 @@ namespace JpegConverter
             {
                 for (int width = 0; width < maxWidth; width++)
                 {
-                    y[height, width] = (int)Math.Round(0.299 * red[height, width] + 0.587 * green[height, width] + 0.114 * blue[height, width] + 0)-128;
-                    cb[height, width] = (int)Math.Round(-0.1687 * red[height, width] - 0.3312 * green[height, width] + 0.5 * blue[height, width] + 128)-128;//(blue[width,height] - y[width, height]) * 0.564 + 128);
-                    cr[height, width] = (int)Math.Round(0.5 * red[height, width] - 0.4186 * green[height, width] - 0.0813 * blue[height, width] + 128)-128;
+                    y[height, width] = (int)Math.Round(0.299 * red[height, width] + 0.587 * green[height, width] + 0.114 * blue[height, width] + 0) - 128;
+                    cb[height, width] = (int)Math.Round(-0.1687 * red[height, width] - 0.3312 * green[height, width] + 0.5 * blue[height, width] + 128) - 128;//(blue[width,height] - y[width, height]) * 0.564 + 128);
+                    cr[height, width] = (int)Math.Round(0.5 * red[height, width] - 0.4186 * green[height, width] - 0.0813 * blue[height, width] + 128) - 128;
                 }
             }
             //Debug.WriteLine("r: {0}\tg: {1}\tb: {2}", rgbImage.R[30, 0], rgbImage.G[30, 0], rgbImage.B[30, 0]);

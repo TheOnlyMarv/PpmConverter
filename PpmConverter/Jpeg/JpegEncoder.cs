@@ -99,7 +99,7 @@ namespace JpegConverter.Jpeg
             //    bitstream.WriteBits(CrBlocks[i]);
             //}
 
-            for(int i = 0; i < CbBlocks.Count; i++)
+            for(int i = 0; i < yBlocks.Count; i++)
             {
                 bitstream.WriteBits(yBlocks[i]);
                 bitstream.WriteBits(CbBlocks[i]);
