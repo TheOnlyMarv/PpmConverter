@@ -46,7 +46,7 @@ namespace JpegConverter.Encoding
         public void StartCalculationAndEncoding()
         {
             ConvertingToYCbCr();
-            //SubSamplingImage();
+            SubSamplingImage();
             DCTCalculation();
             RunQuantisation();
             ZickZackSorting();
@@ -85,11 +85,11 @@ namespace JpegConverter.Encoding
             }
 
             JpegEncoder encoder = new JpegEncoder();
-            encoder.WriteMarker(ppmImage, new List<Huffman.Huffman>() { huffmanYAc, huffmanCAc, huffmanYDc, huffmanCDc }, this);
+            encoder.WriteMarker(ppmImage, new List<Huffman.Huffman>() { huffmanYDc, huffmanYAc, huffmanCDc, huffmanCAc }, this);
             encoder.SaveIntoFile(file);
-        }                                                               
-                                                                        
-        private void CreateHuffmann()                                   
+        }
+
+        private void CreateHuffmann()
         {
             HuffmanForACY();
             HuffmanForACC();

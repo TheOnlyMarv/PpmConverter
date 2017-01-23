@@ -49,7 +49,7 @@ namespace JpegConverter.Jpeg
                 int[] acBits = new int[0];
                 foreach (RunLengthAcPair rlap in item.Value)
                 {
-                    acBits = acBits.Concat(rlap.HuffmanCode.Concat(rlap.BitPattern ?? new int[]{ } ).ToArray()).ToArray();
+                    acBits = acBits.Concat(rlap.HuffmanCode.Concat(rlap.BitPattern ?? new int[] { }).ToArray()).ToArray();
                 }
                 int[] block = dcBits.Concat(acBits).ToArray();
                 yBlocks.Add(block);
@@ -81,30 +81,30 @@ namespace JpegConverter.Jpeg
                 CrBlocks.Add(block);
             }
 
-            //int Bb = image.Matrix.Channel0.GetLength(1) / 8;
-            //int offset = Bb - 1;
-            //int indexA = 0;
-            //for (int i = 0; i < CbBlocks.Count; i++)
-            //{
-            //    if (i%(Bb/2)==0 && i!=0)
-            //    {
-            //        indexA += Bb;
-            //    }
-            //    bitstream.WriteBits(yBlocks[indexA++]);
-            //    bitstream.WriteBits(yBlocks[indexA]);
-            //    bitstream.WriteBits(yBlocks[(indexA++) + offset]);
-            //    bitstream.WriteBits(yBlocks[indexA + offset]);
-            //    //bitstream.WriteBits(yBlocks[i]);
-            //    bitstream.WriteBits(CbBlocks[i]);
-            //    bitstream.WriteBits(CrBlocks[i]);
-            //}
-
-            for(int i = 0; i < yBlocks.Count; i++)
+            int Bb = image.Matrix.Channel0.GetLength(1) / 8;
+            int offset = Bb - 1;
+            int indexA = 0;
+            for (int i = 0; i < CbBlocks.Count; i++)
             {
-                bitstream.WriteBits(yBlocks[i]);
+                if (i % (Bb / 2) == 0 && i != 0)
+                {
+                    indexA += Bb;
+                }
+                bitstream.WriteBits(yBlocks[indexA++]);
+                bitstream.WriteBits(yBlocks[indexA]);
+                bitstream.WriteBits(yBlocks[(indexA++) + offset]);
+                bitstream.WriteBits(yBlocks[indexA + offset]);
+                //bitstream.WriteBits(yBlocks[i]);
                 bitstream.WriteBits(CbBlocks[i]);
                 bitstream.WriteBits(CrBlocks[i]);
             }
+
+            //for(int i = 0; i < CbBlocks.Count; i++)
+            //{
+            //    bitstream.WriteBits(yBlocks[i]);
+            //    bitstream.WriteBits(CbBlocks[i]);
+            //    bitstream.WriteBits(CrBlocks[i]);
+            //}
 
         }
 
@@ -261,7 +261,7 @@ namespace JpegConverter.Jpeg
             bitstream.WriteByte(0x00);
 
             //n-bytes fuer vorschaubild (x*y*3); Für keine Vorschau, kein byte
-            
+
         }
 
         private void WriteSof0(PPMImage image)
@@ -280,7 +280,7 @@ namespace JpegConverter.Jpeg
             bitstream.WriteByte(0x08);
 
             //Bildgroesse y > 0
-            
+
             bitstream.WriteByte((byte)(image.OrgY >> 8));
             bitstream.WriteByte((byte)image.OrgY);
 
@@ -295,7 +295,7 @@ namespace JpegConverter.Jpeg
             //  ID=1
             bitstream.WriteByte(0x01);
             //  Faktor unterabtastung (Bit 0-3 vertikal, 4-7 Horizontal);  Keine Unterabtastung: 0x22, Unterabtastung Faktor 2: 0x11
-            bitstream.WriteByte(0x11);
+            bitstream.WriteByte(0x22);
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
             bitstream.WriteByte(0x00);
 
@@ -315,19 +315,19 @@ namespace JpegConverter.Jpeg
             //  Nummer der Quantisierungstabelle [KEIN PLAN]
             bitstream.WriteByte(0x01);
         }
-        
+
         private void WriteDht(List<JpegConverter.Huffman.Huffman> huffmanTables)
         {
-            foreach (Huffman.Huffman huffman in huffmanTables)
-            {
             //Marker
             bitstream.WriteByte(SEGMENT_BEGIN);
             bitstream.WriteByte(0xc4);
 
             //Laenge des Segments
+            int length = 2 + (1 + 16) * 4 + huffmanTables.Sum(x => x.NumberOfSymbols()); //huffmanTables.Sum(x => x.NumberOfSymbols()) + 17 * huffmanTables.Count;//
             bitstream.WriteByte(0x00);
-            int length = (19 + huffman.NumberOfSymbols()); //huffmanTables.Sum(x => x.NumberOfSymbols()) + 17 * huffmanTables.Count;//
-                bitstream.WriteByte((byte)length);
+            bitstream.WriteByte((byte)length);
+            foreach (Huffman.Huffman huffman in huffmanTables)
+            {
 
                 int[] id = null;
                 switch (huffman.Type)
@@ -362,16 +362,15 @@ namespace JpegConverter.Jpeg
                 bitstream.WriteBits(htInfo);
 
                 // Anzahl von Symbolen mit Kodelängen von 1..16 (Summe dieser Anzahlen ist Gesamtzahl der Symbole, muss <= 256)
-                foreach (int count in huffman.GetCountForEachLevel().Select(x=>x.Value))
+                foreach (int count in huffman.GetCountForEachLevel().Select(x => x.Value))
                 {
                     bitstream.WriteByte((byte)count);
                 }
 
-                // Tabelle mit den Symbolen in aufsteigender Folge der Kodelängen (n = total Gesamtzahl der Symbole)
-                foreach (var symbol in huffman.CodeDictionary.OrderBy(x => BinaryToByte(x.Value)))
+                foreach (var symbol in huffman.CodeDictionary.OrderBy(x => BinaryToByte(x.Value)).OrderBy(x => x.Value.Length))
                 {
                     bitstream.WriteByte((byte)symbol.Key);
-                    //if (((byte)symbol).Equals(0xff)) bitstream.WriteByte(0x00);
+
                 }
 
             }

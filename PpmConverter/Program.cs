@@ -21,77 +21,12 @@ namespace JpegConverter
             {
                 TestPerformanceDCT();
             }
-            else if (args.Length == 2 && string.Compare(args[0], "-experimental", true) == 0)
+            else if (args.Length == 2)
             {
-                PPMImage image = LoadImageFromFile(args[1]);
-                ImageEncoder encoder = new ImageEncoder(image.Matrix);
-                encoder.WriteToJpegToFile(image, "image.jpg");
-            }
-            else if (args.Length == 1)
-            {
-                JpegEncoder encoder = new JpegEncoder();
                 PPMImage image = LoadImageFromFile(args[0]);
-                Dictionary<int, int> sl = GenerateTestHuffmanSymbols();
-                
-                List<Huffman.Huffman> huffmanTables = new List<Huffman.Huffman>()
-                {
-                    new Huffman.Huffman(sl, Huffman.HuffmanTyp.ChrominanceAC),
-                    new Huffman.Huffman(sl, Huffman.HuffmanTyp.ChrominanceDC),
-                    new Huffman.Huffman(sl, Huffman.HuffmanTyp.LuminanceAC),
-                    new Huffman.Huffman(sl, Huffman.HuffmanTyp.LuminanceDC),
-                };
-
-                foreach (Huffman.Huffman huffman in huffmanTables)
-                {
-                    huffman.CreateLimitedHuffman(16, true);
-                }
-
-                encoder.WriteMarker(image, huffmanTables, null);
-                encoder.SaveIntoFile("image.data");
+                ImageEncoder encoder = new ImageEncoder(image.Matrix);
+                encoder.WriteToJpegToFile(image, args[1]);
             }
-
-            //BitstreamTest.StartTests();
-            //BitstreamTest.StartBenchmarking(10000000);
-            //if (args.Length == 2)
-            //{
-            //    string sourcePath = args[0], destination = args[1];
-            //    PPMImage image = LoadImageFromFile(sourcePath);
-            //    YCbCrImage ycrcbMatrix = ConvertToYCbCr(image);
-            //    Subsampling(ycrcbMatrix);
-            //    RGBImage rgbImage = ConvertToRGB(ycrcbMatrix);
-            //    JpegEncoder jpegEncoder = new JpegEncoder();
-            //    ConvertToJpeg(jpegEncoder, image);
-            //    SaveJpegIntoFile(jpegEncoder, destination);
-            //}
-            //Console.Read();
-
-            //SortedList<float, Symbol> symbols = new SortedList<float, Symbol>(new JpegConverter.Huffman.DuplicateKeyComparer<float>());
-
-            //symbols.Add(0.3f, 72);
-            //symbols.Add(0.2f, 97);
-            //symbols.Add(0.15f, 108);
-            //symbols.Add(0.1f, 32);
-            //symbols.Add(0.25f, 111);
-
-            //symbols.Add(4.0f, 1);
-            //symbols.Add(4.0f, 2);
-            //symbols.Add(6.0f, 3);
-            //symbols.Add(6.0f, 4);
-            //symbols.Add(7.0f, 5);
-            //symbols.Add(9.0f, 6);
-
-            //JpegConverter.Huffman.HuffmanTree tree = JpegConverter.Huffman.HuffmanTree.createNormalTree(symbols);
-            //JpegConverter.Huffman.HuffmanTree rightTree = JpegConverter.Huffman.HuffmanTree.createRightTree(tree);
-            //tree.print();
-
-            //Bitstream bitstream = new Bitstream();
-            //tree.encode("Hallo", bitstream);
-            //bitstream.Seek(0, System.IO.SeekOrigin.Begin);
-            //String result = tree.decode(bitstream);
-
-            //Console.WriteLine(result);
-
-            //Console.Read();
 
         }
 
